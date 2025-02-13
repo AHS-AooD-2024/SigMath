@@ -16,7 +16,11 @@
 
 package io.github.atholton.sigmath.symbols;
 
-public class Algebra {
+public final class Algebra {
+    private Algebra() {
+        throw new AssertionError("Do not instantiate class " + Algebra.class);
+    }
+
     public static final char infinity = '∞';
 
     public static final char plus   = '+';

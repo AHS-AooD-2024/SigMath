@@ -16,7 +16,11 @@
 
 package io.github.atholton.sigmath.symbols;
 
-public class Geometry {
+public final class Geometry {
+    private Geometry() {
+        throw new AssertionError("Do not instantiate class " + Geometry.class);
+    }
+
     public static final char triangle = '△';
     public static final char angle = '∠';
     public static final char rightAngle = '∟';

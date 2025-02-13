@@ -16,7 +16,11 @@
 
 package io.github.atholton.sigmath.symbols;
 
-public class Vectors {
+public final class Vectors {
+    private Vectors() {
+        throw new AssertionError("Do not instantiate class " + Greek.class);
+    }
+
     public static final char dot = '⋅';
     public static final char cross = '×';
     

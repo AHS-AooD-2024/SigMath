@@ -16,7 +16,11 @@
 
 package io.github.atholton.sigmath.symbols;
 
-public class SetTheory {
+public final class SetTheory {
+    private SetTheory() {
+        throw new AssertionError("Do not instantiate class " + SetTheory.class);
+    }
+
     public static final char union  = '∪';
     public static final char intersection = '∩';
     public static final char symetricDifference = '⊖';

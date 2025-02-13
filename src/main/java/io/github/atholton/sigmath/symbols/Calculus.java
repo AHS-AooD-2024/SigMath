@@ -16,7 +16,11 @@
 
 package io.github.atholton.sigmath.symbols;
 
-public class Calculus {
+public final class Calculus {
+    private Calculus() {
+        throw new AssertionError("Do not instantiate class " + Calculus.class);
+    }
+
     public static final String lHopital = "L'Hôpital";
     public static final char integral = '∫';
 }
