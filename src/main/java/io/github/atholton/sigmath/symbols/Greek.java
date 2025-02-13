@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.atholton.sigmath;
+package io.github.atholton.sigmath.symbols;
 
 /**
  * A container class for the Greek letters as characters and strings.

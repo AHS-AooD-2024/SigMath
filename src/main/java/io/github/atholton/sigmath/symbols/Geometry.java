@@ -14,24 +14,17 @@
  * limitations under the License.
  */
 
-package io.github.atholton.sigmath;
+package io.github.atholton.sigmath.symbols;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
-
-import io.github.atholton.sigmath.symbols.Greek;
-
-public class UnitTests {
+public class Geometry {
+    public static final char triangle = '△';
+    public static final char angle = '∠';
+    public static final char rightAngle = '∟';
+    public static final char perpendicular = '⊥';
+    public static final char parallel = '∥';
     
-    /**
-     * Assert that uppercase alpha is not the same thing as uppercase A.
-     * They look the same in most fonts, but they might not always.
-     * If this passes, it is likely that the other Greek letters that
-     * look like Anglic/Latin letters are also different code-points  
-     */
-    @Test
-    public void alphaIsNotA() {
-        assertFalse(Greek.ALPHA == 'A');
-    }
+    public static final char congruent = '≅';
+    public static final char similar = '~';
+
+    public static final char degrees = '°';
 }

@@ -37,5 +37,7 @@ public class Sigmath extends JFrame implements Runnable {
         setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         // TODO: add stuff
+        add(new MathLabel("sqrt(e^(xy)x)"));
+        pack();
     }
 }
