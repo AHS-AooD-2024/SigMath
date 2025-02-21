@@ -19,7 +19,7 @@ public abstract class Topic {
     /**
      * Gets a chosen formula from the formula list
      * 
-     * @param index
+     * @param index the index value of formulaList
      * @return formulaList.get(index)
      */
     public abstract String getFormula(int index);
@@ -27,7 +27,7 @@ public abstract class Topic {
     /**
      * Returns the answer to a given question in tree format using the desired formula
      * 
-     * @param question
+     * @param question question in node format
      * @param listIndex
      * @return answer to the question in tree format
      */

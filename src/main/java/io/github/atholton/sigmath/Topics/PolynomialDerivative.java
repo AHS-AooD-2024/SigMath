@@ -1,4 +1,4 @@
-package main.java.io.github.atholton.sigmath.Topics;
+package io.github.atholton.sigmath.Topics;
 
 import java.util.ArrayList;
 
