@@ -1,3 +1,5 @@
+package io.github.atholton.sigmath.EquationTree;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Stack;

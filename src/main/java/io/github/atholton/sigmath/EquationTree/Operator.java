@@ -1,3 +1,5 @@
+package io.github.atholton.sigmath.EquationTree;
+
 public interface Operator {
     /***
      *
