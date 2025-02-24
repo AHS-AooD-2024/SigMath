@@ -28,17 +28,17 @@ public abstract class Topic {
      * Returns the answer to a given question in tree format using the desired formula
      * 
      * @param question question in node format
-     * @param listIndex
+     * @param listIndex index value of desired formula
      * @return answer to the question in tree format
      */
-    public abstract Node returnAnswer(Node question, int listIndex);
+    public ASTNode returnAnswer(Node question, int listIndex) {}
 
     /**
      * Returns the answer to a given question in String format using the desired formula
      * 
-     * @param question
-     * @param listIndex
+     * @param question question in String format
+     * @param listIndex index value of desired formula
      * @return answer to the question in tree format
      */
-    public abstract Node returnAnswer(String question, int listIndex);
+    public ASTNode returnAnswer(String question, int listIndex) {}
 }

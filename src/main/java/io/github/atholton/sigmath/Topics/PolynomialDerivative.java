@@ -2,6 +2,10 @@ package io.github.atholton.sigmath.Topics;
 
 import java.util.ArrayList;
 
+/**
+ * Represents all polynomial derivatives
+ * @author Abhay Nagaraj
+ */
 public class PolynomialDerivative extends Derivative{
     public PolynomialDerivative() {
         super();

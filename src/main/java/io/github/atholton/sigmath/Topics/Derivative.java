@@ -15,8 +15,8 @@ public class Derivative extends Topic{
     /**
      * Returns the answer to any derivative
      * 
-     * @param question
-     * @param listIndex
+     * @param question question to answer
+     * @param listIndex index of the desired formula
      * @return the derivative of question
      */
     @Override
