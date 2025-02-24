@@ -18,9 +18,13 @@ package io.github.atholton.sigmath;
 
 import static org.junit.Assert.*;
 
+import java.util.regex.Pattern;
+
 import org.junit.Test;
 
+import io.github.atholton.sigmath.latex.TeXLabel;
 import io.github.atholton.sigmath.symbols.Greek;
+import io.github.atholton.sigmath.util.Strings;
 
 public class UnitTests {
     
@@ -33,5 +37,40 @@ public class UnitTests {
     @Test
     public void alphaIsNotA() {
         assertFalse(Greek.ALPHA == 'A');
+    }
+
+    @Test
+    public void backspaceTest() {
+        String tex = "2 \\over \\sqrt{3x}";
+        String b1 = Strings.backspaceUntilMatches(tex, " ");
+        assertEquals("2 \\over", b1);
+        String b2 = Strings.backspaceUntilMatches(b1, " ");
+        assertEquals("2", b2);
+    }
+
+    @Test
+    public void testReplaceWithInsides() {
+        // test main function usage
+        final String test     = "(zz) (sqrt (asqrt(b) c (ff(G)) )(d)) sqrt(h);";
+        final String expected = "(zz) (root {aroot{b} c (ff(G)) }(d)) root{h};";
+        String a = Strings.replaceWithInsides(
+            test, "sqrt", "root", 
+            "(", "{", 
+            ")", "}"
+        );
+        // System.out.println(a);
+        // System.out.println(expected);
+        assertEquals(expected, a);
+        
+        // test insertion of parenthesis
+        final String testb     = "sqrta b";
+        final String expectedb = "root{}a b";
+        String b = Strings.replaceWithInsides(
+            testb, "sqrt", "root", 
+            "(", "{", 
+            ")", "}"
+        );
+        assertEquals(expectedb, b);
+
     }
 }

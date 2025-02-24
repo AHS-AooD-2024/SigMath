@@ -17,7 +17,18 @@
 package io.github.atholton.sigmath;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+
+import org.scilab.forge.jlatexmath.TeXConstants;
+import org.scilab.forge.jlatexmath.TeXFormula;
+import org.scilab.forge.jlatexmath.TeXIcon;
+import org.scilab.forge.jlatexmath.TeXParser;
+
+import io.github.atholton.sigmath.latex.DualTeXField;
+import io.github.atholton.sigmath.latex.TeXField;
+import io.github.atholton.sigmath.latex.TeXLabel;
 
 /**
  * The main container class for application interfaces.
@@ -36,8 +47,13 @@ public class Sigmath extends JFrame implements Runnable {
     public void run() {
         setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        TeXIcon.defaultSize = 24.0f;
         // TODO: add stuff
-        add(new MathLabel("sqrt(e^(xy)x)"));
+        var l = new TeXLabel("$$ \\sqrt{x + 2} \\over y^3 $$", 24.0f);
+        add(l);
+        var t = new DualTeXField();
+        add(t);
         pack();
     }
 }

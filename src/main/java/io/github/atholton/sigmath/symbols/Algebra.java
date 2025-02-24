@@ -26,6 +26,7 @@ public final class Algebra {
     public static final char plus   = '+';
     public static final char minus  = '-';
     public static final char times  = '×';
+    public static final char dotTimes  = Vectors.dot;
     public static final char divide = '÷';
 
     public static final char equals = '=';
