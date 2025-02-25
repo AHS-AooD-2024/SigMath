@@ -29,7 +29,19 @@ public class ShuntingYardParser {
             this.operators.put(o.getSymbol(), o);
         }
     }
+    public ShuntingYardParser() {
+        operators = new HashMap<>();
+        operators.put("^", new BaseOperator("^", true, 4));
+        operators.put("*", new BaseOperator("*", false, 3));
+        operators.put("/", new BaseOperator("/", false, 3));
+        operators.put("+", new BaseOperator("+", false, 2));
+        operators.put("-", new BaseOperator("-", false, 2));
+    }
 
+    private static boolean isNumber(char c)
+    {
+        return c == '.' || (c >= '0' &&c <= '9');
+    }
     /***
      * Convert an expression in infix notation to a tree
      *
@@ -41,22 +53,29 @@ public class ShuntingYardParser {
         final Stack<ASTNode> operandStack = new Stack<>();
         //Splits String into tokens
         List<String> tokens = new ArrayList<>();
+
+        String build = "";
         for (int i = 0; i < input.length(); i++)
         {
             char c = input.charAt(i);
             if (c == ' ') continue;
-            tokens.add(String.valueOf(c));
-            while (c >= '0' && c <= '9' && i < input.length() - 1)
+            if (isNumber(c))
             {
-                i++;
-                c = input.charAt(i);
-                if (c >= '0' && c <= '9')
-                    tokens.add(tokens.remove(tokens.size() - 1) + String.valueOf(c));
-                else
-                {
-                    i--;
-                }
+                build += String.valueOf(c);
             }
+            else
+            {
+                if (!build.equals(""))
+                {
+                    tokens.add(build);
+                    build = "";
+                }
+                tokens.add(String.valueOf(c));
+            }
+        }
+        if (!build.equals(""))
+        {
+            tokens.add(build);
         }
 
         main:

@@ -39,16 +39,8 @@ public class ShuntingYardDemo {
     }
 
     public static void main(String[] args) {
-        // Define our basic operators for arithmetic.
-        final Collection<Operator> operators = new ArrayList<>();
-        operators.add(new BaseOperator("^", true, 4));
-        operators.add(new BaseOperator("*", false, 3));
-        operators.add(new BaseOperator("/", false, 3));
-        operators.add(new BaseOperator("+", false, 2));
-        operators.add(new BaseOperator("-", false, 2));
-
-        final ShuntingYardParser parser = new ShuntingYardParser(operators);
-        final String input = "3 + 4 * 4 * 4";
+        final ShuntingYardParser parser = new ShuntingYardParser();
+        final String input = "4 + 55 + 554";
 
 
         final ASTNode parseTree = parser.convertInfixNotationToAST(input);
