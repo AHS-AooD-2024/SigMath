@@ -21,6 +21,11 @@ public interface Operator {
      */
     int comparePrecedence(Operator o);
 
+    default boolean isLeftAssociative()
+    {
+        return !isRightAssociative();
+    }
+
     /***
      *
      * @return Gets the symbol used to denote the operator.
