@@ -1,6 +1,8 @@
 package io.github.atholton.sigmath.Topics;
 import java.util.ArrayList;
 
+import io.github.atholton.sigmath.EquationTree.ASTNode;
+
 /**
  * Represents an individual topic from the curriculum.
  * @author Abhay Nagaraj
@@ -28,17 +30,15 @@ public abstract class Topic {
      * Returns the answer to a given question in tree format using the desired formula
      * 
      * @param question question in node format
-     * @param listIndex index value of desired formula
      * @return answer to the question in tree format
      */
-    public ASTNode returnAnswer(Node question, int listIndex) {}
+    protected abstract ASTNode returnAnswer(ASTNode question);
 
     /**
-     * Returns the answer to a given question in String format using the desired formula
+     * Solves an individual unit of a topic within a problem
      * 
-     * @param question question in String format
-     * @param listIndex index value of desired formula
-     * @return answer to the question in tree format
+     * @param question question to answer
+     * @return the answert to the question
      */
-    public ASTNode returnAnswer(String question, int listIndex) {}
+    protected ASTNode solve(ASTNode question) {return null;}
 }
