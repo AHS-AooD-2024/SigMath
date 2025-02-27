@@ -32,17 +32,18 @@ public class PolynomialDerivative extends Topic{
         ASTNode qL = tempQuestion.getLeftASTNode();
         ASTNode qR = tempQuestion.getRightASTNode();
 
-        reformat(question);
+        reformatConstant(tempQuestion);
+        reformatX(tempQuestion);   
 
         if (qL == null || qR == null) {
             //Do nothing
         }
-        else if (!(question.getLeftASTNode().getValue().equals("x") && question.getValue().equals("^"))) {
-            returnAnswer(question.getLeftASTNode());
-            returnAnswer(question.getRightASTNode());
+        else if (!(tempQuestion.getLeftASTNode().getValue().equals("x") && tempQuestion.getValue().equals("^"))) {
+            returnAnswer(tempQuestion.getLeftASTNode());
+            returnAnswer(tempQuestion.getRightASTNode());
         }
         else {
-            return solve(question);
+            return solve(tempQuestion);
         }
         return tempQuestion;
     }
@@ -59,19 +60,48 @@ public class PolynomialDerivative extends Topic{
         return tempQuestion;
     }
 
-    public void reformat(ASTNode question) {
+    public void reformatX(ASTNode question) {
         ASTNode tempQuestion = question;
         ASTNode qL = tempQuestion.getLeftASTNode();
         ASTNode qR = tempQuestion.getRightASTNode(); 
         
-        if (qR == null || !(qR.getValue().equals("x"))) {
+        if (qR == null || !(qR.getValue().equals("x"))) {//first condition used to short-circuit
             if (qL != null)
-                reformat(qL);
+                reformatX(qL);
             if (qR != null)
-                reformat(qR);
+                reformatX(qR);
         }
         else {
             qR.addExponent(1);
+        }
+    }
+
+    public void reformatConstant(ASTNode question) {
+        ASTNode tempQuestion = question;
+        ASTNode qL = tempQuestion.getLeftASTNode();
+        ASTNode qR = tempQuestion.getRightASTNode(); 
+        try {
+            Double.parseDouble(qR.getValue());
+            if (tempQuestion.getValue().equals("+"))
+                qR.setValue(0);
+        }
+        catch (Exception e) {
+            if (qL != null)
+                reformatConstant(qL);
+            if (qR != null)
+                reformatConstant(qR);
+        }
+
+        try {
+            Double.parseDouble(qL.getValue());
+            if (tempQuestion.getValue().equals("+"))
+                qL.setValue(0);
+        }
+        catch (Exception e) {
+            if (qL != null)
+                reformatConstant(qL);
+            if (qR != null)
+                reformatConstant(qR);
         }
     }
     
