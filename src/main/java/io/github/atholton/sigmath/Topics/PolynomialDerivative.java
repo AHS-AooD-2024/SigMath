@@ -32,7 +32,7 @@ public class PolynomialDerivative extends Topic{
         ASTNode qL = tempQuestion.getLeftASTNode();
         ASTNode qR = tempQuestion.getRightASTNode();
 
-        reformatConstant(tempQuestion);
+        deriveConstants(tempQuestion);
         reformatX(tempQuestion);   
 
         if (qL == null || qR == null) {
@@ -49,7 +49,7 @@ public class PolynomialDerivative extends Topic{
     }
     
     @Override
-    public ASTNode solve(ASTNode question) {//ASK NATHAN: how would I modify the tree to multiply the x value by a constant?
+    public ASTNode solve(ASTNode question) {
         ASTNode tempQuestion = question;
         ASTNode qL = tempQuestion.getLeftASTNode();
         ASTNode qR = tempQuestion.getRightASTNode();
@@ -60,6 +60,10 @@ public class PolynomialDerivative extends Topic{
         return tempQuestion;
     }
 
+    /**
+     * Reformats all x's to be x^1 to be processed by returnAnswer
+     * @param question question to process x's in
+     */
     public void reformatX(ASTNode question) {
         ASTNode tempQuestion = question;
         ASTNode qL = tempQuestion.getLeftASTNode();
@@ -76,7 +80,11 @@ public class PolynomialDerivative extends Topic{
         }
     }
 
-    public void reformatConstant(ASTNode question) {
+    /**
+     * Derives constants which can't be reached by returnAnswer
+     * @param question question to derive constants in
+     */
+    public void deriveConstants(ASTNode question) {
         ASTNode tempQuestion = question;
         ASTNode qL = tempQuestion.getLeftASTNode();
         ASTNode qR = tempQuestion.getRightASTNode(); 
@@ -87,9 +95,9 @@ public class PolynomialDerivative extends Topic{
         }
         catch (Exception e) {
             if (qL != null)
-                reformatConstant(qL);
+                deriveConstants(qL);
             if (qR != null)
-                reformatConstant(qR);
+                deriveConstants(qR);
         }
 
         try {
@@ -99,9 +107,9 @@ public class PolynomialDerivative extends Topic{
         }
         catch (Exception e) {
             if (qL != null)
-                reformatConstant(qL);
+                deriveConstants(qL);
             if (qR != null)
-                reformatConstant(qR);
+                deriveConstants(qR);
         }
     }
     

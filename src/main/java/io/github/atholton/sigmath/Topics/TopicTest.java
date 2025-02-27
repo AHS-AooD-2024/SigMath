@@ -20,7 +20,7 @@ public class TopicTest {
 
         final ShuntingYardParser parser = new ShuntingYardParser(operators);
         Topic d = new PolynomialDerivative();
-        final String input = "2 * x ^ 2 + 3";
+        final String input = "4 * x ^ 3";
 
 
         final ASTNode parseTree = parser.convertInfixNotationToAST(input);
