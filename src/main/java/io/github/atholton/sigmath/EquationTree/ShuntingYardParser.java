@@ -3,20 +3,30 @@ package io.github.atholton.sigmath.EquationTree;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
+import java.util.Set;
 import java.util.Stack;
 
 public class ShuntingYardParser {
 
     private final Map<String, Operator> operators;
+    private final Set<String> functions;
 
-    private static void addNode(Stack<ASTNode> stack, String operator) {
-        final ASTNode rightASTNode = stack.pop();
-        final ASTNode leftASTNode = stack.pop();
-        stack.push(new ASTNode(operator, leftASTNode, rightASTNode));
+    private void addNode(Stack<ASTNode> stack, String operator) {
+        if (operators.containsKey(operator))
+        {
+            final ASTNode rightASTNode = stack.pop();
+            final ASTNode leftASTNode = stack.pop();
+            stack.push(new ASTNode(operator, leftASTNode, rightASTNode));
+        }
+        else
+        {
+            //is a function
+            final ASTNode leftASTNode = stack.pop();
+            stack.push(new ASTNode(operator, leftASTNode, null));
+        }
     }
 
     /***
@@ -30,6 +40,7 @@ public class ShuntingYardParser {
         for(Operator o : operators) {
             this.operators.put(o.getSymbol(), o);
         }
+        functions = new HashSet<>();
     }
     public ShuntingYardParser() {
         operators = new HashMap<>();
@@ -38,6 +49,11 @@ public class ShuntingYardParser {
         operators.put("/", new BaseOperator("/", false, 3));
         operators.put("+", new BaseOperator("+", false, 2));
         operators.put("-", new BaseOperator("-", false, 2));
+
+        functions = new HashSet<>();
+        functions.add("sin");
+        functions.add("cos");
+        functions.add("tan");
     }
 
     private static boolean isNumber(char c)
@@ -55,11 +71,27 @@ public class ShuntingYardParser {
         }
         return true;
     }
-    private static boolean isFunction(String token)
+    private boolean isFunction(String token)
     {
+        return functions.contains(token);
+    }
+    private boolean writingFunction(char letter, StringBuilder build)
+    {
+        for (String function : functions)
+        {
+            String current = build.toString() + letter;
+            //if valid length
+            if (!(current.length() > function.length()))
+            {
+                if (function.substring(0, current.length()).equals(current))
+                {
+                    return true;
+                }
+            }
+        }
         return false;
     }
-    private static List<String> tokenize(final String input)
+    private List<String> tokenize(final String input)
     {
         List<String> tokens = new ArrayList<>();
         StringBuilder build = new StringBuilder();
@@ -68,8 +100,11 @@ public class ShuntingYardParser {
         {
             char c = input.charAt(i);
             if (c == ' ') continue;
-            
-            if (isNumber(c))
+            if (writingFunction(c, build))
+            {
+                build.append(c);
+            }
+            else if (isNumber(c))
             {
                 build.append(c);
             }
@@ -106,7 +141,6 @@ public class ShuntingYardParser {
         //Splits String into tokens
         List<String> tokens = tokenize(input);
 
-        main:
         for(String token : tokens) {
             String popped;
             switch(token) {
@@ -119,15 +153,21 @@ public class ShuntingYardParser {
                     while(!operatorStack.isEmpty()) {
                         popped = operatorStack.pop();
                         if("(".equals(popped)) {
-                            continue main;
+                            if (!operatorStack.isEmpty() && isFunction(operatorStack.peek()))
+                            {
+                                String function = operatorStack.pop();
+                                addNode(operandStack, function);
+                            }
                         } else {
                             addNode(operandStack, popped);
                         }
                     }
-                    throw new IllegalStateException("Unbalanced right " +
-                            "parentheses");
+                    break;
                 default:
-                    if(operators.containsKey(token)) {
+                    if (isFunction(token)) {
+                        operatorStack.push(token);
+                    }
+                    else if (operators.containsKey(token)) {
                         final Operator o1 = operators.get(token);
                         Operator o2;
                         while(!operatorStack.isEmpty() && null != (o2 =
@@ -144,6 +184,7 @@ public class ShuntingYardParser {
                         operatorStack.push(token);
                     } else {
                         //is a number
+                        //or a function
                         operandStack.push(new ASTNode(token, null, null));
                     }
                     break;
@@ -154,54 +195,34 @@ public class ShuntingYardParser {
         }
         return operandStack.pop();
     }
-    public List<String> convertInfixNotationToRPN(final String input)
-    {
-        List<String> output = new ArrayList<>();
-        Stack<String> operatorStack = new Stack<>();
-        List<String> tokens = tokenize(input);
-        for (String token : tokens)
-        {
-            if (isNumber(token))
-            {
-                output.add(token);
-            }
-            else if (isFunction(token))
-            {
-                operatorStack.push(token);
-            }
-            else if (token.equals("("))
-            {
-                operatorStack.push("(");
-            }
-            else if (token.equals(")"))
-            {
-                while(!operatorStack.isEmpty()) {
-                    String popped = operatorStack.pop();
-                    if(!popped.equals("(") || isFunction(token)) {
-                        output.add(popped);
-                    }
-                }
-            }
-            else if (operators.containsKey(token))
-            {
-                if(operators.containsKey(token)) {
-                    Operator o1 = operators.get(token);
-                    Operator o2;
-                    while(!operatorStack.isEmpty() && null != (o2 = operators.get(operatorStack.peek()))) 
-                    {
-                        if (o2.comparePrecedence(o1) > 0 || (o1.comparePrecedence(o2) == 0 && o1.isLeftAssociative()))
-                        {
-                            operatorStack.pop();
-                            output.add(o2.getSymbol());
-                        }
-                    }
-                    operatorStack.push(token);
-                }
-            }
+
+    public static String convertASTToLatex(ASTNode node) {
+        if (node == null) return "";
+        
+        String value = node.getValue();
+        
+        // If it's a leaf node, return its value directly
+        if (node.getLeftASTNode() == null && node.getRightASTNode() == null) {
+            return value;
         }
-        while(!operatorStack.isEmpty()) {
-            output.add(operatorStack.pop());
+
+        // Recursively process left and right subtrees
+        String left = convertASTToLatex(node.getLeftASTNode());
+        String right = convertASTToLatex(node.getRightASTNode());
+
+        // Handle different operators
+        switch (value) {
+            case "+":
+            case "-":
+                return "(" + left + " " + value + " " + right + ")";
+            case "*":
+                return left + " \\times " + right;
+            case "/":
+                return "\\frac{" + left + "}{" + right + "}";
+            case "^":
+                return "{" + left + "}^{" + right + "}";
+            default:
+                return value; // If it's a number or variable, return as is
         }
-        return output;
     }
 }

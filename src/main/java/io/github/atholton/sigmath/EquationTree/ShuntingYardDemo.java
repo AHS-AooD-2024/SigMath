@@ -40,11 +40,10 @@ public class ShuntingYardDemo {
 
     public static void main(String[] args) {
         final ShuntingYardParser parser = new ShuntingYardParser();
-        final String input = "3 + 4 * 2 ÷ ( 1 - 5 ) ^ 2";
+        final String input = "1 + 3 ^ sin(x + 1)";
 
 
         final ASTNode parseTree = parser.convertInfixNotationToAST(input);
-        //System.out.println(parser.convertInfixNotationToRPN(input));
         parseTree.print();
     }
 }
