@@ -2,9 +2,9 @@ package io.github.atholton.sigmath.EquationTree;
 
 public class ASTNode {
 
-    private final String value;
-    private final ASTNode leftASTNode;
-    private final ASTNode rightASTNode;
+    private String value;
+    private ASTNode leftASTNode;
+    private ASTNode rightASTNode;
 
     /***
      * Constructs a new AST node. There's no explicit specialization for leaf
@@ -29,6 +29,14 @@ public class ASTNode {
         return value;
     }
 
+    public void setValue(double d) {
+        value = Double.toString(d);
+    }
+
+    public void setValue(String s) {
+        value = s;
+    }
+
     /***
      *
      * @return The left node, or <code>null</code> if there isn't one.
@@ -44,6 +52,19 @@ public class ASTNode {
     public ASTNode getRightASTNode() {
         return rightASTNode;
     }
+
+    public void multByConstant(double factor) {
+        rightASTNode = new ASTNode(getValue(), null, null);
+        leftASTNode = new ASTNode(Double.toString(factor), null, null);
+        setValue("*");
+    }
+
+    public void addExponent(double exponent) {
+        rightASTNode = new ASTNode(Double.toString(exponent), null, null);
+        leftASTNode = new ASTNode(getValue(), null, null);
+        setValue("^");
+    }
+    
     /**
      * Prints the tree as a tree
      */
