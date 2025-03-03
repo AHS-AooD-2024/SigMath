@@ -1,4 +1,4 @@
-package io.github.atholton.sigmath.EquationTree;
+package io.github.atholton.sigmath.equationtree;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,6 +12,8 @@ import java.util.Stack;
 public class ShuntingYardParser {
 
     private final Map<String, Operator> operators;
+
+    //currently only supports functions with one parameter, ie sin, cos, tan
     private final Set<String> functions;
 
     private void addNode(Stack<ASTNode> stack, String operator) {
@@ -29,7 +31,7 @@ public class ShuntingYardParser {
         }
     }
 
-    /***
+    /**
      * Creates a new ShuntingYardParser for the given operators.
      *
      * @param operators A collection of operators that should be recognized by
@@ -42,6 +44,11 @@ public class ShuntingYardParser {
         }
         functions = new HashSet<>();
     }
+
+    /**
+     * Creates a ShuntingYardParser with default operators
+     * 
+     */
     public ShuntingYardParser() {
         operators = new HashMap<>();
         operators.put("^", new BaseOperator("^", true, 4));
@@ -54,6 +61,7 @@ public class ShuntingYardParser {
         functions.add("sin");
         functions.add("cos");
         functions.add("tan");
+        functions.add("sqrt");
     }
 
     private static boolean isNumber(char c)
@@ -71,10 +79,24 @@ public class ShuntingYardParser {
         }
         return true;
     }
+    /**
+     * Tests if token is a function
+     * 
+     * @param token String to test if is a function
+     * @return returns true if token is a supported function
+     */
     private boolean isFunction(String token)
     {
         return functions.contains(token);
     }
+    /**
+     * Tests if writing a function
+     * ex) si returns true because it is writing sin
+     * 
+     * @param letter letter to be added to function
+     * @param build current token
+     * @return true if writing a function, false otherwise
+     */
     private boolean writingFunction(char letter, StringBuilder build)
     {
         for (String function : functions)
@@ -91,6 +113,11 @@ public class ShuntingYardParser {
         }
         return false;
     }
+    /**
+     * Tokenizes String equation in infix notation
+     * @param input equation
+     * @return list of tokens
+     */
     private List<String> tokenize(final String input)
     {
         List<String> tokens = new ArrayList<>();
@@ -196,33 +223,5 @@ public class ShuntingYardParser {
         return operandStack.pop();
     }
 
-    public static String convertASTToLatex(ASTNode node) {
-        if (node == null) return "";
-        
-        String value = node.getValue();
-        
-        // If it's a leaf node, return its value directly
-        if (node.getLeftASTNode() == null && node.getRightASTNode() == null) {
-            return value;
-        }
-
-        // Recursively process left and right subtrees
-        String left = convertASTToLatex(node.getLeftASTNode());
-        String right = convertASTToLatex(node.getRightASTNode());
-
-        // Handle different operators
-        switch (value) {
-            case "+":
-            case "-":
-                return "(" + left + " " + value + " " + right + ")";
-            case "*":
-                return left + " \\times " + right;
-            case "/":
-                return "\\frac{" + left + "}{" + right + "}";
-            case "^":
-                return "{" + left + "}^{" + right + "}";
-            default:
-                return value; // If it's a number or variable, return as is
-        }
-    }
+    
 }

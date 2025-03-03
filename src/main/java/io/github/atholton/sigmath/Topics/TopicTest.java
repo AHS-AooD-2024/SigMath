@@ -3,10 +3,10 @@ package io.github.atholton.sigmath.Topics;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import io.github.atholton.sigmath.EquationTree.ASTNode;
-import io.github.atholton.sigmath.EquationTree.BaseOperator;
-import io.github.atholton.sigmath.EquationTree.Operator;
-import io.github.atholton.sigmath.EquationTree.ShuntingYardParser;
+import io.github.atholton.sigmath.equationtree.ASTNode;
+import io.github.atholton.sigmath.equationtree.BaseOperator;
+import io.github.atholton.sigmath.equationtree.Operator;
+import io.github.atholton.sigmath.equationtree.ShuntingYardParser;
 
 public class TopicTest {
     public static void main(String[] args) {
@@ -18,9 +18,9 @@ public class TopicTest {
         operators.add(new BaseOperator("+", false, 2));
         operators.add(new BaseOperator("-", false, 2));
 
-        final ShuntingYardParser parser = new ShuntingYardParser(operators);
+        final ShuntingYardParser parser = new ShuntingYardParser();
         Topic d = new PolynomialDerivative();
-        final String input = "4 * x ^ 3";
+        final String input = "4 * x ^ (0.5)";
 
 
         final ASTNode parseTree = parser.convertInfixNotationToAST(input);

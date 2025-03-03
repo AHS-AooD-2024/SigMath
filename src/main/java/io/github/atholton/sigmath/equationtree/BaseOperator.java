@@ -1,5 +1,5 @@
 
-package io.github.atholton.sigmath.EquationTree;
+package io.github.atholton.sigmath.equationtree;
 public class BaseOperator implements Operator {
 
     private final String symbol;

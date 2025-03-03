@@ -1,4 +1,4 @@
-package io.github.atholton.sigmath.EquationTree;
+package io.github.atholton.sigmath.equationtree;
 
 import java.util.ArrayList;
 import java.util.List;

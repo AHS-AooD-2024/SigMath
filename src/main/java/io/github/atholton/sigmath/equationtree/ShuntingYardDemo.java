@@ -1,19 +1,10 @@
-package io.github.atholton.sigmath.EquationTree;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Stack;
+package io.github.atholton.sigmath.equationtree;
 
 public class ShuntingYardDemo {
 
-    /***
-     * Evaluates the calculation encoded in the given abstract syntax tree.
-     * This method uses recursion to keep things clean. If you needed to
-     * evaluate a very deep tree you might need to rewrite this method to use
-     * depth first search and evaluate the tree using an explicit stack.
-     *
+    /**
+     * Attempts to math the equation :)
      * @param tree The {@link ASTNode} to evaluate.
-     *
      * @return The result of the computation.
      */
     private static double evaluateAST(ASTNode tree) {
@@ -40,10 +31,11 @@ public class ShuntingYardDemo {
 
     public static void main(String[] args) {
         final ShuntingYardParser parser = new ShuntingYardParser();
-        final String input = "1 + 3 ^ sin(x + 1)";
+        final String input = "1 / 2 + 3 ^ (2+1)";
 
 
         final ASTNode parseTree = parser.convertInfixNotationToAST(input);
         parseTree.print();
+        System.out.println(parseTree.convertToLatex());
     }
 }

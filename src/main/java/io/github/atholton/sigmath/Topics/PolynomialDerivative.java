@@ -2,7 +2,7 @@ package io.github.atholton.sigmath.Topics;
 
 import java.util.ArrayList;
 
-import io.github.atholton.sigmath.EquationTree.ASTNode;
+import io.github.atholton.sigmath.equationtree.ASTNode;
 
 /**
  * Represents all polynomial derivatives
