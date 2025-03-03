@@ -110,26 +110,37 @@ public class ASTNode {
      */
     public void simplify()
     {
-        simplify(this);
+        //combine like terms first? or remove exponents...
+        simplifyExponent(this);
     }
-    private void simplify(ASTNode node)
+    private static boolean isNumber(String str) { 
+        try {  
+          Double.parseDouble(str);  
+          return true;
+        } catch(NumberFormatException e){  
+          return false;  
+        }  
+    }
+    //combine like terms when....
+    //
+    private void combineLikeTerms(ASTNode node)
     {
-        ASTNode left = node.getLeftASTNode();
-        ASTNode right = node.getRightASTNode();
-
-        if (left != null)
+        if (node == null) return;
+    }
+    private void simplifyExponent(ASTNode node)
+    {
+        if (node == null) return;
+        if (node.getValue().equals("^"))
         {
-            if (left.getValue().equals("^"))
+            if (isNumber(node.getRightASTNode().getValue()))
             {
-                removeExponent(left);
+                replaceNode(node, node.getLeftASTNode());
             }
         }
-        else if (right != null)
+        else
         {
-            if (right.getValue().equals("^"))
-            {
-                removeExponent(right);
-            }
+            simplifyExponent(node.getLeftASTNode());
+            simplifyExponent(node.getRightASTNode());
         }
     }
     private void removeExponent(ASTNode node)
