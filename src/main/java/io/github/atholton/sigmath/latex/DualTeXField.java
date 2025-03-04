@@ -1,13 +1,18 @@
 package io.github.atholton.sigmath.latex;
 
 import java.awt.LayoutManager;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Highlighter.Highlight;
 
-import io.github.atholton.sigmath.symbols.Algebra;
 import io.github.atholton.sigmath.util.FilterKeyListener;
 import io.github.atholton.sigmath.util.Strings;
 
@@ -20,6 +25,10 @@ public class DualTeXField extends JPanel {
     private TeXLabel output;
 
     private DocumentListener labelUpdater;
+    private KeyListener parenthesisSurrounder;
+    private static final char[] surrounds = {
+        '(', ')', '{', '}', '[', ']'
+    };
 
     public DualTeXField(LayoutManager layout, int columns) {
         super(layout);
@@ -47,7 +56,57 @@ public class DualTeXField extends JPanel {
             }
         };
 
+        parenthesisSurrounder = new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                char ch = e.getKeyChar();
+                int i;
+                for(i = 0; i < surrounds.length; i += 2) {
+                    if(ch == surrounds[i]) {
+                        break;
+                    }
+                }
+                
+                // found one
+                if(i < surrounds.length) {
+                    Highlight[] highlights = input.getHighlighter().getHighlights();
+
+                    char open = surrounds[i];
+                    char close = surrounds[i + 1];
+                    try {
+                        if(highlights.length <= 0) {
+                            // bonus, auto place closers
+                            input.getDocument().insertString(input.getCaretPosition(), String.valueOf(new char[]{open, close}), null);
+                            input.setCaretPosition(input.getCaretPosition() - 1);
+                        } else {
+                            runSurrounds(e, open, close, highlights);
+                        }
+                    } catch (BadLocationException e1) {
+                        e1.printStackTrace();
+                    } finally {
+                        // consume so that the highlighted text is not immediately replaced
+                        e.consume();
+                    }
+                }
+            }
+
+            private void runSurrounds(KeyEvent e, char open, char close, Highlight[] highlights) throws BadLocationException {
+                for(Highlight h : highlights) {
+                    int a = h.getStartOffset();
+                    int b = h.getEndOffset();
+                        // getDocument is pretty inexpensive, so we are not
+                        // going to do any lazy caching or anything
+                        input.getDocument().insertString(a, String.valueOf(open), null);
+                        input.getDocument().insertString(b + 1, String.valueOf(close), null);
+                    
+
+                }
+            }
+        };
+
         input.getDocument().addDocumentListener(labelUpdater);
+        input.addKeyListener(parenthesisSurrounder);
         
         output = new TeXLabel("");
 
@@ -138,6 +197,9 @@ public class DualTeXField extends JPanel {
         str = str.replace("csc", " \\csc ");
         str = str.replace("cot", " \\cot ");
 
+        str = str.replace("ln", " \\ln ");
+        str = str.replace("log", " \\log ");
+
         str = str.replace("*", " \\cdot ");
 
         str = Strings.replaceWithInsides(
@@ -153,8 +215,17 @@ public class DualTeXField extends JPanel {
             " "
         );
         
+
+        // caret for superscript, underscore for subscript
         str = Strings.replaceWithInsides(
             str, "^", "^", 
+            "(", "{", 
+            ")", "}",
+            " "
+        );
+
+        str = Strings.replaceWithInsides(
+            str, "_", "_", 
             "(", "{", 
             ")", "}",
             " "

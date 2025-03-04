@@ -128,8 +128,8 @@ public class UnitTests {
 
     @Test
     public void testGrabReplace() {
-        String test = "x^4 + x^2+3";
-        String expt = "x^{4} + x^{2+3}";
+        String test = "x^4 + x^2+3 y^(6)";
+        String expt = "x^{4} + x^{2+3} y^{6}";
         String a = Strings.replaceWithInsides(
             test, "^", "^",
              "(", "{",
