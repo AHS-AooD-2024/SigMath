@@ -107,11 +107,13 @@ public class ASTNode {
      * The goal of this function is to simplify it into more readable terms.
      * 1) to remove exponents to the 1th power
      * 2) to combine like terms
+     * 3) Distribute/Foil --> please help me
      */
     public void simplify()
     {
         //combine like terms first? or remove exponents...
         simplifyExponent(this);
+        combineLikeTerms(this);
     }
     private static boolean isNumber(String str) { 
         try {  
@@ -126,13 +128,29 @@ public class ASTNode {
     private void combineLikeTerms(ASTNode node)
     {
         if (node == null) return;
+        
+        ASTNode left = node.getLeftASTNode();
+        ASTNode right = node.getRightASTNode();
+
+        combineLikeTerms(left);
+        combineLikeTerms(right);
+
+        switch(node.getValue())
+        { 
+            case "+":
+                if (isNumber(left.getValue()) && isNumber(right.getValue()))
+                {
+                    double num = Double.parseDouble(left.getValue()) + Double.parseDouble(right.getValue());
+                    replaceNode(node, new ASTNode(String.valueOf(num), null, null));
+                }
+        }
     }
     private void simplifyExponent(ASTNode node)
     {
         if (node == null) return;
         if (node.getValue().equals("^"))
         {
-            if (isNumber(node.getRightASTNode().getValue()))
+            if (isNumber(node.getRightASTNode().getValue()) && Double.parseDouble(node.getRightASTNode().getValue()) == 1.0)
             {
                 replaceNode(node, node.getLeftASTNode());
             }
@@ -141,18 +159,6 @@ public class ASTNode {
         {
             simplifyExponent(node.getLeftASTNode());
             simplifyExponent(node.getRightASTNode());
-        }
-    }
-    private void removeExponent(ASTNode node)
-    {
-        //should have a number/variable on both sides of node
-        try {
-            if (Double.parseDouble(node.getRightASTNode().getValue()) == 1.0)
-            {
-                replaceNode(node, node.getLeftASTNode());
-            }
-        } catch (Exception e) {
-            //a variable or smth, but evidently not a 1.0
         }
     }
     /**
