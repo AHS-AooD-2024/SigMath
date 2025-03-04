@@ -1,4 +1,4 @@
-package io.github.atholton.sigmath.Topics;
+package io.github.atholton.sigmath.topics;
 import java.util.ArrayList;
 
 import io.github.atholton.sigmath.equationtree.ASTNode;
