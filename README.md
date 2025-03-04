@@ -1,2 +1,2 @@
 # SigMath
-A mathimatics practice app with dynamic difficulty.
+A mathematics practice app with dynamic difficulty.
