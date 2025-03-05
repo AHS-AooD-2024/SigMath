@@ -128,7 +128,7 @@ public class ASTNode {
     private void combineLikeTerms(ASTNode node)
     {
         if (node == null) return;
-        
+
         ASTNode left = node.getLeftASTNode();
         ASTNode right = node.getRightASTNode();
 
@@ -143,6 +143,63 @@ public class ASTNode {
                     double num = Double.parseDouble(left.getValue()) + Double.parseDouble(right.getValue());
                     replaceNode(node, new ASTNode(String.valueOf(num), null, null));
                 }
+                break;
+            case "-":
+                if (isNumber(left.getValue()) && isNumber(right.getValue()))
+                {
+                    double num = Double.parseDouble(left.getValue()) - Double.parseDouble(right.getValue());
+                    replaceNode(node, new ASTNode(String.valueOf(num), null, null));
+                }
+                break;
+            case "*":
+                if (isNumber(left.getValue()) && isNumber(right.getValue()))
+                {
+                    double num = Double.parseDouble(left.getValue()) * Double.parseDouble(right.getValue());
+                    replaceNode(node, new ASTNode(String.valueOf(num), null, null));
+                }
+                break;
+            case "/":
+                if (isNumber(left.getValue()) && isNumber(right.getValue()))
+                {
+                    double num = Double.parseDouble(left.getValue()) / Double.parseDouble(right.getValue());
+                    replaceNode(node, new ASTNode(String.valueOf(num), null, null));
+                }
+                break;
+            case "^":
+                if (isNumber(left.getValue()) && isNumber(right.getValue()))
+                {
+                    double num = Math.pow(Double.parseDouble(left.getValue()),  Double.parseDouble(right.getValue()));
+                    replaceNode(node, new ASTNode(String.valueOf(num), null, null));
+                }
+                break;
+            case "sin":
+                if (isNumber(left.getValue()))
+                {
+                    double num = Math.sin(Double.parseDouble(left.getValue()));
+                    replaceNode(node, new ASTNode(String.valueOf(num), null, null));
+                }
+                break;
+            case "cos":
+                if (isNumber(left.getValue()))
+                {
+                    double num = Math.cos(Double.parseDouble(left.getValue()));
+                    replaceNode(node, new ASTNode(String.valueOf(num), null, null));
+                }
+                break;
+            case "tan":
+                if (isNumber(left.getValue()))
+                {
+                    double num = Math.tan(Double.parseDouble(left.getValue()));
+                    replaceNode(node, new ASTNode(String.valueOf(num), null, null));
+                }
+                break;
+            case "sqrt":
+                if (isNumber(left.getValue()))
+                {
+                    double num = Math.sqrt(Double.parseDouble(left.getValue()));
+                    replaceNode(node, new ASTNode(String.valueOf(num), null, null));
+                }
+                break;
         }
     }
     private void simplifyExponent(ASTNode node)
