@@ -157,6 +157,16 @@ public class ASTNode {
                     double num = Double.parseDouble(left.getValue()) * Double.parseDouble(right.getValue());
                     replaceNode(node, new ASTNode(String.valueOf(num), null, null));
                 }
+                else
+                {
+                    //means one of the two is an operator or variable
+                    //maybe both, like (5 + 1) * (6 + 2)
+                    //this would have no issues though, it would add first and then multiply
+                    //but (x + 1) * 2 would have, and (x + 1) * (x + 2) would have more
+                    //turns into 2 * x + 2 * 1
+                    //turns into x * (x + 2) + 1 * (x + 2), and then use prev rule
+                    distribute(node);
+                }
                 break;
             case "/":
                 if (isNumber(left.getValue()) && isNumber(right.getValue()))
@@ -201,6 +211,21 @@ public class ASTNode {
                 }
                 break;
         }
+    }
+    private void distribute(ASTNode node)
+    {
+        //no recursion... yet...
+        //node is * and one of below is not number
+        ASTNode left = node.getLeftASTNode();
+        ASTNode right = node.getRightASTNode();
+
+        //builds off right, but not always should be like this...
+        ASTNode distLeft = new ASTNode(node.getValue(), right.getLeftASTNode(), left);
+        ASTNode distRight = new ASTNode(node.getValue(), right.getRightASTNode(), left);
+        right.leftASTNode = distLeft;
+        right.rightASTNode = distRight;
+
+        replaceNode(node, right);
     }
     private void simplifyExponent(ASTNode node)
     {
