@@ -1,6 +1,7 @@
 package io.github.atholton.sigmath.equationtree;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+
+import io.github.atholton.sigmath.equationtree.ASTNode.Type;
 
 public class ShuntingYardParser {
 
@@ -21,13 +24,13 @@ public class ShuntingYardParser {
         {
             final ASTNode rightASTNode = stack.pop();
             final ASTNode leftASTNode = stack.pop();
-            stack.push(new ASTNode(operator, leftASTNode, rightASTNode));
+            stack.push(new ASTNode(operator, leftASTNode, rightASTNode, Type.OPERATOR));
         }
         else
         {
             //is a function
             final ASTNode leftASTNode = stack.pop();
-            stack.push(new ASTNode(operator, leftASTNode, null));
+            stack.push(new ASTNode(operator, leftASTNode, null, Type.FUNCTION));
         }
     }
 
@@ -51,17 +54,14 @@ public class ShuntingYardParser {
      */
     public ShuntingYardParser() {
         operators = new HashMap<>();
-        operators.put("^", new BaseOperator("^", true, 4));
-        operators.put("*", new BaseOperator("*", false, 3));
-        operators.put("/", new BaseOperator("/", false, 3));
-        operators.put("+", new BaseOperator("+", false, 2));
-        operators.put("-", new BaseOperator("-", false, 2));
 
+        for (BaseOperator o : BaseOperator.operators)
+        {
+            operators.put(o.getSymbol(), o);
+        }
+        
         functions = new HashSet<>();
-        functions.add("sin");
-        functions.add("cos");
-        functions.add("tan");
-        functions.add("sqrt");
+        functions.addAll(Arrays.asList(BaseOperator.functions));
     }
 
     private static boolean isNumber(char c)
@@ -211,8 +211,12 @@ public class ShuntingYardParser {
                         operatorStack.push(token);
                     } else {
                         //is a number
-                        //or a function
-                        operandStack.push(new ASTNode(token, null, null));
+                        Type t = Type.VARIABLE;
+                        if (isNumber(token))
+                        {
+                            t = Type.NUMBER;
+                        }
+                        operandStack.push(new ASTNode(token, null, null, t));
                     }
                     break;
             }

@@ -3,8 +3,16 @@ package io.github.atholton.sigmath.equationtree;
 public class ASTNode {
 
     private String value;
+    public Type type;
     private ASTNode leftASTNode;
     private ASTNode rightASTNode;
+
+    public enum Type{
+        NUMBER,
+        VARIABLE,
+        OPERATOR,
+        FUNCTION
+    }
 
     /***
      * Constructs a new AST node. There's no explicit specialization for leaf
@@ -15,10 +23,11 @@ public class ASTNode {
      * @param leftASTNode The left node, or <code>null</code> if there isn't one.
      * @param rightASTNode The right node, or <code>null</code> if there isn't one.
      */
-    public ASTNode(String value, ASTNode leftASTNode, ASTNode rightASTNode) {
+    public ASTNode(String value, ASTNode leftASTNode, ASTNode rightASTNode, Type type) {
         this.value = value;
         this.leftASTNode = leftASTNode;
         this.rightASTNode = rightASTNode;
+        this.type = type;
     }
 
     /***
@@ -54,15 +63,17 @@ public class ASTNode {
     }
 
     public void multByConstant(double factor) {
-        rightASTNode = new ASTNode(getValue(), null, null);
-        leftASTNode = new ASTNode(Double.toString(factor), null, null);
+        rightASTNode = new ASTNode(getValue(), null, null, type);
+        leftASTNode = new ASTNode(Double.toString(factor), null, null, Type.NUMBER);
         setValue("*");
+        type = Type.OPERATOR;
     }
 
     public void addExponent(double exponent) {
-        rightASTNode = new ASTNode(Double.toString(exponent), null, null);
-        leftASTNode = new ASTNode(getValue(), null, null);
+        rightASTNode = new ASTNode(Double.toString(exponent), null, null, Type.NUMBER);
+        leftASTNode = new ASTNode(getValue(), null, null, type);
         setValue("^");
+        type = Type.OPERATOR;
     }
     /**
      * Method to Convert a {@link ASTNode} tree into LaTeX format String
@@ -138,24 +149,24 @@ public class ASTNode {
         switch(node.getValue())
         { 
             case "+":
-                if (isNumber(left.getValue()) && isNumber(right.getValue()))
+                if (left.type == Type.NUMBER && right.type == Type.NUMBER)
                 {
                     double num = Double.parseDouble(left.getValue()) + Double.parseDouble(right.getValue());
-                    replaceNode(node, new ASTNode(String.valueOf(num), null, null));
+                    replaceNode(node, new ASTNode(String.valueOf(num), null, null, Type.NUMBER));
                 }
                 break;
             case "-":
-                if (isNumber(left.getValue()) && isNumber(right.getValue()))
+                if (left.type == Type.NUMBER && right.type == Type.NUMBER)
                 {
                     double num = Double.parseDouble(left.getValue()) - Double.parseDouble(right.getValue());
-                    replaceNode(node, new ASTNode(String.valueOf(num), null, null));
+                    replaceNode(node, new ASTNode(String.valueOf(num), null, null, Type.NUMBER));
                 }
                 break;
             case "*":
-                if (isNumber(left.getValue()) && isNumber(right.getValue()))
+                if (left.type == Type.NUMBER && right.type == Type.NUMBER)
                 {
                     double num = Double.parseDouble(left.getValue()) * Double.parseDouble(right.getValue());
-                    replaceNode(node, new ASTNode(String.valueOf(num), null, null));
+                    replaceNode(node, new ASTNode(String.valueOf(num), null, null, Type.NUMBER));
                 }
                 else
                 {
@@ -169,45 +180,45 @@ public class ASTNode {
                 }
                 break;
             case "/":
-                if (isNumber(left.getValue()) && isNumber(right.getValue()))
+                if (left.type == Type.NUMBER && right.type == Type.NUMBER)
                 {
                     double num = Double.parseDouble(left.getValue()) / Double.parseDouble(right.getValue());
-                    replaceNode(node, new ASTNode(String.valueOf(num), null, null));
+                    replaceNode(node, new ASTNode(String.valueOf(num), null, null, Type.NUMBER));
                 }
                 break;
             case "^":
-                if (isNumber(left.getValue()) && isNumber(right.getValue()))
+                if (left.type == Type.NUMBER && right.type == Type.NUMBER)
                 {
                     double num = Math.pow(Double.parseDouble(left.getValue()),  Double.parseDouble(right.getValue()));
-                    replaceNode(node, new ASTNode(String.valueOf(num), null, null));
+                    replaceNode(node, new ASTNode(String.valueOf(num), null, null, Type.NUMBER));
                 }
                 break;
             case "sin":
-                if (isNumber(left.getValue()))
+                if (left.type == Type.NUMBER)
                 {
                     double num = Math.sin(Double.parseDouble(left.getValue()));
-                    replaceNode(node, new ASTNode(String.valueOf(num), null, null));
+                    replaceNode(node, new ASTNode(String.valueOf(num), null, null, Type.NUMBER));
                 }
                 break;
             case "cos":
-                if (isNumber(left.getValue()))
+                if (left.type == Type.NUMBER)
                 {
                     double num = Math.cos(Double.parseDouble(left.getValue()));
-                    replaceNode(node, new ASTNode(String.valueOf(num), null, null));
+                    replaceNode(node, new ASTNode(String.valueOf(num), null, null, Type.NUMBER));
                 }
                 break;
             case "tan":
-                if (isNumber(left.getValue()))
+                if (left.type == Type.NUMBER)
                 {
                     double num = Math.tan(Double.parseDouble(left.getValue()));
-                    replaceNode(node, new ASTNode(String.valueOf(num), null, null));
+                    replaceNode(node, new ASTNode(String.valueOf(num), null, null, Type.NUMBER));
                 }
                 break;
             case "sqrt":
-                if (isNumber(left.getValue()))
+                if (left.type == Type.NUMBER)
                 {
                     double num = Math.sqrt(Double.parseDouble(left.getValue()));
-                    replaceNode(node, new ASTNode(String.valueOf(num), null, null));
+                    replaceNode(node, new ASTNode(String.valueOf(num), null, null, Type.NUMBER));
                 }
                 break;
         }
@@ -219,20 +230,28 @@ public class ASTNode {
         ASTNode left = node.getLeftASTNode();
         ASTNode right = node.getRightASTNode();
 
-        //builds off right, but not always should be like this...
-        ASTNode distLeft = new ASTNode(node.getValue(), right.getLeftASTNode(), left);
-        ASTNode distRight = new ASTNode(node.getValue(), right.getRightASTNode(), left);
-        right.leftASTNode = distLeft;
-        right.rightASTNode = distRight;
+        String leftOperator = left.getValue();
+        String rightOperator = right.getValue();
+
+
+
+
+        //get bigger tree
+        //then multiply other tree to all of the nodes in the right tree
 
         replaceNode(node, right);
+    }
+    private ASTNode copy(final ASTNode node)
+    {
+        if (node == null) return null;
+        return new ASTNode(node.getValue(), copy(node.getLeftASTNode()), copy(node.getRightASTNode()), node.type);
     }
     private void simplifyExponent(ASTNode node)
     {
         if (node == null) return;
         if (node.getValue().equals("^"))
         {
-            if (isNumber(node.getRightASTNode().getValue()) && Double.parseDouble(node.getRightASTNode().getValue()) == 1.0)
+            if (node.getRightASTNode().type == Type.NUMBER && Double.parseDouble(node.getRightASTNode().getValue()) == 1.0)
             {
                 replaceNode(node, node.getLeftASTNode());
             }

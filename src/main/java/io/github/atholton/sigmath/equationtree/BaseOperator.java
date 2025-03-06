@@ -1,7 +1,19 @@
 
 package io.github.atholton.sigmath.equationtree;
 public class BaseOperator implements Operator {
-
+    public static BaseOperator[] operators = {
+        new BaseOperator("^", true, 4),
+        new BaseOperator("*", false, 3),
+        new BaseOperator("/", false, 3),
+        new BaseOperator("+", false, 2),
+        new BaseOperator("-", false, 2),
+    };
+    public static String[] functions = {
+        "sin",
+        "cos",
+        "tan",
+        "sqrt",
+    };
     private final String symbol;
     private final boolean rightAssociative;
     private final int precedence;
@@ -38,7 +50,22 @@ public class BaseOperator implements Operator {
             return -o.comparePrecedence(this);
         }
     }
-
+    @Override
+    public boolean equals(Object other)
+    {
+        if (other == null) return false;
+        if (other instanceof Operator)
+        {
+            Operator o = (Operator)other;
+            if (o.getSymbol().equals(symbol)) return true;
+        }
+        else if (other instanceof String)
+        {
+            String o = (String)other;
+            if (o.equals(symbol)) return true;
+        }
+        return false;
+    }
     @Override
     public String getSymbol() {
         return symbol;
