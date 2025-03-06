@@ -1,9 +1,11 @@
 package io.github.atholton.sigmath.latex;
 
+import java.awt.Component;
 import java.awt.LayoutManager;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
@@ -14,7 +16,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Highlighter.Highlight;
 
 import io.github.atholton.sigmath.util.FilterKeyListener;
-import io.github.atholton.sigmath.util.Strings;
 
 /**
  * A LaTeX input field that uses two components: a {@link JTextField}
@@ -27,7 +28,7 @@ public class DualTeXField extends JPanel {
     private DocumentListener labelUpdater;
     private KeyListener parenthesisSurrounder;
     private static final char[] surrounds = {
-        '(', ')', '{', '}', '[', ']'
+        '(', ')', '{', '}', '[', ']', '|', '|'
     };
 
     public DualTeXField(LayoutManager layout, int columns) {
@@ -46,7 +47,7 @@ public class DualTeXField extends JPanel {
             }
 
             private void texify0() {
-                String texify = texify(input.getText());
+                String texify = TeXComponentProperties.texify(input.getText());
                 output.setTeX(texify);
                 System.out.println(texify);
             }
@@ -122,116 +123,11 @@ public class DualTeXField extends JPanel {
         setLayout(layout);
     }
 
-    private static String texify(String str) {
-        str = Strings.replaceWithInsides(
-            str, "sqrt", "\\sqrt",
-            "(", "{",
-            ")", "}"
-            );
+    @Override
+    public Component add(Component comp) {
+        if(comp instanceof SymbolButton) {
 
-
-        // NOTE: ***ALL*** simple replaces MUST have spaces to pad the 
-        // replacement, as otherwise the tex commands can merge with
-        // other text and get really mess.
-            
-        // unfortunately, some letters contain "eta" inside of them,
-        // so to get around this we run the replace here and test
-        // the other replaces with the backslash
-        str = str.replace("eta", " \\eta ");
-        
-        str = str.replace("alpha", " \\alpha ");
-        str = str.replace("Alpha", " \\Alpha ");
-        str = str.replace("b \\eta ", " \\beta ");
-        str = str.replace("B \\eta ", " \\beta ");
-        str = str.replace("gamma", " \\gamma ");
-        str = str.replace("Gamma", " \\Gamma ");
-        str = str.replace("delta", " \\delta ");
-        str = str.replace("Delta", " \\Delta ");
-        str = str.replace("epsilon", " \\epsilon ");
-        str = str.replace("epsilon", " \\Epsilon ");
-        str = str.replace("z \\eta ", " \\zeta ");
-        str = str.replace("Z \\eta ", " \\Zeta ");
-        str = str.replace("th \\eta ", " \\theta ");
-        str = str.replace("Th \\eta ", " \\Theta ");
-        str = str.replace("Eta", " \\Eta ");
-        str = str.replace("iota", " \\iota ");
-        str = str.replace("Iota", " \\Iota ");
-        str = str.replace("kappa", " \\kappa ");
-        str = str.replace("Kappa", " \\Kappa ");
-        str = str.replace("lambda", " \\lambda ");
-        str = str.replace("Lambda", " \\Lambda ");
-        str = str.replace("mu", " \\mu ");
-        str = str.replace("Mu", " \\Mu ");
-        str = str.replace("nu", " \\nu ");
-        str = str.replace("Nu", " \\Nu ");
-        str = str.replace("xi", " \\xu ");
-        str = str.replace("Xi", " \\Xu ");
-        str = str.replace("omicron", " \\omicron ");
-        str = str.replace("Omicron", " \\Omicron ");
-        str = str.replace("pi", " \\pi ");
-        str = str.replace("Pi", " \\Pi ");
-        str = str.replace("rho", " \\rho ");
-        str = str.replace("Rho", " \\Rho ");
-        str = str.replace("sigma", " \\sigma ");
-        str = str.replace("Sigma", " \\Sigma ");
-        str = str.replace("tau", " \\tau ");
-        str = str.replace("Tau", " \\Tau ");
-        str = str.replace("upsilon", " \\upsilon ");
-        str = str.replace("Upsilon", " \\Upsilon ");
-        str = str.replace("phi", " \\phi ");
-        str = str.replace("Phi", " \\Phi ");
-        str = str.replace("chi", " \\chi ");
-        str = str.replace("Chi", " \\Chi ");
-        str = str.replace("psi", " \\psi ");
-        str = str.replace("Psi", " \\Psi ");
-        str = str.replace("omega", " \\omega ");
-        str = str.replace("Omega", " \\Omega ");
-
-        str = str.replace("inf", " \\inf ");
-
-        str = str.replace("sin", " \\sin ");
-        str = str.replace("cos", " \\cos ");
-        str = str.replace("tan", " \\tan ");
-
-        str = str.replace("sec", " \\sec ");
-        str = str.replace("csc", " \\csc ");
-        str = str.replace("cot", " \\cot ");
-
-        str = str.replace("ln", " \\ln ");
-        str = str.replace("log", " \\log ");
-
-        str = str.replace("*", " \\cdot ");
-
-        str = Strings.replaceWithInsides(
-            str, "/", "/", 
-            "(", "{", 
-            ")", "}",
-            " "
-        );
-        str = Strings.replaceBeforeWithInsides(
-            str, "/", "", 
-            "(", "\\frac{", 
-            ")", "}",
-            " "
-        );
-        
-
-        // caret for superscript, underscore for subscript
-        str = Strings.replaceWithInsides(
-            str, "^", "^", 
-            "(", "{", 
-            ")", "}",
-            " "
-        );
-
-        str = Strings.replaceWithInsides(
-            str, "_", "_", 
-            "(", "{", 
-            ")", "}",
-            " "
-        );
-
-
-        return str;
+        }
+        return super.add(comp);
     }
 }

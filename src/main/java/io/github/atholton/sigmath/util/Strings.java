@@ -452,9 +452,11 @@ public final class Strings {
         int startIndex, int endIndex,
         StringBuilder sb
     ) {
+        if(endIndex > str.length()) endIndex = str.length();
         if(startIndex >= endIndex) {
             return;
         }
+        // System.out.println("sstr=\"" + str.substring(startIndex, endIndex) + "\"");
         int i = str.indexOf(old, startIndex);
         int oldI = startIndex;
 
@@ -481,7 +483,8 @@ public final class Strings {
                 
                 // if the grab is found before the open,
                 // we will consider it not our opener
-                boolean noOpenFound = j < 0 || j > g;
+                boolean noOpenFound = j < 0 || (j > g && g != -1);
+                // System.out.format("%d < 0 || %d > %d && %d != -1\n", j, j, g, g);
                 if(noOpenFound){
                     // no open found, so we add one
                     j = j0;
@@ -494,25 +497,29 @@ public final class Strings {
                 int k0, k, l;
                 k0 = j + open.length();
         
+                int oldK = k0;
                 k = str.indexOf(close, k0);
                 l = str.indexOf(open, k0);
-                
+
                 // while there is an opener for the found closer,
                 // find another
                 while(l < k && l != -1) {
+                    oldK = k;
                     k = str.indexOf(close, k + 1);
                     l = str.indexOf(open, l + 1);
                 }
         
                 // no corrosponding closer found
-                boolean noCloseFound = k <= g;
+                boolean noCloseFound = noOpenFound || k < 0 || (k > g && g != -1 && noOpenFound);
+                // System.out.format("%b || %d < 0 || (%d > %d && %d != -1)\n", noOpenFound, k, k, g, g);
+                
                 if(noCloseFound) {
-                    k0 -= open.length();
                     if(noOpenFound) {
+                        k0 -= open.length();
                         if(g != -1) {
                             k = g; // place close at the grabUntil
                         } else {
-                            k = endIndex;
+                            k = oldK;
                         }
                     } else {
                         k = endIndex; // place close at the end
@@ -536,7 +543,7 @@ public final class Strings {
                 // search from the end of all replacements
                 i = str.indexOf(old, k);
                 if(noCloseFound) {
-                    last = k; // we added a close, so no need to add close.length()
+                    last = Math.min(k, endIndex);; // we added a close, so no need to add close.length()
                 } else {
                     // still doing a min check just in case.
                     last = Math.min(k + close.length(), endIndex);
@@ -600,12 +607,14 @@ public final class Strings {
         // hey I realized that we can reverse the sb rather than reversing 
         // the string afterwards
         StringBuilder sb = new StringBuilder();
+        startIndex = str.length() - startIndex;
+        endIndex = str.length() - endIndex;
         replaceWithInsides(
             reversed(str), reversed(old), reversed(replacement), 
             reversed(close), reversed(closeReplace), 
             reversed(open), reversed(openReplace), 
             reversed(grabUntil),
-            startIndex, endIndex,
+            endIndex, startIndex,
             sb
         );
         return sb.reverse().toString();

@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 
 import org.junit.Test;
 
+import io.github.atholton.sigmath.latex.TeXComponentProperties;
 import io.github.atholton.sigmath.latex.TeXLabel;
 import io.github.atholton.sigmath.symbols.Greek;
 import io.github.atholton.sigmath.util.Strings;
@@ -136,6 +137,16 @@ public class UnitTests {
              ")", "}",
              " "
             );
+
+        assertEquals(expt, a);
+    }
+
+    @Test
+    public void courtesyOfAbhay() {
+        String test = "a ((x)/(5)) b";
+        String expt = "a  (  \\frac{ x }{ 5 }  )  b";
+        
+        String a = TeXComponentProperties.texify(test);
 
         assertEquals(expt, a);
     }
