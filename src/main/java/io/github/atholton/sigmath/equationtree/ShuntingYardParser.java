@@ -132,15 +132,7 @@ public class ShuntingYardParser {
         {
             char c = input.charAt(i);
             if (c == ' ') continue;
-            if (writingFunction(c, build))
-            {
-                build.append(c);
-            }
-            else if (isNumber(c))
-            {
-                build.append(c);
-            }
-            else if (c == '-' && !isNumber(prevToken))
+            if (writingFunction(c, build) || isNumber(c) || c == '-' && !isNumber(prevToken))
             {
                 build.append(c);
             }
@@ -160,6 +152,11 @@ public class ShuntingYardParser {
             tokens.add(build.toString());
         }
         return tokens;
+    }
+    public ASTNode convertLatexToAST(final String input)
+    {
+        //do stuff
+        return convertInfixNotationToAST(input);
     }
     /***
      * Convert an expression in infix notation to a tree

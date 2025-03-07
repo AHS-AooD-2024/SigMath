@@ -118,10 +118,18 @@ public class ASTNode {
                 return value; // If it's a number or variable, return as is
         }
     }
+    /**
+     * Method to Convert a {@link ASTNode} tree into LaTeX format String
+     * @return Equation in LaTeX
+     */
     public String convertToLatex()
     {
         return convertToLatex(this);
     }
+    /**
+     * ignore this method.
+     * Only used to initialize things needed for simplify
+     */
     public static void initializeFuncs()
     {
         if (computeOperator == null && computeFunction == null)
@@ -134,6 +142,7 @@ public class ASTNode {
             computeOperator.put("^", (a, b) -> Math.pow(a, b));
             
             computeFunction = new HashMap<>();
+            //Funciton reference operator ohmygosh its so cool
             computeFunction.put("sin", Math::sin);
             computeFunction.put("cos", Math::cos);
             computeFunction.put("tan", Math::tan);
@@ -156,6 +165,7 @@ public class ASTNode {
     }
     //combine like terms when....
     //TODO: combine when 2 * x + 4 * x to 6 * x, maybe through factor
+    //TODO: work when like 3 + x + 4, or 2 * x * 4 ,cuz these can simplify, but x is getting in the way
     private void combineLikeTerms(ASTNode node)
     {
         if (node == null) return;
@@ -176,10 +186,19 @@ public class ASTNode {
                 double value = computeOperator.get(node.getValue()).apply(leftValue, rightValue);
                 replaceNode(node, new ASTNode(String.valueOf(value), null, null, Type.NUMBER));
             }
+            else if (left.type == Type.OPERATOR || right.type == Type.OPERATOR)
+            {
+                //try combine like terms, ex) 2 + x + 3, is a tree with + 2 + x 3
+                if (isLikeTerms(left, right))
+                {
+
+                }
+                //try distribute
+                distribute(node);
+            }
             else
             {
-                //try distribute, but 1 * x, or 1 + x can't distribute
-                distribute(node);
+                //i don't even know anymore
             }
         }
         else if (node.type == Type.FUNCTION)
@@ -197,7 +216,17 @@ public class ASTNode {
             }
         }
     }
+    //3 + x + 4 will return true b/c 3 and 4 in x + 4 are like terms, so try to reorganize and then combine
+    //or other way of combining idk
+    //same with 2 * x * 4
+    //should maybe work with 2 * x + 4 * x, idk
+    //Idea -> 
+    private boolean isLikeTerms(ASTNode node1, ASTNode node2)
+    {
+        return false;
+    }
 
+    //try to avoid factoring, cuz idk what im doing lol
     private void factor(ASTNode node)
     {
         //we're cooked
@@ -214,7 +243,7 @@ public class ASTNode {
         if (node.type == Type.OPERATOR)
         {
             BaseOperator op = BaseOperator.getOperator(node.getValue());
-            if (left.type == Type.OPERATOR ^ right.type == Type.OPERATOR)
+            if (left.type == Type.OPERATOR || right.type == Type.OPERATOR)
             {
                 //reordering nodes
                 ASTNode treeNode = left.type == Type.OPERATOR ? left : right;
@@ -225,31 +254,50 @@ public class ASTNode {
                 BaseOperator otherOp = BaseOperator.getOperator(treeNode.getValue());
 
                 //child should be lower precedent, ex) * (1 + x), + is child
-                if (op.comparePrecedence(otherOp) > 0)
+                int num;
+                if ((num = op.comparePrecedence(otherOp)) == 1)
                 {
                     //something like 2 * (1 + x) is allowed here
                     //turns into 2 * 1 + 2 * x, + is top
                     //issue if is (x + 1)^2
 
                     replaceNode(node, treeNode);
-
-                    //do to all numbers with same precedent
-                    //distributeToAll();
-                    ASTNode extraLeft = new ASTNode(op.getSymbol(), copy(node.getLeftASTNode()), copy(otherNode), Type.OPERATOR);
-                    ASTNode extraRight = new ASTNode(op.getSymbol(), copy(node.getRightASTNode()), copy(otherNode), Type.OPERATOR);
-                    //extraLeft.print();
-                    //extraRight.print();
-                    replaceNode(node.getLeftASTNode(), extraLeft);
-                    replaceNode(node.getRightASTNode(), extraRight);
+                    distributeToAll(node, otherOp, otherNode, op);
 
                     //do the current node operator to everything on tree Node with other node's value (number)
                     combineLikeTerms(node);
                 }
+                else if (num == 2)
+                {
+                    //to the power of smth, am cooked lmao
+                    //ex) (x + 1) ^ 2
+                    //can convert into (x + 1) * (x + 1) and then distribute
+                    if (otherNode.type == Type.NUMBER)
+                    {
+                        int number = (int)Double.parseDouble(otherNode.getValue());
+
+                        //if it is an integer, cuz cant expand 2.5
+                        if (number == Double.parseDouble(otherNode.getValue()))
+                        {
+                            ASTNode[] trees = new ASTNode[number];
+                            for (int i = 0; i < trees.length; i++)
+                            {
+                                trees[i] = copy(treeNode);
+                            }
+                            for (int i = 0; i < trees.length - 1; i++)
+                            {
+                                ASTNode temp = new ASTNode("*", null, null, Type.OPERATOR);
+
+                            }
+                        }
+                    }
+                }
+
             }
             else
             {
                 //etiher neither are trees
-                //or both are trees
+                //or both are trees but not actually anymore im a god
 
             }
 
@@ -262,8 +310,21 @@ public class ASTNode {
      * @param numToDistribute  num or var applied to all of tree
      * @param operatorToDistribute operator that is used to apply num to tree, the * in 2 * (x + 1)
      */
-    private void distributeToAll(ASTNode tree, BaseOperator lowerPrecedence, ASTNode numToDistribute, BaseOperator operatorToDistribute)
+    private void distributeToAll(ASTNode tree, BaseOperator lowerPrecedence, final ASTNode numToDistribute, final BaseOperator operatorToDistribute)
     {
+        if (tree == null) return;
+
+        //what is here is like 1 + 2 with *x, or smth
+        if (tree.type == Type.OPERATOR && lowerPrecedence.comparePrecedence(BaseOperator.getOperator(tree.getValue())) == 0)
+        {
+            distributeToAll(tree.getLeftASTNode(), lowerPrecedence, numToDistribute, operatorToDistribute);    
+            distributeToAll(tree.getRightASTNode(), lowerPrecedence, numToDistribute, operatorToDistribute);
+        }
+        else
+        {
+            ASTNode extra = new ASTNode(operatorToDistribute.getSymbol(), copy(tree), copy(numToDistribute), Type.OPERATOR);
+            replaceNode(tree, extra);
+        }
 
     }
     private ASTNode copy(final ASTNode node)
@@ -307,6 +368,7 @@ public class ASTNode {
     /**
      * Prints the tree as a tree
      * Kinda scuffed but mostly readable
+     * StackOverflow Code goes hard
      */
     public void print()
     {
