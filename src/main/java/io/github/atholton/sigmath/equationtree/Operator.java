@@ -1,5 +1,8 @@
 package io.github.atholton.sigmath.equationtree;
 
+/**
+ * @author nathanli5722
+ */
 public interface Operator {
     /***
      *

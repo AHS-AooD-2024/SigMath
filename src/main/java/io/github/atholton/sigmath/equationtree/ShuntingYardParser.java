@@ -12,6 +12,11 @@ import java.util.Stack;
 
 import io.github.atholton.sigmath.equationtree.ASTNode.Type;
 
+/**
+ * @author nathanli5722
+ * part taken from wikipedia psuedocode
+ * part taken from a blog post
+ */
 public class ShuntingYardParser {
 
     private final Map<String, Operator> operators;
