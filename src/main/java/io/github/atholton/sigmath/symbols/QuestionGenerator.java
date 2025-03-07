@@ -1,4 +1,4 @@
-package io.github.atholton.sigmath;
+package io.github.atholton.sigmath.symbols;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
