@@ -17,7 +17,7 @@ import io.github.atholton.sigmath.equationtree.ASTNode.Type;
  * part taken from wikipedia psuedocode
  * part taken from a blog post
  * 
- * TODO: support unary operators, might have to make all minus signs unary
+ * 
  */
 public class ShuntingYardParser {
 
@@ -77,14 +77,15 @@ public class ShuntingYardParser {
     }
     private static boolean isNumber(String c)
     {
-        for (int i = 0; i < c.length(); i++)
+        try
         {
-            if (!isNumber(c.charAt(i)))
-            {
-                return false;
-            }
+            Double.parseDouble(c);
+            return true;
         }
-        return true;
+        catch(Exception e)
+        {
+            return false;
+        }
     }
     /**
      * Tests if token is a function
@@ -134,9 +135,14 @@ public class ShuntingYardParser {
         {
             char c = input.charAt(i);
             if (c == ' ') continue;
-            if (writingFunction(c, build) || isNumber(c) || c == '-' && !isNumber(prevToken))
+            if (writingFunction(c, build) || isNumber(c))
             {
                 build.append(c);
+            }
+            else if (c == '-' && !isNumber(prevToken))
+            {
+                tokens.add("-1");
+                tokens.add("*");
             }
             else
             {
@@ -191,6 +197,7 @@ public class ShuntingYardParser {
                                 String function = operatorStack.pop();
                                 addNode(operandStack, function);
                             }
+                            break;
                         } else {
                             addNode(operandStack, popped);
                         }
