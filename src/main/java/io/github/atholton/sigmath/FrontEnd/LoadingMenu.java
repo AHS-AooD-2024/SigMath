@@ -1,4 +1,4 @@
-package io.github.atholton.sigmath.FrontEnd;
+package io.github.atholton.sigmath.frontend;
 
 import javax.swing.*;
 import java.awt.*;
