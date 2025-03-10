@@ -11,7 +11,8 @@ import java.util.List;
 /**
  * @author nathanli5722
  * 
- * TODO: other than other todos, need to convert 1 * x into x, and x * x into x^2, and remove anything multiplied by 0
+ * TODO: other than other todos, need to convert d x * x into x^2
+ * TODO: support unary operators
  */
 public class ASTNode {
     private String value;
@@ -75,20 +76,29 @@ public class ASTNode {
     public ASTNode getRightASTNode() {
         return rightASTNode;
     }
-
+    /**
+     * @author dxmbname
+     * @param factor
+     */
     public void multByConstant(double factor) {
         rightASTNode = new ASTNode(getValue(), null, null, type);
         leftASTNode = new ASTNode(Double.toString(factor), null, null, Type.NUMBER);
         setValue("*");
         type = Type.OPERATOR;
     }
-
+    
+    /**
+     * @author dxmbname
+     * @param factor
+     */
     public void addExponent(double exponent) {
         rightASTNode = new ASTNode(Double.toString(exponent), null, null, Type.NUMBER);
         leftASTNode = new ASTNode(getValue(), null, null, type);
         setValue("^");
         type = Type.OPERATOR;
     }
+
+
     /**
      * Method to Convert a {@link ASTNode} tree into LaTeX format String
      * @param node Root node of tree
@@ -207,8 +217,13 @@ public class ASTNode {
             }
             else
             {
-                //could be operator or variable
+                //could be operator or variable in function
                 //might need to factor or smth to simplify if sqrt
+                if (node.value.equals("sqrt"))
+                {
+                    ASTNode sqrt = new ASTNode("0.5", null, null, Type.NUMBER);
+                    replaceNode(node, new ASTNode("^", node.leftASTNode, sqrt, Type.OPERATOR));
+                }
             }
         }
     }
@@ -420,7 +435,7 @@ public class ASTNode {
 
     }
     /**
-     * flattens tree, ie split into expressions by a certain operator
+     * flattens tree, ie split into expressions by + or -
      * @param node
      * @param targetOperator
      * @return
@@ -434,10 +449,15 @@ public class ASTNode {
     private static void flatten(ASTNode node, String targetOperator, List<ASTNode> result) {
         if (node == null) return;
 
-        if (node.type == Type.OPERATOR && node.value.equals(targetOperator)) {
+        if (node.type == Type.OPERATOR && node.value.equals("+")) {
             flatten(node.leftASTNode, targetOperator, result);
             flatten(node.rightASTNode, targetOperator, result);
-        } else {
+        } 
+        else if (node.type == Type.OPERATOR && node.value.equals("-"))
+        {
+
+        }
+        else {
             result.add(node);
         }
     }
@@ -448,7 +468,7 @@ public class ASTNode {
      * @return
      */
     private static ASTNode rebuild(List<ASTNode> nodes, String operator) {
-        if (nodes.isEmpty()) return null;
+        if (nodes == null || nodes.isEmpty()) return null;
         ASTNode root = nodes.get(0);
     
         for (int i = 1; i < nodes.size(); i++) {
@@ -462,31 +482,65 @@ public class ASTNode {
         if (node == null) return null;
         return new ASTNode(node.getValue(), copy(node.getLeftASTNode()), copy(node.getRightASTNode()), node.type);
     }
-    private void simplifyExponentRecursive(ASTNode node)
+    private void simplificationRules(ASTNode node)
     {
-        if (node == null) return;
-        if (node.getValue().equals("^"))
+        if (node == null || node.type != Type.OPERATOR) return;
+
+        String value = node.getValue();
+        ASTNode left = node.getLeftASTNode();
+        ASTNode right = node.getRightASTNode();
+
+        if (value.equals("^"))
         {
-            if (node.getRightASTNode().type == Type.NUMBER && Double.parseDouble(node.getRightASTNode().getValue()) == 1.0)
+            if (right.type == Type.NUMBER)
             {
-                replaceNode(node, node.getLeftASTNode());
+                if (Double.parseDouble(right.getValue()) == 1.0)
+                {
+                    replaceNode(node, left);
+                }
+            }
+            else if (left.type == Type.NUMBER)
+            {
+                //0 ^ any real number
+                if (Double.parseDouble(left.getValue()) == 0.0)
+                {
+                    replaceNode(node, left);
+                }
+            }
+        }
+        else if (value.equals("*"))
+        {
+            if (left.type == Type.NUMBER)
+            {
+                double val = Double.parseDouble(left.getValue());
+                if (val == 0.0)
+                {
+                    //TODO: remove the whole thing???
+                    replaceNode(node, left);
+                }
+                else if (val == 1.0)
+                {
+                    replaceNode(node, right);
+                }
+            }
+            else if (right.type == Type.NUMBER)
+            {
+                double val = Double.parseDouble(right.getValue());
+                if (val == 0.0)
+                {
+                    //TODO: remove the whole thing???
+                    replaceNode(node, right);
+                }
+                else if (val == 1.0)
+                {
+                    replaceNode(node, left);
+                }
             }
         }
         else
         {
-            simplifyExponentRecursive(node.getLeftASTNode());
-            simplifyExponentRecursive(node.getRightASTNode());
-        }
-    }
-    private void simplifyExponent(ASTNode node)
-    {
-        if (node == null) return;
-        if (node.getValue().equals("^"))
-        {
-            if (node.getRightASTNode().type == Type.NUMBER && Double.parseDouble(node.getRightASTNode().getValue()) == 1.0)
-            {
-                replaceNode(node, node.getLeftASTNode());
-            }
+            simplificationRules(left);
+            simplificationRules(right);
         }
     }
     /**
@@ -556,6 +610,10 @@ public class ASTNode {
     {
         System.out.println(toInfix());
     }
+    public void print()
+    {
+        printInfix();
+    }
     private void print(StringBuilder buffer, String prefix, String childrenPrefix) {
         buffer.append(prefix);
         buffer.append(value);
@@ -594,6 +652,6 @@ public class ASTNode {
 
     @Override
     public int hashCode() {
-        return Objects.hash(value, type, leftASTNode, rightASTNode); // Combines all parts recursively
+        return Objects.hash(value, type, leftASTNode, rightASTNode);
     }
 }

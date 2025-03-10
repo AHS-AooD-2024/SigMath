@@ -16,6 +16,8 @@ import io.github.atholton.sigmath.equationtree.ASTNode.Type;
  * @author nathanli5722
  * part taken from wikipedia psuedocode
  * part taken from a blog post
+ * 
+ * TODO: support unary operators, might have to make all minus signs unary
  */
 public class ShuntingYardParser {
 
@@ -155,8 +157,7 @@ public class ShuntingYardParser {
     }
     public ASTNode convertLatexToAST(final String input)
     {
-        //do stuff
-        return convertInfixNotationToAST(input);
+        return convertTokensToAST(tokenizeLaTeX(input));
     }
     /***
      * Convert an expression in infix notation to a tree
@@ -164,11 +165,14 @@ public class ShuntingYardParser {
      * @param input The expression, in infix notation.
      * @return An {@link ASTNode} that serves as the root of the AST.
      */
-    public ASTNode convertInfixNotationToAST(final String input) {
+    public ASTNode convertInfixNotationToAST(final String input) 
+    {
+        return convertTokensToAST(tokenize(input));
+    }
+    private ASTNode convertTokensToAST(List<String> tokens)
+    {
         final Stack<String> operatorStack = new Stack<>();
         final Stack<ASTNode> operandStack = new Stack<>();
-        //Splits String into tokens
-        List<String> tokens = tokenize(input);
 
         for(String token : tokens) {
             String popped;
@@ -228,6 +232,41 @@ public class ShuntingYardParser {
         }
         return operandStack.pop();
     }
-
+    /**
+     * TODO: tokenize LaTeX input
+     * @param input
+     * @return
+     */
+    private List<String> tokenizeLaTeX(final String input) 
+    {
+        List<String> tokens = new ArrayList<>();
+        StringBuilder build = new StringBuilder();
+        char prevToken = '\0';
+        boolean inCommand = false; 
     
+        for (int i = 0; i < input.length(); i++)
+        {
+            char c = input.charAt(i);
+            if (c == ' ') continue;
+            if (writingFunction(c, build) || isNumber(c) || c == '-' && !isNumber(prevToken))
+            {
+                build.append(c);
+            }
+            else
+            {
+                if (build.length() != 0)
+                {
+                    tokens.add(build.toString());
+                    build.setLength(0);
+                }
+                tokens.add(String.valueOf(c));
+            }
+            prevToken = c;
+        }
+        if (build.length() != 0)
+        {
+            tokens.add(build.toString());
+        }
+        return tokens;
+    }
 }
