@@ -1,11 +1,17 @@
 package io.github.atholton.sigmath.equationtree;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author nathanli5722
+ * 
+ * TODO: other than other todos, need to convert 1 * x into x, and x * x into x^2, and remove anything multiplied by 0
  */
 public class ASTNode {
     private String value;
@@ -159,48 +165,38 @@ public class ASTNode {
     {
         //add stuff to computeOperators
         initializeFuncs();
-        //combine like terms first? or remove exponents...
-        simplifyExponent(this);
-        combineLikeTerms(this);
+        simplify(this);
     }
-    //combine like terms when....
-    //TODO: combine when 2 * x + 4 * x to 6 * x, maybe through factor
-    //TODO: work when like 3 + x + 4, or 2 * x * 4 ,cuz these can simplify, but x is getting in the way
-    private void combineLikeTerms(ASTNode node)
+    private void simplify(ASTNode node)
     {
         if (node == null) return;
 
         ASTNode left = node.getLeftASTNode();
         ASTNode right = node.getRightASTNode();
 
-        combineLikeTerms(left);
-        combineLikeTerms(right);
+        simplify(left);
+        simplify(right);
 
         //can improve
         if (node.type == Type.OPERATOR)
         {
             if (left.type == Type.NUMBER && right.type == Type.NUMBER)
             {
-                double leftValue = Double.parseDouble(left.getValue());
-                double rightValue = Double.parseDouble(right.getValue());
-                double value = computeOperator.get(node.getValue()).apply(leftValue, rightValue);
-                replaceNode(node, new ASTNode(String.valueOf(value), null, null, Type.NUMBER));
+                arithmeticSolve(node);
             }
             else if (left.type == Type.OPERATOR || right.type == Type.OPERATOR)
             {
-                //try combine like terms, ex) 2 + x + 3, is a tree with + 2 + x 3
-                if (isLikeTerms(left, right))
-                {
-
-                }
-                //try distribute
                 distribute(node);
+
+                //maybe combine like terms???
+                combineLikeTerms(node);
             }
             else
             {
-                //i don't even know anymore
+                //i don't even know whats left anymore
             }
         }
+        //try to solve function, should change sqrt to ^ 0.5
         else if (node.type == Type.FUNCTION)
         {
             if (left.type == Type.NUMBER)
@@ -216,22 +212,119 @@ public class ASTNode {
             }
         }
     }
-    //3 + x + 4 will return true b/c 3 and 4 in x + 4 are like terms, so try to reorganize and then combine
-    //or other way of combining idk
-    //same with 2 * x * 4
-    //should maybe work with 2 * x + 4 * x, idk
-    //Idea -> 
-    private boolean isLikeTerms(ASTNode node1, ASTNode node2)
+    private void arithmeticSolve(ASTNode node)
     {
-        return false;
+        if (node == null) return;
+
+        ASTNode left = node.getLeftASTNode();
+        ASTNode right = node.getRightASTNode();
+
+        double leftValue = Double.parseDouble(left.getValue());
+        double rightValue = Double.parseDouble(right.getValue());
+        double value = computeOperator.get(node.getValue()).apply(leftValue, rightValue);
+        replaceNode(node, new ASTNode(String.valueOf(value), null, null, Type.NUMBER));
     }
 
+    //combine like terms when....
+    private void combineLikeTerms(ASTNode node)
+    {
+        if (node == null) return;
+
+        //dunno if recursion needed
+        //ASTNode left = node.getLeftASTNode();
+        //ASTNode right = node.getRightASTNode();
+
+        //for "+", but can you combine when not +???
+        if (node.type == Type.OPERATOR && node.value.equals("+"))
+        {
+            //flattened list of nodes that are separated by + sign
+
+            //TODO: Make work with minus sign as well
+            List<ASTNode> flattenedNodes = flatten(node, "+");
+
+            Map<ASTNode, List<ASTNode>> likeTerms = new HashMap<>();
+
+            //Get the "base" of each flattened node, and the coefficient of each as well.
+            //if the base is equal, we can
+            for (ASTNode flattenedNode : flattenedNodes) {
+                ASTNode base = getBase(flattenedNode);
+                ASTNode coefficient = getCoefficient(flattenedNode);
+
+                likeTerms.putIfAbsent(base, new ArrayList<>());
+                likeTerms.get(base).add(coefficient);
+            }
+
+            flattenedNodes = combine(likeTerms);
+            ASTNode newTree = rebuild(flattenedNodes, "+");
+            replaceNode(node, newTree);
+        }
+
+    }
+    private List<ASTNode> combine(Map<ASTNode, List<ASTNode>> map)
+    {
+        List<ASTNode> list = new ArrayList<>();
+        for (Map.Entry<ASTNode, List<ASTNode>> entry : map.entrySet())
+        {
+            //add all the coefficients
+            //only expects numerical coefficients, which is always true unless this is also used in a factoring context
+            double num = 0;
+            List<ASTNode> coefficients = entry.getValue();
+            for (ASTNode coefficient : coefficients)
+            {
+                if (coefficient.type == Type.NUMBER)
+                {
+                    num += Double.parseDouble(coefficient.value);
+                }
+                else
+                {
+                    System.out.println("Issue in combining like terms\nMissed something");
+                }
+            }
+            ASTNode coefficient = new ASTNode(String.valueOf(num), null, null, Type.NUMBER);
+            //multiply it with the base
+            list.add(new ASTNode("*", coefficient, entry.getKey(), Type.OPERATOR));
+        }
+        return list;
+    }
+    private ASTNode getBase(ASTNode node)
+    {
+        if (node.type == Type.OPERATOR && node.value.equals("*")) 
+        {
+            ASTNode left = node.getLeftASTNode();
+            ASTNode right = node.getRightASTNode();
+
+            //pick the other side
+            if (left.type == Type.NUMBER) return right;
+            if (right.type == Type.NUMBER) return left;
+        }
+        //if its a number, then its just a constant, without any base
+        //though its being multiplied so just put in 1
+        if (node.type == Type.NUMBER) return new ASTNode("1.0", null, null, Type.NUMBER);
+
+        //assume whole thing is base, but this is not always the case...
+        //TODO: support / sign with getting base
+        return node;
+    }
+    private ASTNode getCoefficient(ASTNode node)
+    {
+        if (node.type == Type.NUMBER) return node;
+
+        if (node.type == Type.OPERATOR && node.value.equals("*")) 
+        {
+            ASTNode left = node.getLeftASTNode();
+            ASTNode right = node.getRightASTNode();
+
+            if (left.type == Type.NUMBER) return left;
+            if (right.type == Type.NUMBER) return right;
+        }
+
+        // if only, base then coefficient is one ex) (x + y) is a base with coefficient of 1
+        return new ASTNode("1", null, null, Type.NUMBER);
+    }
     //try to avoid factoring, cuz idk what im doing lol
+    //just use quadratic formula and pretend the rest don't exist
     private void factor(ASTNode node)
     {
-        //we're cooked
-        //check for lower precedence, then higher.
-        //if same base, like var, or exponent base, then do stuff
     }
     private void distribute(ASTNode node)
     {
@@ -265,7 +358,7 @@ public class ASTNode {
                     distributeToAll(node, otherOp, otherNode, op);
 
                     //do the current node operator to everything on tree Node with other node's value (number)
-                    combineLikeTerms(node);
+                    simplify(node);
                 }
                 else if (num == 2)
                 {
@@ -284,11 +377,10 @@ public class ASTNode {
                             {
                                 trees[i] = copy(treeNode);
                             }
-                            for (int i = 0; i < trees.length - 1; i++)
-                            {
-                                ASTNode temp = new ASTNode("*", null, null, Type.OPERATOR);
+                            ASTNode tree = rebuild(Arrays.asList(trees), "*");
 
-                            }
+                            replaceNode(node, tree);
+                            distribute(node);
                         }
                     }
                 }
@@ -296,8 +388,8 @@ public class ASTNode {
             }
             else
             {
-                //etiher neither are trees
-                //or both are trees but not actually anymore im a god
+                //neither are trees...
+                //lol
 
             }
 
@@ -327,12 +419,50 @@ public class ASTNode {
         }
 
     }
+    /**
+     * flattens tree, ie split into expressions by a certain operator
+     * @param node
+     * @param targetOperator
+     * @return
+     */
+    private static List<ASTNode> flatten(ASTNode node, String targetOperator) {
+        List<ASTNode> result = new ArrayList<>();
+        flatten(node, targetOperator, result);
+        return result;
+    }
+
+    private static void flatten(ASTNode node, String targetOperator, List<ASTNode> result) {
+        if (node == null) return;
+
+        if (node.type == Type.OPERATOR && node.value.equals(targetOperator)) {
+            flatten(node.leftASTNode, targetOperator, result);
+            flatten(node.rightASTNode, targetOperator, result);
+        } else {
+            result.add(node);
+        }
+    }
+    /**
+     * Rebuilds tree after it has been flattened
+     * @param nodes
+     * @param operator
+     * @return
+     */
+    private static ASTNode rebuild(List<ASTNode> nodes, String operator) {
+        if (nodes.isEmpty()) return null;
+        ASTNode root = nodes.get(0);
+    
+        for (int i = 1; i < nodes.size(); i++) {
+            root = new ASTNode(operator, root, nodes.get(i), Type.OPERATOR);
+        }
+    
+        return root;
+    }
     private ASTNode copy(final ASTNode node)
     {
         if (node == null) return null;
         return new ASTNode(node.getValue(), copy(node.getLeftASTNode()), copy(node.getRightASTNode()), node.type);
     }
-    private void simplifyExponent(ASTNode node)
+    private void simplifyExponentRecursive(ASTNode node)
     {
         if (node == null) return;
         if (node.getValue().equals("^"))
@@ -344,8 +474,19 @@ public class ASTNode {
         }
         else
         {
-            simplifyExponent(node.getLeftASTNode());
-            simplifyExponent(node.getRightASTNode());
+            simplifyExponentRecursive(node.getLeftASTNode());
+            simplifyExponentRecursive(node.getRightASTNode());
+        }
+    }
+    private void simplifyExponent(ASTNode node)
+    {
+        if (node == null) return;
+        if (node.getValue().equals("^"))
+        {
+            if (node.getRightASTNode().type == Type.NUMBER && Double.parseDouble(node.getRightASTNode().getValue()) == 1.0)
+            {
+                replaceNode(node, node.getLeftASTNode());
+            }
         }
     }
     /**
@@ -356,7 +497,7 @@ public class ASTNode {
      * @param node1 node to be replaced
      * @param node2 node that will replace node1
      */
-    public static void replaceNode(ASTNode node1, ASTNode node2)
+    private static void replaceNode(ASTNode node1, ASTNode node2)
     {
         //replacing everything should 
         node1.value = node2.value;
@@ -364,17 +505,56 @@ public class ASTNode {
         node1.rightASTNode = node2.rightASTNode;
         node1.type = node2.type;
     }
+    /**
+     * Not meant to be used in application, LaTeX preferred
+     * @return infix notation equation
+     */
+    public String toInfix()
+    {
+        StringBuilder s = new StringBuilder();
+        toInfix(this, s);
+        return s.toString();
+    }
+    private void toInfix(ASTNode node, StringBuilder s) {
+        if (node == null) return;
     
+        // Numbers and variables are appended directly
+        if (node.type == Type.NUMBER || node.type == Type.VARIABLE) {
+            s.append(node.getValue());
+            return;
+        }
+
+        if (node.type == Type.FUNCTION) {
+            s.append(node.getValue()).append("(");
+            toInfix(node.getLeftASTNode(), s);
+            s.append(")");
+            return;
+        }
+
+        if (node.type == Type.OPERATOR) {
+            s.append("(");
+            
+            toInfix(node.getLeftASTNode(), s);
+            s.append(" ").append(node.getValue()).append(" ");
+            toInfix(node.getRightASTNode(), s);
+            
+            s.append(")");
+        }
+    }
     /**
      * Prints the tree as a tree
      * Kinda scuffed but mostly readable
      * StackOverflow Code goes hard
      */
-    public void print()
+    public void printTree()
     {
         StringBuilder s = new StringBuilder();
         print(s, "", "");
         System.out.println(s.toString());
+    }
+    public void printInfix()
+    {
+        System.out.println(toInfix());
     }
     private void print(StringBuilder buffer, String prefix, String childrenPrefix) {
         buffer.append(prefix);
@@ -394,5 +574,26 @@ public class ASTNode {
             else
                 rightASTNode.print(buffer, childrenPrefix + "└── ", childrenPrefix + "    ");
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true; // Same reference
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        ASTNode other = (ASTNode) obj;
+
+        // Check value and type
+        if (!this.value.equals(other.value) || this.type != other.type) {
+            return false;
+        }
+
+        // Recursively check left and right children
+        return Objects.equals(leftASTNode, other.leftASTNode) && Objects.equals(rightASTNode, other.rightASTNode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value, type, leftASTNode, rightASTNode); // Combines all parts recursively
     }
 }
