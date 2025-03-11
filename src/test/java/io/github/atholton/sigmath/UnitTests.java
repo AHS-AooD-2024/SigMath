@@ -150,4 +150,28 @@ public class UnitTests {
 
         assertEquals(expt, a);
     }
+
+    @Test
+    public void recursiveFrac() {
+        String test = "2/2";
+        String expt = "\\frac{2}{2}";
+
+        String a = TeXComponentProperties.texify(test);
+
+        assertEquals(expt, a);
+
+        test = "2/2/2";
+        expt = "\\frac{\\frac{2}{2}}{2}";
+
+        a = TeXComponentProperties.texify(test);
+
+        assertEquals(expt, a);
+
+        test = "2/2/2/2";
+        expt = "\\frac{\\frac{\\frac{2}{2}}{2}}{2}";
+
+        a = TeXComponentProperties.texify(test);
+
+        assertEquals(expt, a);
+    }
 }

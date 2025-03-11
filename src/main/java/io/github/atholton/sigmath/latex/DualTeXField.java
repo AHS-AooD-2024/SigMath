@@ -5,7 +5,16 @@ import java.awt.LayoutManager;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
@@ -15,6 +24,8 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Highlighter.Highlight;
 
+import org.scilab.forge.jlatexmath.ParseException;
+
 import io.github.atholton.sigmath.util.FilterKeyListener;
 
 /**
@@ -22,6 +33,8 @@ import io.github.atholton.sigmath.util.FilterKeyListener;
  *  and a {@link TeXLabel}.
  */
 public class DualTeXField extends JPanel {
+    private static Logger logger = logger();
+
     private JTextField input;
     private TeXLabel output;
 
@@ -36,6 +49,7 @@ public class DualTeXField extends JPanel {
 
         input = new JTextField(columns);
         labelUpdater = new DocumentListener() {
+
             @Override
             public void insertUpdate(DocumentEvent e) {
                 texify0();
@@ -47,8 +61,13 @@ public class DualTeXField extends JPanel {
             }
 
             private void texify0() {
-                String texify = TeXComponentProperties.texify(input.getText());
-                output.setTeX(texify);
+                String text = input.getText();
+                String texify = TeXComponentProperties.texify(text);
+                try {
+                    output.setTeX(texify);
+                } catch (ParseException e) {
+                    logger().logp(Level.SEVERE, getClass().getName(), getClass().getName() + "#texify0", e, () -> "Illegal LaTeX generated:\n" + texify + "\nFrom input:\n" + text);
+                }
                 System.out.println(texify);
             }
             
@@ -121,6 +140,28 @@ public class DualTeXField extends JPanel {
         this(null, 0);
         BoxLayout layout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
         setLayout(layout);
+    }
+
+    private static Logger logger() {
+        if(logger == null) {
+            logger = Logger.getLogger("TeXInput");
+
+            try {
+                System.out.println("trying");
+                SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd_HH-mm");
+                String sdfstr = sdf.format(Calendar.getInstance().getTime());
+                Files.createTempDirectory("sigmath");
+                FileHandler fh = new FileHandler("%t/sigmath/" + sdfstr + "_%u.log", 1024 * 32, 8);
+                System.out.println("created lol");
+                SimpleFormatter f = new SimpleFormatter();
+                logger.addHandler(fh);
+                fh.setFormatter(f);
+            } catch (SecurityException | IOException e) {
+                e.printStackTrace();
+                System.console().readLine(); // pause
+            }
+        }
+        return logger;
     }
 
     @Override
