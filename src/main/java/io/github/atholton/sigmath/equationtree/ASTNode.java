@@ -268,16 +268,18 @@ public class ASTNode {
     {
         if (node == null) return;
 
+        simplificationRules(node);
+
         //dunno if recursion needed
         //ASTNode left = node.getLeftASTNode();
         //ASTNode right = node.getRightASTNode();
-
         //for "+", but can you combine when not +???
         if (node.type == Type.OPERATOR && node.value.equals("+"))
         {
             //flattened list of nodes that are separated by + sign
 
             List<ASTNode> flattenedNodes = flatten(node, "+");
+            System.out.println(flattenedNodes);
 
             Map<ASTNode, List<ASTNode>> likeTerms = new HashMap<>();
 
@@ -292,6 +294,8 @@ public class ASTNode {
             }
 
             flattenedNodes = combine(likeTerms);
+            System.out.println(flattenedNodes);
+            System.out.println();
             ASTNode newTree = rebuild(flattenedNodes, "+");
             replaceNode(node, newTree);
         }
@@ -317,9 +321,16 @@ public class ASTNode {
                     System.out.println("Issue in combining like terms\nMissed something");
                 }
             }
-            ASTNode coefficient = new ASTNode(String.valueOf(num), null, null, Type.NUMBER);
+            if (num == 1.0)
+            {
+                list.add(entry.getKey());
+            }
+            else
+            {
+                ASTNode coefficient = new ASTNode(String.valueOf(num), null, null, Type.NUMBER);
             //multiply it with the base
-            list.add(new ASTNode("*", coefficient, entry.getKey(), Type.OPERATOR));
+                    list.add(new ASTNode("*", coefficient, entry.getKey(), Type.OPERATOR));
+            }
         }
         return list;
     }
@@ -442,7 +453,7 @@ public class ASTNode {
                             ASTNode tree = rebuild(Arrays.asList(trees), "*");
 
                             replaceNode(node, tree);
-                            distribute(node);
+                            simplify(node);
                         }
                     }
                 }
@@ -558,7 +569,13 @@ public class ASTNode {
         }
         else if (value.equals("*"))
         {
-            if (left.type == Type.NUMBER)
+            if (left.equals(right))
+            {
+                node.setValue("^");
+                node.type = Type.OPERATOR;
+                node.rightASTNode = new ASTNode("2.0", null, null, Type.NUMBER);
+            }
+            else if (left.type == Type.NUMBER)
             {
                 double val = Double.parseDouble(left.getValue());
                 if (val == 0.0)
