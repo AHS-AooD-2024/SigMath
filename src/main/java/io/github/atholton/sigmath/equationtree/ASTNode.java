@@ -417,8 +417,15 @@ public class ASTNode {
                 //otherNode could be a tree as well
                 ASTNode otherNode = left.type == Type.OPERATOR ? right : left;
 
-
                 BaseOperator otherOp = BaseOperator.getOperator(treeNode.getValue());
+
+                if (op.comparePrecedence(otherOp) != 1)
+                {
+                    treeNode = right.type == Type.OPERATOR ? right : left;
+                    otherNode = right.type == Type.OPERATOR ? left : right;
+
+                    otherOp = BaseOperator.getOperator(treeNode.getValue());
+                }
 
                 //child should be lower precedent, ex) * (1 + x), + is child
                 int num;
