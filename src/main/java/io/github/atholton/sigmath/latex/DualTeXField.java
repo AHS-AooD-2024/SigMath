@@ -26,14 +26,17 @@ import javax.swing.text.Highlighter.Highlight;
 
 import org.scilab.forge.jlatexmath.ParseException;
 
+import io.github.atholton.sigmath.equationtree.ASTNode;
+import io.github.atholton.sigmath.equationtree.ShuntingYardParser;
 import io.github.atholton.sigmath.util.FilterKeyListener;
+import io.github.atholton.sigmath.util.LazyLogger;
 
 /**
  * A LaTeX input field that uses two components: a {@link JTextField}
  *  and a {@link TeXLabel}.
  */
 public class DualTeXField extends JPanel {
-    private static Logger logger = logger();
+    private static LazyLogger logger = new LazyLogger("TeXInput");
 
     private JTextField input;
     private TeXLabel output;
@@ -62,11 +65,15 @@ public class DualTeXField extends JPanel {
 
             private void texify0() {
                 String text = input.getText();
-                String texify = TeXComponentProperties.texify(text);
+                var parser = new ShuntingYardParser();
+                ASTNode ast = parser.convertInfixNotationToAST(text);
+                ast.printTree();
+                ast.printInfix();
+                String texify = TeXComponentProperties.texify(ast);
                 try {
                     output.setTeX(texify);
                 } catch (ParseException e) {
-                    logger().logp(Level.SEVERE, getClass().getName(), getClass().getName() + "#texify0", e, () -> "Illegal LaTeX generated:\n" + texify + "\nFrom input:\n" + text);
+                    logger.get().logp(Level.SEVERE, getClass().getName(), "#texify0", e, () -> "Illegal LaTeX generated:\n" + texify + "\nFrom input:\n" + text);
                 }
                 System.out.println(texify);
             }
@@ -140,28 +147,6 @@ public class DualTeXField extends JPanel {
         this(null, 0);
         BoxLayout layout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
         setLayout(layout);
-    }
-
-    private static Logger logger() {
-        if(logger == null) {
-            logger = Logger.getLogger("TeXInput");
-
-            try {
-                System.out.println("trying");
-                SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd_HH-mm");
-                String sdfstr = sdf.format(Calendar.getInstance().getTime());
-                Files.createTempDirectory("sigmath");
-                FileHandler fh = new FileHandler("%t/sigmath/" + sdfstr + "_%u.log", 1024 * 32, 8);
-                System.out.println("created lol");
-                SimpleFormatter f = new SimpleFormatter();
-                logger.addHandler(fh);
-                fh.setFormatter(f);
-            } catch (SecurityException | IOException e) {
-                e.printStackTrace();
-                System.console().readLine(); // pause
-            }
-        }
-        return logger;
     }
 
     @Override

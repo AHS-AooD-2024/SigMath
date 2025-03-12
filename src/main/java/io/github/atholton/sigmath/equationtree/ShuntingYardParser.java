@@ -1,8 +1,10 @@
 package io.github.atholton.sigmath.equationtree;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -26,17 +28,17 @@ public class ShuntingYardParser {
     //currently only supports functions with one parameter, ie sin, cos, tan
     private final Set<String> functions;
 
-    private void addNode(Stack<ASTNode> stack, String operator) {
+    private void addNode(Deque<ASTNode> stack, String operator) {
         if (operators.containsKey(operator))
         {
-            final ASTNode rightASTNode = stack.pop();
-            final ASTNode leftASTNode = stack.pop();
+            final ASTNode rightASTNode = stack.poll();
+            final ASTNode leftASTNode = stack.poll();
             stack.push(new ASTNode(operator, leftASTNode, rightASTNode, Type.OPERATOR));
         }
         else
         {
             //is a function
-            final ASTNode leftASTNode = stack.pop();
+            final ASTNode leftASTNode = stack.poll();
             stack.push(new ASTNode(operator, leftASTNode, null, Type.FUNCTION));
         }
     }
@@ -177,8 +179,8 @@ public class ShuntingYardParser {
     }
     private ASTNode convertTokensToAST(List<String> tokens)
     {
-        final Stack<String> operatorStack = new Stack<>();
-        final Stack<ASTNode> operandStack = new Stack<>();
+        final Deque<String> operatorStack = new ArrayDeque<>();
+        final Deque<ASTNode> operandStack = new ArrayDeque<>();
 
         for(String token : tokens) {
             String popped;
@@ -190,11 +192,11 @@ public class ShuntingYardParser {
                     break;
                 case ")":
                     while(!operatorStack.isEmpty()) {
-                        popped = operatorStack.pop();
+                        popped = operatorStack.poll();
                         if("(".equals(popped)) {
                             if (!operatorStack.isEmpty() && isFunction(operatorStack.peek()))
                             {
-                                String function = operatorStack.pop();
+                                String function = operatorStack.poll();
                                 addNode(operandStack, function);
                             }
                             break;
@@ -215,7 +217,7 @@ public class ShuntingYardParser {
                             if((!o1.isRightAssociative() &&
                                     0 == o1.comparePrecedence(o2)) ||
                                     o1.comparePrecedence(o2) < 0) {
-                                operatorStack.pop();
+                                operatorStack.poll();
                                 addNode(operandStack, o2.getSymbol());
                             } else {
                                 break;
@@ -235,9 +237,9 @@ public class ShuntingYardParser {
             }
         }
         while(!operatorStack.isEmpty()) {
-            addNode(operandStack, operatorStack.pop());
+            addNode(operandStack, operatorStack.poll());
         }
-        return operandStack.pop();
+        return operandStack.poll();
     }
     /**
      * TODO: tokenize LaTeX input

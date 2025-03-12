@@ -4,6 +4,7 @@ import java.beans.BeanProperty;
 
 import org.scilab.forge.jlatexmath.TeXConstants;
 
+import io.github.atholton.sigmath.equationtree.ASTNode;
 import io.github.atholton.sigmath.util.Strings;
 
 public interface TeXComponentProperties {
@@ -247,5 +248,13 @@ public interface TeXComponentProperties {
     
     
         return str;
+    }
+
+    // FIXME: the ast idea of texifying has some...interesting interperetations.
+    // some highlights include
+    // "a + " => "(+a)"
+    // "a/b - c" => "\frac{a}{-1} \times c"
+    static String texify(ASTNode root) {
+        return root.convertToLatex(); // well that was easy lol
     }
 }

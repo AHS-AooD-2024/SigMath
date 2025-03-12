@@ -1,6 +1,7 @@
 package io.github.atholton.sigmath.equationtree;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.ArrayList;
@@ -28,6 +29,26 @@ public class ASTNode {
 
     public static Map<String, BiFunction<Double, Double, Double>> computeOperator;
     public static Map<String, Function<Double, Double>> computeFunction;
+
+    /**
+     * The set of tokens that are simple to replace, as they only need {@code x -> "\\" + x}
+     */
+    private static Set<String> simpleTexers = Set.of(
+        "sqrt",
+        "sin",
+        "cos",
+        "tan",
+        "sec",
+        "csc",
+        "cot",
+        "alpha",
+        "Alpha",
+        "gamma",
+        "Gamma",
+        "delta",
+        "Delta" 
+    );  
+
     /***
      * Constructs a new AST node. There's no explicit specialization for leaf
      * nodes. Leaves are denoted by nodes where both the left and right node
@@ -97,6 +118,15 @@ public class ASTNode {
         type = Type.OPERATOR;
     }
 
+    private String latexToken(String str) {
+        for(String s : simpleTexers) {
+            if(s.equals(str)) {
+                return " \\" + str + " ";
+            }
+        }
+        return str;
+    }
+
 
     /**
      * Method to Convert a {@link ASTNode} tree into LaTeX format String
@@ -111,7 +141,7 @@ public class ASTNode {
         
         // If it's a leaf node, return its value directly
         if (node.getLeftASTNode() == null && node.getRightASTNode() == null) {
-            return value;
+            return latexToken(value);
         }
 
         // Recursively process left and right subtrees
@@ -129,8 +159,12 @@ public class ASTNode {
                 return "\\frac{" + left + "}{" + right + "}";
             case "^":
                 return "{" + left + "}^{" + right + "}";
+            case "sqrt":
+                return "\\sqrt{" + left + "}";
+            case "cbrt":
+                return "\\sqrt[3]{" + left + "}";
             default:
-                return value; // If it's a number or variable, return as is
+                return latexToken(value); // If it's a number or variable, return as is
         }
     }
     /**
