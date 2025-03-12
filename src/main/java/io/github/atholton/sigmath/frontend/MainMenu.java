@@ -2,14 +2,23 @@ package io.github.atholton.sigmath.frontend;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
-public class MainMenu extends JPanel{
+public class MainMenu extends JPanel {
+    private static MainMenu instance;
 
-    public MainMenu() {
+    private MainMenu() {
         
         setLayout(new BorderLayout());
         add(new Toolbar(), BorderLayout.NORTH);
         add(RecentTopicsMenu.get());
+    }
+    public static MainMenu get()
+    {
+        if (instance == null) instance = new MainMenu();
+        return instance;
+    }
+    public void addWithTransition(Component component)
+    {
+        add(component);
     }
 }
