@@ -9,8 +9,9 @@ import java.util.ArrayList;
 
 public class AllTopicsMenu extends JPanel{
     private ArrayList<RecentTopicsButton> topics;
+    private static AllTopicsMenu instance;
     
-    public AllTopicsMenu() {
+    private AllTopicsMenu() {
         topics = new ArrayList<RecentTopicsButton>();
 
         addTopic(new PolynomialDerivative(), "Ur stinky... - Albert Einstein");
@@ -18,9 +19,13 @@ public class AllTopicsMenu extends JPanel{
             add(t);
         }
     }
-
     public void addTopic(Topic t, String topicString) {
         RecentTopicsButton b = new RecentTopicsButton(t, topicString);
         topics.add(b);
+    }
+    public static AllTopicsMenu get()
+    {
+        if (instance == null) instance = new AllTopicsMenu();
+        return instance;
     }
 }

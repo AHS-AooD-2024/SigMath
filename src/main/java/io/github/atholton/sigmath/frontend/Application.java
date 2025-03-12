@@ -8,13 +8,16 @@ import io.github.atholton.sigmath.Sigmath;
 import io.github.atholton.sigmath.latex.DualTeXField;
 import io.github.atholton.sigmath.latex.TeXLabel;
 
-public class Application extends JFrame implements Runnable{
+
+public class Application extends JFrame implements Runnable
+{
+    private static Application instance;
     public static void main(String[] args) {
-        Application sigmath = new Application();
+        Application sigmath = get();
         SwingUtilities.invokeLater(sigmath);
     }
 
-    public Application() {
+    private Application() {
         super("SigMath");
     }
 
@@ -24,10 +27,15 @@ public class Application extends JFrame implements Runnable{
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         //MainMenu mm = new MainMenu();
-        AllTopicsMenu m = new AllTopicsMenu();
+        AllTopicsMenu m = AllTopicsMenu.get();
         //add(mm);
         add(m);
 
         pack();
+    }
+    public static Application get()
+    {
+        if (instance == null) instance = new Application();
+        return instance;
     }
 }
