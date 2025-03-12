@@ -7,10 +7,10 @@ import io.github.atholton.sigmath.topics.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class RecentTopicsMenu extends JPanel{
+public class AllTopicsMenu extends JPanel{
     private ArrayList<RecentTopicsButton> topics;
     
-    public RecentTopicsMenu() {
+    public AllTopicsMenu() {
         topics = new ArrayList<RecentTopicsButton>();
 
         addTopic(new PolynomialDerivative(), "Ur stinky... - Albert Einstein");
