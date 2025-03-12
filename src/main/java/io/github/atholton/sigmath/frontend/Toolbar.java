@@ -8,12 +8,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Toolbar extends JPanel{
-    private JLabel logo;
-    private JButton topics, settings;
+    private JButton topics, settings, logo;
 
     public Toolbar() {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        logo = new JLabel("SigΣath");
+
+        //logo should redirect to recent Topics
+        logo = new JButton("SigΣath");
         logo.setFont(new Font("Sans Serif", Font.BOLD, 60));
         logo.setAlignmentY(TOP_ALIGNMENT);
         logo.setBorder(new EmptyBorder(0, 50, 0, 50));
