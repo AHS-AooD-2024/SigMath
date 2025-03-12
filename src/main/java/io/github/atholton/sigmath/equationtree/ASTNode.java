@@ -174,7 +174,7 @@ public class ASTNode {
     {
         //add stuff to computeOperators
         initializeFuncs();
-        while(true)
+        for (int i = 0; i < 50; i++)
         {
             ASTNode copy = copy(this);
             simplify(this);
@@ -475,7 +475,6 @@ public class ASTNode {
                     distributeToAll(node, otherOp, otherNode, op);
 
                     //do the current node operator to everything on tree Node with other node's value (number)
-                    simplify(node);
                 }
                 else if (num == 2)
                 {
@@ -497,7 +496,7 @@ public class ASTNode {
                             ASTNode tree = rebuild(Arrays.asList(trees), "*");
 
                             replaceNode(node, tree);
-                            simplify(node);
+                            distribute(node);
                         }
                     }
                 }
