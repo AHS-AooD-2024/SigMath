@@ -11,7 +11,6 @@ public class MainMenu extends JPanel{
         setLayout(new BorderLayout());
         add(new Toolbar(), BorderLayout.NORTH);
         add(new RecentTopicsMenu());
-        
     }
 
     

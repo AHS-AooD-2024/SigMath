@@ -24,9 +24,10 @@ public class Application extends JFrame implements Runnable{
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         //MainMenu mm = new MainMenu();
-        AllTopicsMenu m = new AllTopicsMenu();
+        //AllTopicsMenu m = new AllTopicsMenu();
+        add(new ProblemsMenu());
         //add(mm);
-        add(m);
+        //add(m);
 
         pack();
     }
