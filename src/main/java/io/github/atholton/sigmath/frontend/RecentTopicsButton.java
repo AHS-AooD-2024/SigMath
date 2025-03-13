@@ -2,9 +2,12 @@ package io.github.atholton.sigmath.frontend;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import io.github.atholton.sigmath.topics.*;
 
-public class RecentTopicsButton extends JButton{
+public class RecentTopicsButton extends JButton implements ActionListener{
     private Topic topic;
 
     public RecentTopicsButton(Topic topic, String topicString) {
@@ -24,5 +27,14 @@ public class RecentTopicsButton extends JButton{
 
         RecentTopicsButton o = (RecentTopicsButton)other;
         return o.topic.equals(topic);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        MainMenu menu = MainMenu.get();
+        menu.remove(menu.getComponent(1));
+        menu.add(new ProblemsMenu(topic));
+        menu.revalidate();
+        menu.repaint();
     }
 }
