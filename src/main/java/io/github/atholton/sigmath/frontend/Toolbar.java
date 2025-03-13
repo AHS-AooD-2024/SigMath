@@ -23,7 +23,10 @@ public class Toolbar extends JPanel{
             public void actionPerformed(ActionEvent e) {
                 MainMenu menu = MainMenu.get();
                 RecentTopicsMenu home = RecentTopicsMenu.get();
-                menu.add(home);
+                menu.remove(menu.getComponent(1));
+                menu.add(home, BorderLayout.CENTER);
+                menu.repaint();
+                menu.revalidate();
             }
         });
 
@@ -36,7 +39,10 @@ public class Toolbar extends JPanel{
             @Override
             public void actionPerformed(ActionEvent e) {
                 MainMenu menu = MainMenu.get();
-                menu.add(AllTopicsMenu.get());
+                menu.remove(menu.getComponent(1));
+                menu.add(AllTopicsMenu.get(), BorderLayout.CENTER);
+                menu.repaint();
+                menu.revalidate();
             }
             
         });
@@ -49,9 +55,13 @@ public class Toolbar extends JPanel{
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                //System.out.println("butt");
                 MainMenu menu = MainMenu.get();
                 //super sick transition :thumbs up:
-                menu.add(SettingsMenu.get());
+                menu.remove(menu.getComponent(1));
+                menu.add(SettingsMenu.get(), BorderLayout.CENTER);
+                menu.repaint();
+                menu.revalidate();
             }
             
         });

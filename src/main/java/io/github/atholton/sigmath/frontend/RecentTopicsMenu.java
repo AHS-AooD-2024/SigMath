@@ -12,6 +12,7 @@ public class RecentTopicsMenu extends JPanel{
         topics = new ArrayList<RecentTopicsButton>();
 
         addTopic(new PolynomialDerivative(), "Ur stinky... - Albert Einstein");
+        addTopic(new PolynomialDerivative(), "I'm a frog");
         for (RecentTopicsButton t : topics) {
             add(t);
         }
