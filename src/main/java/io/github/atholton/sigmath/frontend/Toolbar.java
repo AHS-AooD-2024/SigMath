@@ -26,8 +26,8 @@ public class Toolbar extends JPanel{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                Application app = Application.get();
-                app.add(AllTopicsMenu.get());
+                MainMenu mm = MainMenu.get();
+                mm.add(AllTopicsMenu.get());
             }
             
         });
@@ -40,8 +40,8 @@ public class Toolbar extends JPanel{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                Application app = Application.get();
-                app.add(SettingsMenu.get());
+                MainMenu mm = MainMenu.get();
+                mm.add(SettingsMenu.get());
             }
             
         });

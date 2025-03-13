@@ -15,7 +15,10 @@ public class ProblemsMenu extends JPanel{
     private JButton submitButton, getHelpButton;
     private QuestionGenerator questionGenerator;
 
-    public ProblemsMenu() {
+    public ProblemsMenu(Topic t) {
+        questionGenerator = new QuestionGenerator(t, 0, 0);
+        problemText = new JLabel();
+
         inputBox = new DualTeXField();
         add(inputBox);
     }
