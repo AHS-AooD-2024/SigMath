@@ -15,4 +15,14 @@ public class RecentTopicsButton extends JButton{
     public Topic getTopic() {
         return topic;
     }
+
+    @Override
+    public boolean equals(Object other)
+    {
+        if (other == null) return false;
+        if (other.getClass() != getClass()) return false;
+
+        RecentTopicsButton o = (RecentTopicsButton)other;
+        return o.topic.equals(topic);
+    }
 }

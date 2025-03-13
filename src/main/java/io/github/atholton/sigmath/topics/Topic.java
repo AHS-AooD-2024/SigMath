@@ -41,4 +41,13 @@ public abstract class Topic {
      * @return the answert to the question
      */
     protected ASTNode solve(ASTNode question) {return null;}
+
+    @Override
+    //I have no idea if this is right, supposed to be if the class is the same
+    public boolean equals(Object other)
+    {
+        if (other == null) return false;
+        if (other == this || other.getClass() == getClass()) return true;
+        return false;
+    }
 }

@@ -8,15 +8,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Toolbar extends JPanel{
-    private JLabel logo;
-    private JButton topics, settings;
+    private JButton topics, settings, logo;
 
     public Toolbar() {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        logo = new JLabel("SigΣath");
+
+        //logo should redirect to recent Topics
+        logo = new JButton("SigΣath");
         logo.setFont(new Font("Sans Serif", Font.BOLD, 60));
+        logo.setBackground(Color.WHITE);
         logo.setAlignmentY(TOP_ALIGNMENT);
         logo.setBorder(new EmptyBorder(0, 50, 0, 50));
+        logo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                MainMenu menu = MainMenu.get();
+                RecentTopicsMenu home = RecentTopicsMenu.get();
+                menu.add(home);
+            }
+        });
 
         topics = new JButton("Topics");
         topics.setFont(new Font("Sans Serif", Font.BOLD, 60));
@@ -26,8 +35,8 @@ public class Toolbar extends JPanel{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                MainMenu mm = MainMenu.get();
-                mm.add(AllTopicsMenu.get());
+                MainMenu menu = MainMenu.get();
+                menu.add(AllTopicsMenu.get());
             }
             
         });
@@ -40,8 +49,9 @@ public class Toolbar extends JPanel{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                MainMenu mm = MainMenu.get();
-                mm.add(SettingsMenu.get());
+                MainMenu menu = MainMenu.get();
+                //super sick transition :thumbs up:
+                menu.add(SettingsMenu.get());
             }
             
         });
