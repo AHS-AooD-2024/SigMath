@@ -34,7 +34,8 @@ public class QuestionGenerator {
 
     private String replaceVariables(String equation) {
         return equation.replaceAll("a", String.valueOf(random.nextInt(100) + 1))  // Replace 'a' with random number
-                       .replaceAll("b", String.valueOf(random.nextInt(100) + 1)); // Replace 'b' with random number
+                       .replaceAll("b", String.valueOf(random.nextInt(100) + 1)) // Replace 'b' with random number
+                       .replaceAll("c", String.valueOf(random.nextInt(100) + 1)); 
     }
 }
 
