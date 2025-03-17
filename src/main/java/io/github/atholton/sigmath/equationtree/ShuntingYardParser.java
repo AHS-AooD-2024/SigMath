@@ -1,5 +1,6 @@
 package io.github.atholton.sigmath.equationtree;
 
+import java.nio.CharBuffer;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -175,40 +177,56 @@ public class ShuntingYardParser {
         // return tokens;
     }
     
-    private static Pattern operatorPattern = Pattern.compile("[\\+\\-\\*\\/\\^\\(\\)\\[\\]]");
-    private static Pattern notOperatorPattern = Pattern.compile("[^\\+\\-\\*\\/\\^\\(\\)\\[\\]]+");
     private List<String> tokenize2(String input) {
         // it is easier to not deal with spaces
         input = input.replace(" ", "");
         List<String> tokens = new ArrayList<>();
 
-        Stream<String> split = operatorPattern.splitAsStream(input);
-        Stream<String> antisplit = notOperatorPattern.splitAsStream(input);
-
-        // empty strings make it so much harder, so we just don't
-        Iterator<String> it1 = split.filter(s -> !s.isBlank()).iterator();
-        Iterator<String> it2 = antisplit.filter(s -> !s.isBlank()).iterator();
-
-        // zipper merge
-        while(true) {
-            if(it1.hasNext()) {
-                tokens.add(it1.next());
-                if(it2.hasNext()) {
-                    tokens.add(it2.next());
-                }
-            } else {
-                if(it2.hasNext()) {
-                    tokens.add(it2.next());
-                } else {
-                    break;
-                }
-            }
-        }
+        loopTokenize(input, tokens);
         
         System.out.println(tokens);
         return tokens;
     }
-    
+
+    private void loopTokenize(String input, List<String> tokens) {
+        final String ops = "+-/*(){}[]<>,|";
+        
+        // save heap space
+        char[] dummy = new char[1];
+        CharBuffer dummyBuff = CharBuffer.wrap(dummy);
+        StringBuilder sb = new StringBuilder();
+
+        for(int i = 0; i < input.length(); i++) {
+            char ch = input.charAt(i);
+            dummy[0] = ch;
+            if(ops.contains(dummyBuff)) {
+                loopTokenize_tokenizeShortMultiplication(sb, tokens);
+                tokens.add(String.valueOf(ch));
+            } else if(ch == ' ') {
+                loopTokenize_tokenizeShortMultiplication(sb, tokens);
+            } else {
+                sb.append(ch);
+            }
+        }
+
+        loopTokenize_tokenizeShortMultiplication(sb, tokens);
+    }
+
+    private void loopTokenize_tokenizeShortMultiplication(StringBuilder sb, List<String> tokens) {
+        if(sb.isEmpty()) return;
+        String str = sb.toString();
+        if(isFunction(str)) {
+            tokens.add(str);
+        } else {
+            for(int i = 0; i < str.length() - 1; i++) {
+                tokens.add(str.substring(i, i + 1));
+                tokens.add("*");
+            }
+            tokens.add(str.substring(str.length() - 1));
+        }
+        sb.setLength(0);
+    }
+
     public ASTNode convertLatexToAST(final String input)
     {
         return convertTokensToAST(tokenizeLaTeX(input));
