@@ -8,22 +8,22 @@ import io.github.atholton.sigmath.equationtree.ASTNode;
  * Represents all polynomial derivatives
  * @author Abhay Nagaraj
  */
-public class PolynomialDerivative extends Topic{
-    public PolynomialDerivative() {
+public class PolynomialDerivative extends Topic {
+    private static PolynomialDerivative instance;
+    public static PolynomialDerivative get()
+    {
+        if (instance == null) instance = new PolynomialDerivative();
+        return instance;
+    }
+    public static void set(PolynomialDerivative instance)
+    {
+        PolynomialDerivative.instance = instance;
+    }
+    private PolynomialDerivative() {
         super();
         formulaList.add("a*x^n");
         formulaList.add("a*x^n + b*x^n-1");
         formulaList.add("a*x^n + b*x^n-1 + c*x^n-2");
-    }
-
-    @Override
-    public String getFormula(int index) {
-        return formulaList.get(index);
-    }
-
-    @Override
-    public double getProficiency() {
-        return proficiencyLevel;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class PolynomialDerivative extends Topic{
     }
     
     @Override
-    public ASTNode solve(ASTNode question) {
+    protected ASTNode solve(ASTNode question) {
         ASTNode tempQuestion = question;
         ASTNode qL = tempQuestion.getLeftASTNode();
         ASTNode qR = tempQuestion.getRightASTNode();
@@ -64,7 +64,7 @@ public class PolynomialDerivative extends Topic{
      * Reformats all x's to be x^1 to be processed by returnAnswer
      * @param question question to process x's in
      */
-    public void reformatX(ASTNode question) {
+    protected void reformatX(ASTNode question) {
         ASTNode tempQuestion = question;
         ASTNode qL = tempQuestion.getLeftASTNode();
         ASTNode qR = tempQuestion.getRightASTNode(); 
@@ -84,7 +84,7 @@ public class PolynomialDerivative extends Topic{
      * Derives constants which can't be reached by returnAnswer
      * @param question question to derive constants in
      */
-    public void deriveConstants(ASTNode question) {
+    protected void deriveConstants(ASTNode question) {
         ASTNode tempQuestion = question;
         ASTNode qL = tempQuestion.getLeftASTNode();
         ASTNode qR = tempQuestion.getRightASTNode(); 

@@ -14,7 +14,7 @@ public class AllTopicsMenu extends JPanel{
     private AllTopicsMenu() {
         topics = new ArrayList<TopicsButton>();
 
-        addTopic(new PolynomialDerivative(), "Ur stinky... - Albert Einstein");
+        addTopic(PolynomialDerivative.get(), "Ur stinky... - Albert Einstein");
         for (TopicsButton t : topics) {
             add(t);
         }

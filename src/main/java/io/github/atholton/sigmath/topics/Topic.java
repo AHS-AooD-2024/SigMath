@@ -7,8 +7,14 @@ import io.github.atholton.sigmath.equationtree.ASTNode;
  * Represents an individual topic from the curriculum.
  * @author Abhay Nagaraj
  */
+//Should topics be singleton? should user stats just have a list of all Topics?
 public abstract class Topic {
     protected double proficiencyLevel;
+
+    /**
+     * List of sample problems to plug in numbers to
+     * might need a formula solver that tells how to solve formula maybe
+     */
     protected ArrayList<String> formulaList = new ArrayList<String>();
 
     /**
@@ -16,7 +22,10 @@ public abstract class Topic {
      * 
      * @return proficiencyLevel
      */
-    public abstract double getProficiency();
+    public double getProficiency()
+    {
+        return proficiencyLevel;
+    }
     
     /**
      * Gets a chosen formula from the formula list
@@ -24,7 +33,17 @@ public abstract class Topic {
      * @param index the index value of formulaList
      * @return formulaList.get(index)
      */
-    public abstract String getFormula(int index);
+    public String getFormula(int index)
+    {
+        index = Math.min(index, formulaList.size() - 1);
+        index = Math.max(index, 0);
+
+        return formulaList.get(index);
+    }
+    public String getFormula()
+    {
+        return getFormula((int)(Math.random() * formulaList.size()));
+    }
 
     /**
      * Returns the answer to a given question in tree format using the desired formula
@@ -32,7 +51,7 @@ public abstract class Topic {
      * @param question question in node format
      * @return answer to the question in tree format
      */
-    protected abstract ASTNode returnAnswer(ASTNode question);
+    public abstract ASTNode returnAnswer(ASTNode question);
 
     /**
      * Solves an individual unit of a topic within a problem
@@ -40,7 +59,7 @@ public abstract class Topic {
      * @param question question to answer
      * @return the answert to the question
      */
-    protected ASTNode solve(ASTNode question) {return null;}
+    protected abstract ASTNode solve(ASTNode question);
 
     @Override
     //I have no idea if this is right, supposed to be if the class is the same

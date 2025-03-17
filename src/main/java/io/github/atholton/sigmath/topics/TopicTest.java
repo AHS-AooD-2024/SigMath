@@ -18,8 +18,8 @@ public class TopicTest {
         operators.add(new BaseOperator("+", false, 2));
         operators.add(new BaseOperator("-", false, 2));
 
-        final ShuntingYardParser parser = new ShuntingYardParser();
-        Topic d = new PolynomialDerivative();
+        final ShuntingYardParser parser = ShuntingYardParser.get();
+        Topic d = PolynomialDerivative.get();
         final String input = "4 * x ^ (0.5)";
 
 
