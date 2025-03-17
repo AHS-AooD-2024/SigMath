@@ -38,8 +38,9 @@ public class ProblemsMenu extends JPanel{
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.gridheight = 2;
         problemText = new JLabel("SAMPLE TEXT");
-        makeComponent(problemText, layout, c);
+        makeComponent(problemText, layout, c);  
 
+        c.gridwidth = 1;
         c.gridheight = 1;
         c.weightx = 1;
         percentageText = new JLabel("0%");
