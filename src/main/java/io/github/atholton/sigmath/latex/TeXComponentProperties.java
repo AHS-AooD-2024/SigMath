@@ -255,6 +255,6 @@ public interface TeXComponentProperties {
     // "a + " => "(+a)"
     // "a/b - c" => "\frac{a}{-1} \times c"
     static String texify(ASTNode root) {
-        return root.convertToLatex(); // well that was easy lol
+        return ASTNode.convertToLatex(root); // well that was easy lol
     }
 }

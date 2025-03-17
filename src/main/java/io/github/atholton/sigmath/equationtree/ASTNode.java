@@ -118,7 +118,7 @@ public class ASTNode {
         type = Type.OPERATOR;
     }
 
-    private String latexToken(String str) {
+    private static String latexToken(String str) {
         for(String s : simpleTexers) {
             if(s.equals(str)) {
                 return " \\" + str + " ";
@@ -134,7 +134,7 @@ public class ASTNode {
      * @return Equation in LaTeX
      */
     //TODO: make it work
-    private String convertToLatex(ASTNode node) {
+    public static String convertToLatex(ASTNode node) {
         if (node == null) return "";
         
         String value = node.getValue();
@@ -704,6 +704,16 @@ public class ASTNode {
         print(s, "", "");
         System.out.println(s.toString());
     }
+
+    public static void printTree(ASTNode node) {
+        if(node == null) System.out.println("");
+        else             node.printTree();
+    }
+    public static void printInfix(ASTNode node) {
+        if(node == null) System.out.println("");
+        else             node.printInfix();
+    }
+
     public void printInfix()
     {
         System.out.println(toInfix());

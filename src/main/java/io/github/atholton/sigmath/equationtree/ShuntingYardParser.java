@@ -7,10 +7,13 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import io.github.atholton.sigmath.equationtree.ASTNode.Type;
 
@@ -130,39 +133,82 @@ public class ShuntingYardParser {
      */
     private List<String> tokenize(final String input)
     {
+        return tokenize2(input);
+        // List<String> tokens = new ArrayList<>();
+        // StringBuilder build = new StringBuilder();
+        // char prevToken = '\0';
+        // for (int i = 0; i < input.length(); i++)
+        // {
+        //     char c = input.charAt(i);
+        //     if (c == ' ') {
+        //         if (build.length() != 0)
+        //         {
+        //             tokens.add(build.toString());
+        //             build.setLength(0);
+        //         }
+        //         tokens.add(String.valueOf(c));
+        //     } else
+        //     if (writingFunction(c, build) || isNumber(c))
+        //     {
+        //         build.append(c);
+        //     }
+        //     else if (c == '-' && !isNumber(prevToken))
+        //     {
+        //         tokens.add("-1");
+        //         tokens.add("*");
+        //     }
+        //     else
+        //     {
+        //         if (build.length() != 0)
+        //         {
+        //             tokens.add(build.toString());
+        //             build.setLength(0);
+        //         }
+        //         tokens.add(String.valueOf(c));
+        //     }
+        //     prevToken = c;
+        // }
+        // if (build.length() != 0)
+        // {
+        //     tokens.add(build.toString());
+        // }
+        // return tokens;
+    }
+    
+    private static Pattern operatorPattern = Pattern.compile("[\\+\\-\\*\\/\\^\\(\\)\\[\\]]");
+    private static Pattern notOperatorPattern = Pattern.compile("[^\\+\\-\\*\\/\\^\\(\\)\\[\\]]+");
+    private List<String> tokenize2(String input) {
+        // it is easier to not deal with spaces
+        input = input.replace(" ", "");
         List<String> tokens = new ArrayList<>();
-        StringBuilder build = new StringBuilder();
-        char prevToken = '\0';
-        for (int i = 0; i < input.length(); i++)
-        {
-            char c = input.charAt(i);
-            if (c == ' ') continue;
-            if (writingFunction(c, build) || isNumber(c))
-            {
-                build.append(c);
-            }
-            else if (c == '-' && !isNumber(prevToken))
-            {
-                tokens.add("-1");
-                tokens.add("*");
-            }
-            else
-            {
-                if (build.length() != 0)
-                {
-                    tokens.add(build.toString());
-                    build.setLength(0);
+
+        Stream<String> split = operatorPattern.splitAsStream(input);
+        Stream<String> antisplit = notOperatorPattern.splitAsStream(input);
+
+        // empty strings make it so much harder, so we just don't
+        Iterator<String> it1 = split.filter(s -> !s.isBlank()).iterator();
+        Iterator<String> it2 = antisplit.filter(s -> !s.isBlank()).iterator();
+
+        // zipper merge
+        while(true) {
+            if(it1.hasNext()) {
+                tokens.add(it1.next());
+                if(it2.hasNext()) {
+                    tokens.add(it2.next());
                 }
-                tokens.add(String.valueOf(c));
+            } else {
+                if(it2.hasNext()) {
+                    tokens.add(it2.next());
+                } else {
+                    break;
+                }
             }
-            prevToken = c;
         }
-        if (build.length() != 0)
-        {
-            tokens.add(build.toString());
-        }
+        
+        System.out.println(tokens);
         return tokens;
     }
+    
     public ASTNode convertLatexToAST(final String input)
     {
         return convertTokensToAST(tokenizeLaTeX(input));

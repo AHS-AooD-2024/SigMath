@@ -67,8 +67,8 @@ public class DualTeXField extends JPanel {
                 String text = input.getText();
                 var parser = new ShuntingYardParser();
                 ASTNode ast = parser.convertInfixNotationToAST(text);
-                ast.printTree();
-                ast.printInfix();
+                ASTNode.printTree(ast);
+                ASTNode.printInfix(ast);
                 String texify = TeXComponentProperties.texify(ast);
                 try {
                     output.setTeX(texify);
