@@ -22,7 +22,7 @@ public class ProblemsMenu extends JPanel{
          gridbag.setConstraints(comp, c);
          add(comp);
          revalidate();
-     }
+    }
 
     public ProblemsMenu(Topic t) {
         super();
@@ -36,24 +36,35 @@ public class ProblemsMenu extends JPanel{
 
         //problemText at top, percentage on left, submit and input box in the middle, get help on right.
         c.gridwidth = GridBagConstraints.REMAINDER;
-        c.gridheight = 2;
+        c.gridheight = 1;
+        c.weightx = 1;
+        c.weighty = 0.6;
         problemText = new JLabel("SAMPLE TEXT");
+        problemText.setFont(new Font("Sans Serif", Font.BOLD, 60));
+        problemText.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+        problemText.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         makeComponent(problemText, layout, c);  
 
         c.gridwidth = 1;
-        c.gridheight = 1;
+        c.gridheight = 2;
         c.weightx = 1;
+        c.weighty = 1;
         percentageText = new JLabel("0%");
         makeComponent(percentageText, layout, c);
 
-        c.weightx = 2;
+        c.gridheight = 1;
+        c.weightx = 6;
+        c.gridx = 1;
+        c.weighty = 1;
         inputBox = new DualTeXField();
         makeComponent(inputBox, layout, c);
 
-        c.weightx = 1;
         submitButton = new JButton("Submit");
         makeComponent(submitButton, layout, c);
 
+        c.gridheight = 2;
+        c.gridx = GridBagConstraints.RELATIVE;
         c.gridwidth = GridBagConstraints.REMAINDER;
         getHelpButton = new JButton("HELP");
         makeComponent(getHelpButton, layout, c);
