@@ -7,8 +7,7 @@ public class ShuntingYardDemo {
 
 
         ASTNode parseTree = parser.convertInfixNotationToAST(input);
-        parseTree.print();
         parseTree.simplify();
-        parseTree.print();
+        parseTree.printInfix();
     }
 }

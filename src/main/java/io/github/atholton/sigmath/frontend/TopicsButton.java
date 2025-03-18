@@ -33,7 +33,9 @@ public class TopicsButton extends JButton implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         MainMenu menu = MainMenu.get();
-        menu.remove(menu.getComponent(1));
+        JPanel main = (JPanel)menu.getComponent(1);
+    
+        menu.remove(main);
         menu.add(new ProblemsMenu(topic));
         menu.revalidate();
         menu.repaint();

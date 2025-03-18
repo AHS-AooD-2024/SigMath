@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Test {
+    /*
     public static void main(String[] args) {
         String input = "4 + 5";
         List<String> tokens = new ArrayList<>();
@@ -37,5 +38,11 @@ public class Test {
     private static boolean isNumber(char c)
     {
         return c == '.' || (c >= '0' &&c <= '9');
+    }
+        */
+    public static void main(String[] args) {
+        System.out.println(true ^ false);
+        System.out.println(true ^ true);
+        System.out.println(false ^ false);
     }
 }
