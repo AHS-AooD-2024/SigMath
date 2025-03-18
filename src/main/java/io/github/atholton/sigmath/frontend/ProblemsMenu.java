@@ -29,7 +29,7 @@ public class ProblemsMenu extends JPanel{
         layout = new GridBagLayout();
         setLayout(layout);
 
-        questionGenerator = new QuestionGenerator(t, 0, 0);
+        questionGenerator = new QuestionGenerator(t);
 
         c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
@@ -50,9 +50,11 @@ public class ProblemsMenu extends JPanel{
         c.gridheight = 2;
         c.weightx = 1;
         c.weighty = 1;
+        c.insets = new Insets(100, 20, 100, 20);
         percentageText = new JLabel("0%");
         makeComponent(percentageText, layout, c);
 
+        c.insets = new Insets(0, 0, 0, 0);
         c.gridheight = 1;
         c.weightx = 6;
         c.gridx = 1;
@@ -60,13 +62,20 @@ public class ProblemsMenu extends JPanel{
         inputBox = new DualTeXField();
         makeComponent(inputBox, layout, c);
 
+        c.weighty = 0.5;
+        c.insets = new Insets(30, 100, 30, 100);
         submitButton = new JButton("Submit");
         makeComponent(submitButton, layout, c);
 
+        c.insets = new Insets(0, 0, 0, 0);
+        c.weighty = 1;
+        c.weightx = 1;
         c.gridheight = 2;
         c.gridx = GridBagConstraints.RELATIVE;
         c.gridwidth = GridBagConstraints.REMAINDER;
         getHelpButton = new JButton("HELP");
         makeComponent(getHelpButton, layout, c);
+
+        problemText.setText(questionGenerator.generateQuestion());
     }
 }

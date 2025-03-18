@@ -9,16 +9,14 @@ import io.github.atholton.sigmath.topics.PolynomialDerivative;
 public class QuestionGenerator {
     private Topic topic;
     private Random random;
-    private int index;
 
-    public QuestionGenerator(Topic topic, int index) {
+    public QuestionGenerator(Topic topic) {
         this.topic = topic;
-        this.index = index;
         this.random = new Random();
     }
 
     public String generateQuestion() {
-        String formula = topic.getFormula(index); // Retrieve a formula for the selected topic
+        String formula = topic.getFormula(); // Retrieve a formula for the selected topic
         String formattedQuestion = replaceVariables(formula); // Replace variables with numbers
         return new String(formattedQuestion);
     }
@@ -32,12 +30,12 @@ public class QuestionGenerator {
                        .replaceAll("n", String.valueOf(random.nextInt(5) + 1));//this is a horrendous line btw
     }
     public static void main(String[] args) {
-        QuestionGenerator gen = new QuestionGenerator(new PolynomialDerivative(), 0);
+        QuestionGenerator gen = new QuestionGenerator(PolynomialDerivative.get());
         String eq = gen.generateQuestion();
         System.out.println(eq);
         ASTNode equation = ShuntingYardParser.get().convertInfixNotationToAST(eq);
         equation.print();
-        (new PolynomialDerivative()).returnAnswer(equation);
+        (PolynomialDerivative.get()).returnAnswer(equation);
         equation.print();
     }
 }

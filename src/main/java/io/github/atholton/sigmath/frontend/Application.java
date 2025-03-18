@@ -15,6 +15,7 @@ public class Application extends JFrame implements Runnable
     public static void main(String[] args) {
         Application sigmath = get();
         SwingUtilities.invokeLater(sigmath);
+        sigmath.setSize(1600, 900);
     }
 
     private Application() {
@@ -26,11 +27,11 @@ public class Application extends JFrame implements Runnable
         setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        LoadingMenu lm = new LoadingMenu();
-        //MainMenu mm = MainMenu.get();
+        //LoadingMenu lm = new LoadingMenu();
+        MainMenu mm = MainMenu.get();
         //AllTopicsMenu m = AllTopicsMenu.get();
-        //add(mm);
-        add(lm);
+        add(mm);
+        //add(lm);
 
         pack();
     }

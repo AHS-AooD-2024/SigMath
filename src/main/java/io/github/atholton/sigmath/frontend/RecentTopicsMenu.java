@@ -36,8 +36,7 @@ public class RecentTopicsMenu extends JPanel{
 
         topics = new ArrayList<TopicsButton>();
 
-        addTopic(new PolynomialDerivative(), "Ur stinky... - Albert Einstein");
-        addTopic(new PolynomialDerivative(), "I'm a frog");
+        addTopic(PolynomialDerivative.get(), "Ur stinky... - Albert Einstein");
         
         c.weightx = 1;
         c.weighty = 1;
