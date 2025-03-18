@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.Stack;
 
 public class ShuntingYardParser {
+    private static ShuntingYardParser instance;
 
     private final Map<String, Operator> operators;
 
@@ -37,7 +38,7 @@ public class ShuntingYardParser {
      * @param operators A collection of operators that should be recognized by
      * the parser.
      */
-    public ShuntingYardParser(Collection<Operator> operators) {
+    private ShuntingYardParser(Collection<Operator> operators) {
         this.operators = new HashMap<>();
         for(Operator o : operators) {
             this.operators.put(o.getSymbol(), o);
@@ -49,7 +50,7 @@ public class ShuntingYardParser {
      * Creates a ShuntingYardParser with default operators
      * 
      */
-    public ShuntingYardParser() {
+    private ShuntingYardParser() {
         operators = new HashMap<>();
         operators.put("^", new BaseOperator("^", true, 4));
         operators.put("*", new BaseOperator("*", false, 3));
@@ -62,6 +63,12 @@ public class ShuntingYardParser {
         functions.add("cos");
         functions.add("tan");
         functions.add("sqrt");
+    }
+
+    public static ShuntingYardParser get()
+    {
+        if (instance == null) instance = new ShuntingYardParser();
+        return instance;
     }
 
     private static boolean isNumber(char c)

@@ -15,6 +15,7 @@ public class Application extends JFrame implements Runnable
     public static void main(String[] args) {
         Application sigmath = get();
         SwingUtilities.invokeLater(sigmath);
+        sigmath.setSize(1600, 900);
     }
 
     private Application() {

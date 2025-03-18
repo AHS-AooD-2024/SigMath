@@ -7,10 +7,10 @@ import java.awt.event.ActionListener;
 
 import io.github.atholton.sigmath.topics.*;
 
-public class RecentTopicsButton extends JButton implements ActionListener{
+public class TopicsButton extends JButton implements ActionListener{
     private Topic topic;
 
-    public RecentTopicsButton(Topic topic, String topicString) {
+    public TopicsButton(Topic topic, String topicString) {
         super(topicString);
         this.topic = topic;
         addActionListener(this);
@@ -26,7 +26,7 @@ public class RecentTopicsButton extends JButton implements ActionListener{
         if (other == null) return false;
         if (other.getClass() != getClass()) return false;
 
-        RecentTopicsButton o = (RecentTopicsButton)other;
+        TopicsButton o = (TopicsButton)other;
         return o.topic.equals(topic);
     }
 

@@ -8,19 +8,19 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class AllTopicsMenu extends JPanel{
-    private ArrayList<RecentTopicsButton> topics;
+    private ArrayList<TopicsButton> topics;
     private static AllTopicsMenu instance;
     
     private AllTopicsMenu() {
-        topics = new ArrayList<RecentTopicsButton>();
+        topics = new ArrayList<TopicsButton>();
 
-        addTopic(new PolynomialDerivative(), "Ur stinky... - Albert Einstein");
-        for (RecentTopicsButton t : topics) {
+        addTopic(PolynomialDerivative.get(), "Ur stinky... - Albert Einstein");
+        for (TopicsButton t : topics) {
             add(t);
         }
     }
     public void addTopic(Topic t, String topicString) {
-        RecentTopicsButton b = new RecentTopicsButton(t, topicString);
+        TopicsButton b = new TopicsButton(t, topicString);
         topics.add(b);
     }
     public static AllTopicsMenu get()

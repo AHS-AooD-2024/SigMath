@@ -10,8 +10,17 @@ import java.awt.event.ActionListener;
 public class Toolbar extends JPanel{
     private JButton topics, settings, logo;
 
+    private void makeComponent(Component comp,
+                               GridBagLayout gridbag,
+                               GridBagConstraints c) {
+        gridbag.setConstraints(comp, c);
+        add(comp);
+        revalidate();
+    }
+
     public Toolbar() {
-        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
 
         //logo should redirect to recent Topics
         logo = new JButton("SigΣath");
@@ -74,9 +83,13 @@ public class Toolbar extends JPanel{
             
         });
 
-        add(topics);
-        add(logo);
-        add(settings);
+        //gridBag
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 1;
+        c.weighty = 1;
+        makeComponent(topics, (GridBagLayout)getLayout(), c);
+        makeComponent(logo, (GridBagLayout)getLayout(), c);
+        makeComponent(settings, (GridBagLayout)getLayout(), c);
 
         setBackground(new Color(201, 218, 248));
     }
