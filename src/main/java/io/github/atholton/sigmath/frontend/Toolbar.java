@@ -48,12 +48,22 @@ public class Toolbar extends JPanel{
         topics.setAlignmentY(TOP_ALIGNMENT);
         topics.setBorder(new EmptyBorder(0, 50, 0, 50));
         topics.addActionListener(new ActionListener() {
+            private JPanel previous;
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 MainMenu menu = MainMenu.get();
+                JPanel currentMenu = (JPanel) menu.getComponent(1);
                 menu.remove(menu.getComponent(1));
-                menu.add(AllTopicsMenu.get(), BorderLayout.CENTER);
+                if (currentMenu.getClass() == AllTopicsMenu.class)
+                {
+                    menu.add(previous);
+                }
+                else
+                {
+                    menu.add(AllTopicsMenu.get(), BorderLayout.CENTER);
+                }
+                previous = currentMenu;
                 menu.repaint();
                 menu.revalidate();
             }
@@ -69,14 +79,24 @@ public class Toolbar extends JPanel{
         settings.setAlignmentY(TOP_ALIGNMENT);
         settings.setBorder(new EmptyBorder(0, 50, 0, 50));
         settings.addActionListener(new ActionListener() {
+            private JPanel previous;
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 //System.out.println("butt");
                 MainMenu menu = MainMenu.get();
                 //super sick transition :thumbs up:
+                JPanel currentMenu = (JPanel) menu.getComponent(1);
                 menu.remove(menu.getComponent(1));
-                menu.add(SettingsMenu.get(), BorderLayout.CENTER);
+                if (currentMenu.getClass() == AllTopicsMenu.class)
+                {
+                    menu.add(previous);
+                }
+                else
+                {
+                    menu.add(SettingsMenu.get(), BorderLayout.CENTER);
+                }
+                previous = currentMenu;
                 menu.repaint();
                 menu.revalidate();
             }
