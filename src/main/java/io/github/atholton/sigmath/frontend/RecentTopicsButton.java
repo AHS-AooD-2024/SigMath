@@ -13,6 +13,7 @@ public class RecentTopicsButton extends JButton implements ActionListener{
     public RecentTopicsButton(Topic topic, String topicString) {
         super(topicString);
         this.topic = topic;
+        addActionListener(this);
     }
     
     public Topic getTopic() {

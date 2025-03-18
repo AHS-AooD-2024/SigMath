@@ -16,7 +16,7 @@ public class Toolbar extends JPanel{
         //logo should redirect to recent Topics
         logo = new JButton("SigΣath");
         logo.setFont(new Font("Sans Serif", Font.BOLD, 60));
-        logo.setBackground(Color.WHITE);
+        logo.setBackground(new Color(201, 218, 248));
         logo.setAlignmentY(TOP_ALIGNMENT);
         logo.setBorder(new EmptyBorder(0, 50, 0, 50));
         logo.addActionListener(new ActionListener() {
@@ -30,8 +30,12 @@ public class Toolbar extends JPanel{
             }
         });
 
-        topics = new JButton("Topics");
-        topics.setFont(new Font("Sans Serif", Font.BOLD, 60));
+        topics = new JButton();
+        //settings.setFont(new Font("Sans Serif", Font.BOLD, 60));
+        ImageIcon topicsIcon = new ImageIcon(getClass().getResource("tempTopics.jpg"));
+        topicsIcon = new ImageIcon(topicsIcon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH));
+        topics.setIcon(topicsIcon);
+        topics.setBackground(new Color(201, 218, 248));
         topics.setAlignmentY(TOP_ALIGNMENT);
         topics.setBorder(new EmptyBorder(0, 50, 0, 50));
         topics.addActionListener(new ActionListener() {
@@ -47,8 +51,12 @@ public class Toolbar extends JPanel{
             
         });
 
-        settings = new JButton("Settings");
-        settings.setFont(new Font("Sans Serif", Font.BOLD, 60));
+        settings = new JButton();
+        //settings.setFont(new Font("Sans Serif", Font.BOLD, 60));
+        ImageIcon settingsIcon = new ImageIcon(getClass().getResource("tempsettings.jpg"));
+        settingsIcon = new ImageIcon(settingsIcon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH));
+        settings.setIcon(settingsIcon);
+        settings.setBackground(new Color(201, 218, 248));
         settings.setAlignmentY(TOP_ALIGNMENT);
         settings.setBorder(new EmptyBorder(0, 50, 0, 50));
         settings.addActionListener(new ActionListener() {
