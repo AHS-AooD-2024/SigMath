@@ -35,7 +35,7 @@ public class QuestionGenerator {
         System.out.println(eq);
         ASTNode equation = ShuntingYardParser.get().convertInfixNotationToAST(eq);
         equation.print();
-        (PolynomialDerivative.get()).returnAnswer(equation);
+        PolynomialDerivative.get().returnAnswer(equation);
         equation.print();
     }
 }
