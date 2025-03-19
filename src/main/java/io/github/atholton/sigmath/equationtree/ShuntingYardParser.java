@@ -33,6 +33,8 @@ public class ShuntingYardParser {
     //currently only supports functions with one parameter, ie sin, cos, tan
     private final Set<String> functions;
 
+    private final Set<String> specialCharacters;
+
     private void addNode(Deque<ASTNode> stack, String operator) {
         if (operators.containsKey(operator))
         {
@@ -60,6 +62,7 @@ public class ShuntingYardParser {
             this.operators.put(o.getSymbol(), o);
         }
         functions = new HashSet<>();
+        specialCharacters = Set.of(BaseOperator.specialCharacters);
     }
 
     /**
@@ -76,6 +79,7 @@ public class ShuntingYardParser {
         
         functions = new HashSet<>();
         functions.addAll(Arrays.asList(BaseOperator.functions));
+        specialCharacters = Set.of(BaseOperator.specialCharacters);
     }
 
     private static boolean isNumber(char c)
@@ -104,6 +108,11 @@ public class ShuntingYardParser {
     {
         return functions.contains(token);
     }
+
+    private boolean isSpecial(String token) {
+        return specialCharacters.contains(token);
+    }
+
     /**
      * Tests if writing a function
      * ex) si returns true because it is writing sin
@@ -189,12 +198,19 @@ public class ShuntingYardParser {
     }
 
     private void loopTokenize(String input, List<String> tokens) {
-        final String ops = "+-/*(){}[]<>,|";
+        final String ops = "+-/*^<>=,|";
+        
+        // FIXME: absolute value pipes "|" COMPLETELY break everything.
+        // for now, we can just disallow them, but I would like to eventually
+        // se this fixed. 
+        final String opens = "({[";
+        final String closes = ")}]";
         
         // save heap space
         char[] dummy = new char[1];
         CharBuffer dummyBuff = CharBuffer.wrap(dummy);
         StringBuilder sb = new StringBuilder();
+        boolean lastWasClose = false;
 
         for(int i = 0; i < input.length(); i++) {
             char ch = input.charAt(i);
@@ -202,10 +218,28 @@ public class ShuntingYardParser {
             if(ops.contains(dummyBuff)) {
                 loopTokenize_tokenizeShortMultiplication(sb, tokens);
                 tokens.add(String.valueOf(ch));
-            } else if(ch == ' ') {
+                lastWasClose = false;
+            } else if (opens.contains(dummyBuff)) {
+                if(sb.isEmpty()) { // this means that the last thiing was an op
+                    tokens.add(String.valueOf(ch));
+                } else { // this means a var or num
+                    loopTokenize_tokenizeShortMultiplication(sb, tokens);
+                    tokens.add(ASTNode.IMPLICIT_TIMES);
+                    tokens.add(String.valueOf(ch));
+                }
+            } else if (closes.contains(dummyBuff)) {
                 loopTokenize_tokenizeShortMultiplication(sb, tokens);
+                tokens.add(String.valueOf(ch));
+                lastWasClose = true;
+            } else if (ch == ' ') {
+                loopTokenize_tokenizeShortMultiplication(sb, tokens);
+                lastWasClose = false;
             } else {
+                if(lastWasClose) {
+                    tokens.add(ASTNode.IMPLICIT_TIMES);
+                }
                 sb.append(ch);
+                lastWasClose = false;
             }
         }
 
@@ -215,12 +249,21 @@ public class ShuntingYardParser {
     private void loopTokenize_tokenizeShortMultiplication(StringBuilder sb, List<String> tokens) {
         if(sb.isEmpty()) return;
         String str = sb.toString();
-        if(isFunction(str)) {
+        if(isFunction(str) || isNumber(str) || isSpecial(str)) {
             tokens.add(str);
         } else {
             for(int i = 0; i < str.length() - 1; i++) {
-                tokens.add(str.substring(i, i + 1));
-                tokens.add("*");
+                // capture whole digits
+                if(Character.isDigit(str.charAt(i))) {
+                    int j = i;
+                    while(Character.isDigit(str.charAt(++j)))
+                        ;
+                    tokens.add(str.substring(i, j));
+                    i = j;
+                } else {
+                    tokens.add(str.substring(i, i + 1));
+                }
+                tokens.add(ASTNode.IMPLICIT_TIMES);
             }
             tokens.add(str.substring(str.length() - 1));
         }
@@ -252,6 +295,9 @@ public class ShuntingYardParser {
                 case " ":
                     break;
                 case "(":
+                    // if(!operandStack.isEmpty() && operandStack.peek().type != Type.OPERATOR) {
+                    //     operatorStack.push(ASTNode.IMPLICIT_TIMES);
+                    // }
                     operatorStack.push("(");
                     break;
                 case ")":
@@ -268,6 +314,7 @@ public class ShuntingYardParser {
                             addNode(operandStack, popped);
                         }
                     }
+                    // operatorStack.push(ASTNode.IMPLICIT_TIMES);
                     break;
                 default:
                     if (isFunction(token)) {

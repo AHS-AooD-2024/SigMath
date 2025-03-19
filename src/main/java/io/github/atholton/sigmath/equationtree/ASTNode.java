@@ -4,6 +4,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+
+import io.github.atholton.sigmath.util.Arrays2;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,24 +33,7 @@ public class ASTNode {
     public static Map<String, BiFunction<Double, Double, Double>> computeOperator;
     public static Map<String, Function<Double, Double>> computeFunction;
 
-    /**
-     * The set of tokens that are simple to replace, as they only need {@code x -> "\\" + x}
-     */
-    private static Set<String> simpleTexers = Set.of(
-        "sqrt",
-        "sin",
-        "cos",
-        "tan",
-        "sec",
-        "csc",
-        "cot",
-        "alpha",
-        "Alpha",
-        "gamma",
-        "Gamma",
-        "delta",
-        "Delta" 
-    );  
+    public static final String IMPLICIT_TIMES = "\\!implicit_times";
 
     /***
      * Constructs a new AST node. There's no explicit specialization for leaf
@@ -119,11 +105,10 @@ public class ASTNode {
     }
 
     private static String latexToken(String str) {
-        for(String s : simpleTexers) {
-            if(s.equals(str)) {
-                return " \\" + str + " ";
-            }
+        if(Arrays2.contains(BaseOperator.specialCharacters, str)) {
+            return " \\" + str + " ";
         }
+
         return str;
     }
 
@@ -148,6 +133,7 @@ public class ASTNode {
         String left = convertToLatex(node.getLeftASTNode());
         String right = convertToLatex(node.getRightASTNode());
 
+        System.out.println("2tex: " + value);
         // Handle different operators
         switch (value) {
             case "+":
@@ -155,6 +141,8 @@ public class ASTNode {
                 return "(" + left + " " + value + " " + right + ")";
             case "*":
                 return left + " \\times " + right;
+            case IMPLICIT_TIMES:
+                return implicitTimesTex(node.getLeftASTNode(), node.getRightASTNode(), left, right);
             case "/":
                 return "\\frac{" + left + "}{" + right + "}";
             case "^":
@@ -167,6 +155,23 @@ public class ASTNode {
                 return latexToken(value); // If it's a number or variable, return as is
         }
     }
+
+    private static String implicitTimesTex(ASTNode left, ASTNode right, String leftStr, String rightStr) {
+        if(left == null) return rightStr;
+        if(right == null) return leftStr;
+        if(
+            // xy
+            left.type == Type.VARIABLE && right.type == Type.VARIABLE ||
+            // 2x
+            left.type == Type.NUMBER && right.type != Type.NUMBER ||
+            left.value == IMPLICIT_TIMES || right.value == IMPLICIT_TIMES
+            ) {
+            return leftStr + rightStr;
+        } else {
+            return leftStr + " \\cdot " + rightStr;
+        }
+    }
+
     /**
      * Method to Convert a {@link ASTNode} tree into LaTeX format String
      * @return Equation in LaTeX
