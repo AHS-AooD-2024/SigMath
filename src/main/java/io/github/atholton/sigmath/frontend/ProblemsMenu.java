@@ -59,6 +59,7 @@ public class ProblemsMenu extends JPanel{
         c.weighty = 1;
         c.insets = new Insets(100, 20, 100, 20);
         percentageText = new JLabel("0%");
+        percentageText.setBackground(new Color(255, 0, 255));
         makeComponent(percentageText, layout, c);
 
         c.insets = new Insets(0, 0, 0, 0);
@@ -88,6 +89,7 @@ public class ProblemsMenu extends JPanel{
     }
     class Submit implements ActionListener
     {
+        private int numGuesses = 0;
         @Override
         public void actionPerformed(ActionEvent e) {
             String userAnswer = inputBox.input.getText();
@@ -105,9 +107,16 @@ public class ProblemsMenu extends JPanel{
             finally
             {
                 JOptionPane.showMessageDialog(Application.get(), right ? "RIGHT ANSWER":"WRONG ANSWER");
-                if (right)
+                if (right || numGuesses > 3)
                 {
+                    if (right) t.setProficiency(t.getProficiency() + 0.1);
+
                     problemText.setText(questionGenerator.generateQuestion());
+                    numGuesses = 0;
+                }
+                else
+                {
+                    numGuesses++;
                 }
             }
         }

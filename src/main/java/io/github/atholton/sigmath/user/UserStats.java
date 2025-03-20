@@ -1,4 +1,4 @@
-package io.github.atholton.sigmath.topics;
+package io.github.atholton.sigmath.user;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -8,6 +8,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.atholton.sigmath.topics.PolynomialDerivative;
+import io.github.atholton.sigmath.topics.Topic;
+
 /**
  * Contains all the statistics of the user, ie their profiecency level in all topics
  * Should be saved and maybe have profiles or smth
@@ -15,41 +18,14 @@ import java.util.List;
 public class UserStats implements Serializable {
     private static final long serialVersionUID = -539438982350009L;
     private List<Topic> allTopics;
+    private UserSettings settings;
     String name, path; //will look for default path only
     private static UserStats instance;
 
     private UserStats()
     {
         
-        //look for file with default. ex) default.osufile idk
-        //else make a new one
-        try {
-            //get file, then read all the topics
-            FileInputStream file = new FileInputStream("DEFAULT.dat");
-            ObjectInputStream in = new ObjectInputStream(file);
-
-            UserStats read = (UserStats)in.readObject();
-            instance = read;
-            //assign the topics their topics from file, which would hold proficiency
-            for (Topic t : instance.allTopics)
-            {
-                if (t instanceof PolynomialDerivative)
-                {
-                    PolynomialDerivative.set((PolynomialDerivative)t);
-                }
-                //horrendous code
-            }
-            //assign name as well
-
-            in.close();
-        } catch (Exception e) {
-            //add all other topics
-            allTopics = new ArrayList<>();
-            allTopics.add(PolynomialDerivative.get());
-            //get name
-            name = "User";
-            path = "DEFAULT";
-        }
+        this("DEFAULT");
     }
     
     private UserStats(String tempPath)
@@ -64,6 +40,7 @@ public class UserStats implements Serializable {
 
             UserStats read = (UserStats)in.readObject();
             instance = read;
+            UserSettings.set(read.settings);
             //assign the topics their topics from file, which would hold proficiency
             for (Topic t : instance.allTopics)
             {
@@ -78,6 +55,8 @@ public class UserStats implements Serializable {
             //add all other topics
             allTopics = new ArrayList<>();
             allTopics.add(PolynomialDerivative.get());
+            //add settings
+            settings = UserSettings.get(); //pointer so dynamic
             //get name
             name = "User";
             path = "DEFAULT";
