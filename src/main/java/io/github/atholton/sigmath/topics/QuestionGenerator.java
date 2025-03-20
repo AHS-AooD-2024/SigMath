@@ -1,10 +1,8 @@
-package io.github.atholton.sigmath;
+package io.github.atholton.sigmath.topics;
 import java.util.Random;
 
-import io.github.atholton.sigmath.topics.Topic;
 import io.github.atholton.sigmath.equationtree.ASTNode;
 import io.github.atholton.sigmath.equationtree.ShuntingYardParser;
-import io.github.atholton.sigmath.topics.PolynomialDerivative;
 
 public class QuestionGenerator {
     private Topic topic;
@@ -29,6 +27,7 @@ public class QuestionGenerator {
                        .replaceAll("e", String.valueOf(random.nextInt(20) + 1))
                        .replaceAll("n", String.valueOf(random.nextInt(5) + 1));//this is a horrendous line btw
     }
+    /*
     public static void main(String[] args) {
         QuestionGenerator gen = new QuestionGenerator(PolynomialDerivative.get());
         String eq = gen.generateQuestion();
@@ -38,5 +37,6 @@ public class QuestionGenerator {
         PolynomialDerivative.get().returnAnswer(equation);
         equation.print();
     }
+        */
 }
 

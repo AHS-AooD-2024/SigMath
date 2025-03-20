@@ -10,6 +10,7 @@ import io.github.atholton.sigmath.equationtree.ASTNode;
  */
 public class PolynomialDerivative extends Topic {
     private static PolynomialDerivative instance;
+    private static final long serialVersionUID = 324090982439L;
     public static PolynomialDerivative get()
     {
         if (instance == null) instance = new PolynomialDerivative();

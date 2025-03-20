@@ -1,4 +1,5 @@
 package io.github.atholton.sigmath.topics;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import io.github.atholton.sigmath.equationtree.ASTNode;
@@ -8,7 +9,7 @@ import io.github.atholton.sigmath.equationtree.ASTNode;
  * @author Abhay Nagaraj
  */
 //Should topics be singleton? should user stats just have a list of all Topics?
-public abstract class Topic {
+public abstract class Topic implements Serializable{
     protected double proficiencyLevel;
 
     /**
@@ -25,6 +26,10 @@ public abstract class Topic {
     public double getProficiency()
     {
         return proficiencyLevel;
+    }
+    public void setProficiency(double proficiency)
+    {
+        proficiencyLevel = proficiency;
     }
     
     /**
