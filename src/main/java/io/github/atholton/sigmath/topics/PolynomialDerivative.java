@@ -3,6 +3,7 @@ package io.github.atholton.sigmath.topics;
 import java.util.ArrayList;
 
 import io.github.atholton.sigmath.equationtree.ASTNode;
+import io.github.atholton.sigmath.equationtree.ASTNode.Type;
 
 /**
  * Represents all polynomial derivatives
@@ -29,36 +30,41 @@ public class PolynomialDerivative extends Topic {
     @Override
     //TODO: broken lol
     public ASTNode returnAnswer(ASTNode question) {
-        ASTNode tempQuestion = question;
-        ASTNode qL = tempQuestion.getLeftASTNode();
-        ASTNode qR = tempQuestion.getRightASTNode();
-
-        deriveConstants(tempQuestion);
-        reformatX(tempQuestion);   
+        //return question;
+        deriveConstants(question);
+        reformatX(question);
+        
+        ASTNode qL = question.getLeftASTNode();
+        ASTNode qR = question.getRightASTNode();
 
         if (qL == null || qR == null) {
             //Do nothing
         }
-        else if (!(tempQuestion.getLeftASTNode().getValue().equals("x") && tempQuestion.getValue().equals("^"))) {
-            returnAnswer(tempQuestion.getLeftASTNode());
-            returnAnswer(tempQuestion.getRightASTNode());
+        else if (!(question.getLeftASTNode().getValue().equals("x") && question.getValue().equals("^"))) {
+            returnAnswer(question.getLeftASTNode());
+            returnAnswer(question.getRightASTNode());
         }
         else {
-            return solve(tempQuestion);
+            ASTNode copiedQuestion = ASTNode.copy(question);
+            ASTNode.replaceNode(question, new ASTNode("*", ASTNode.copy(copiedQuestion.getRightASTNode()), copiedQuestion, Type.OPERATOR));
+
+            //question = new ASTNode("*", ASTNode.copy(copiedQuestion.getRightASTNode()), copiedQuestion, Type.OPERATOR);
+            qR = question.getRightASTNode();
+            qL = question.getLeftASTNode();
+            qR.getRightASTNode().setValue(Double.parseDouble(qR.getRightASTNode().getValue()) - 1);
         }
-        return tempQuestion;
+        return question;
     }
     
     @Override
     protected ASTNode solve(ASTNode question) {
-        ASTNode tempQuestion = question;
-        ASTNode qL = tempQuestion.getLeftASTNode();
-        ASTNode qR = tempQuestion.getRightASTNode();
+        ASTNode qL = question.getLeftASTNode();
+        ASTNode qR = question.getRightASTNode();
 
         qL.multByConstant(Double.parseDouble(qR.getValue()));
         qR.setValue(Double.parseDouble(qR.getValue()) - 1);
 
-        return tempQuestion;
+        return question;
     }
 
     /**
@@ -66,9 +72,8 @@ public class PolynomialDerivative extends Topic {
      * @param question question to process x's in
      */
     protected void reformatX(ASTNode question) {
-        ASTNode tempQuestion = question;
-        ASTNode qL = tempQuestion.getLeftASTNode();
-        ASTNode qR = tempQuestion.getRightASTNode(); 
+        ASTNode qL = question.getLeftASTNode();
+        ASTNode qR = question.getRightASTNode(); 
         
         if (qR == null || !(qR.getValue().equals("x"))) {//first condition used to short-circuit
             if (qL != null)
@@ -79,6 +84,12 @@ public class PolynomialDerivative extends Topic {
         else {
             qR.addExponent(1);
         }
+        
+        /*
+        if (question.getValue().equals("x")) {
+            question.addExponent(1);
+        }
+        */
     }
 
     /**
@@ -86,12 +97,11 @@ public class PolynomialDerivative extends Topic {
      * @param question question to derive constants in
      */
     protected void deriveConstants(ASTNode question) {
-        ASTNode tempQuestion = question;
-        ASTNode qL = tempQuestion.getLeftASTNode();
-        ASTNode qR = tempQuestion.getRightASTNode(); 
+        ASTNode qL = question.getLeftASTNode();
+        ASTNode qR = question.getRightASTNode(); 
         try {
             Double.parseDouble(qR.getValue());
-            if (tempQuestion.getValue().equals("+"))
+            if (question.getValue().equals("+"))
                 qR.setValue(0);
         }
         catch (Exception e) {
@@ -103,7 +113,7 @@ public class PolynomialDerivative extends Topic {
 
         try {
             Double.parseDouble(qL.getValue());
-            if (tempQuestion.getValue().equals("+"))
+            if (question.getValue().equals("+"))
                 qL.setValue(0);
         }
         catch (Exception e) {

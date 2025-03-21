@@ -574,7 +574,7 @@ public class ASTNode {
     
         return root;
     }
-    private ASTNode copy(final ASTNode node)
+    public static ASTNode copy(final ASTNode node)
     {
         if (node == null) return null;
         return new ASTNode(node.getValue(), copy(node.getLeftASTNode()), copy(node.getRightASTNode()), node.type);
@@ -651,7 +651,7 @@ public class ASTNode {
      * @param node1 node to be replaced
      * @param node2 node that will replace node1
      */
-    private static void replaceNode(ASTNode node1, ASTNode node2)
+    public static void replaceNode(ASTNode node1, ASTNode node2)
     {
         //replacing everything should 
         node1.value = node2.value;
