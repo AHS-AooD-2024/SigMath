@@ -3,12 +3,28 @@ package io.github.atholton.sigmath.frontend;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import io.github.atholton.sigmath.user.UserSettings;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Toolbar extends JPanel{
     private JButton topics, settings, logo;
+    private static Toolbar instance;
+
+    public static Toolbar get()
+    {
+        if (instance == null) instance = new Toolbar();
+        return instance;
+    }
+    public static void updateSize()
+    {
+        UserSettings settings = UserSettings.get();
+        int size = settings.getToolBarSize();
+        Toolbar bar = Toolbar.get();
+        bar.logo.setFont(bar.logo.getFont().deriveFont((size/100.0f * bar.logo.getFont().getSize())));
+    }
 
     private void makeComponent(Component comp,
                                GridBagLayout gridbag,
@@ -18,7 +34,7 @@ public class Toolbar extends JPanel{
         revalidate();
     }
 
-    public Toolbar() {
+    private Toolbar() {
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
@@ -26,8 +42,6 @@ public class Toolbar extends JPanel{
         logo = new JButton("SigΣath");
         logo.setFont(new Font("Sans Serif", Font.BOLD, 60));
         logo.setBackground(new Color(201, 218, 248));
-        logo.setAlignmentY(TOP_ALIGNMENT);
-        logo.setBorder(new EmptyBorder(0, 50, 0, 50));
         logo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 MainMenu menu = MainMenu.get();
@@ -45,8 +59,6 @@ public class Toolbar extends JPanel{
         topicsIcon = new ImageIcon(topicsIcon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH));
         topics.setIcon(topicsIcon);
         topics.setBackground(new Color(201, 218, 248));
-        topics.setAlignmentY(TOP_ALIGNMENT);
-        topics.setBorder(new EmptyBorder(0, 50, 0, 50));
         topics.addActionListener(new ActionListener() {
             private JPanel previous;
 
@@ -76,8 +88,6 @@ public class Toolbar extends JPanel{
         settingsIcon = new ImageIcon(settingsIcon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH));
         settings.setIcon(settingsIcon);
         settings.setBackground(new Color(201, 218, 248));
-        settings.setAlignmentY(TOP_ALIGNMENT);
-        settings.setBorder(new EmptyBorder(0, 50, 0, 50));
         settings.addActionListener(new ActionListener() {
             private JPanel previous;
 
@@ -107,6 +117,7 @@ public class Toolbar extends JPanel{
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1;
         c.weighty = 1;
+        c.insets = new Insets(30, 50, 30, 50);
         makeComponent(topics, (GridBagLayout)getLayout(), c);
         makeComponent(logo, (GridBagLayout)getLayout(), c);
         makeComponent(settings, (GridBagLayout)getLayout(), c);

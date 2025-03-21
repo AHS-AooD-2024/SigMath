@@ -5,12 +5,12 @@ import java.io.Serializable;
 public class UserSettings implements Serializable
 {
     private static final long serialVersionUID = -2980982098L;
-    private int fontSize;
+    private int fontSize, toolBarSize;
     private static UserSettings instance;
     private UserSettings()
     {
         //default
-        fontSize = 50;
+        fontSize = 100;
     }
     public int getFontSize()
     {
@@ -19,6 +19,14 @@ public class UserSettings implements Serializable
     public void setFontSize(int size)
     {
         fontSize = size;
+    }
+    public int getToolBarSize()
+    {
+        return toolBarSize;
+    }
+    public void setToolBarSize(int size)
+    {
+        toolBarSize = size;
     }
     public static UserSettings get()
     {

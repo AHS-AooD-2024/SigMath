@@ -25,7 +25,9 @@ public class QuestionGenerator {
                        .replaceAll("c", String.valueOf(random.nextInt(20) + 1))
                        .replaceAll("d", String.valueOf(random.nextInt(20) + 1))
                        .replaceAll("e", String.valueOf(random.nextInt(20) + 1))
-                       .replaceAll("n", String.valueOf(random.nextInt(5) + 1));//this is a horrendous line btw
+                       .replaceAll("n1", String.valueOf(random.nextInt(5) + 1))
+                       .replaceAll("n2", String.valueOf(random.nextInt(5) + 1))
+                       .replaceAll("n3", String.valueOf(random.nextInt(5) + 1));//this is a horrendous line btw
     }
     /*
     public static void main(String[] args) {
