@@ -72,7 +72,7 @@ public class Toolbar extends JPanel{
 
         settings = new JButton();
         //settings.setFont(new Font("Sans Serif", Font.BOLD, 60));
-        ImageIcon settingsIcon = new ImageIcon(getClass().getResource("tempsettings.jpg"));
+        ImageIcon settingsIcon = new ImageIcon(getClass().getResource("settings.png"));
         settingsIcon = new ImageIcon(settingsIcon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH));
         settings.setIcon(settingsIcon);
         settings.setBackground(new Color(201, 218, 248));

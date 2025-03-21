@@ -2,17 +2,23 @@ package io.github.atholton.sigmath.frontend;
 
 import javax.swing.*;
 
-import io.github.atholton.sigmath.QuestionGenerator;
+import io.github.atholton.sigmath.equationtree.ASTNode;
+import io.github.atholton.sigmath.equationtree.ShuntingYardParser;
 import io.github.atholton.sigmath.latex.DualTeXField;
+import io.github.atholton.sigmath.topics.QuestionGenerator;
+import io.github.atholton.sigmath.topics.QuestionTester;
 import io.github.atholton.sigmath.topics.Topic;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class ProblemsMenu extends JPanel{
     private DualTeXField inputBox;
     private JLabel problemText, percentageText;
     private JButton submitButton, getHelpButton;
     private QuestionGenerator questionGenerator;
+    private Topic t;
     private GridBagLayout layout;
     private GridBagConstraints c;
 
@@ -30,6 +36,7 @@ public class ProblemsMenu extends JPanel{
         setLayout(layout);
 
         questionGenerator = new QuestionGenerator(t);
+        this.t = t;
 
         c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
@@ -52,6 +59,7 @@ public class ProblemsMenu extends JPanel{
         c.weighty = 1;
         c.insets = new Insets(100, 20, 100, 20);
         percentageText = new JLabel("0%");
+        percentageText.setBackground(new Color(255, 0, 255));
         makeComponent(percentageText, layout, c);
 
         c.insets = new Insets(0, 0, 0, 0);
@@ -62,9 +70,10 @@ public class ProblemsMenu extends JPanel{
         inputBox = new DualTeXField();
         makeComponent(inputBox, layout, c);
 
-        c.weighty = 0.5;
+        c.weighty = 0.2;
         c.insets = new Insets(30, 100, 30, 100);
         submitButton = new JButton("Submit");
+        submitButton.addActionListener(new Submit());
         makeComponent(submitButton, layout, c);
 
         c.insets = new Insets(0, 0, 0, 0);
@@ -77,5 +86,40 @@ public class ProblemsMenu extends JPanel{
         makeComponent(getHelpButton, layout, c);
 
         problemText.setText(questionGenerator.generateQuestion());
+    }
+    class Submit implements ActionListener
+    {
+        private int numGuesses = 0;
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String userAnswer = inputBox.input.getText();
+            boolean right = false;
+            try
+            {
+                ASTNode userEquation = ShuntingYardParser.get().convertInfixNotationToAST(userAnswer);
+                ASTNode answer = t.returnAnswer(ShuntingYardParser.get().convertInfixNotationToAST(problemText.getText()));
+                right = QuestionTester.testEquations(userEquation, answer);
+            }
+            catch(Exception exception)
+            {
+                System.out.println("AHHHHHHHHHHHHHHHHHHHHHHHHHHHHH\nMY LEGGGGGGGGGGGGG");
+            }
+            finally
+            {
+                JOptionPane.showMessageDialog(Application.get(), right ? "RIGHT ANSWER":"WRONG ANSWER");
+                if (right || numGuesses > 3)
+                {
+                    if (right) t.setProficiency(t.getProficiency() + 0.1);
+
+                    problemText.setText(questionGenerator.generateQuestion());
+                    numGuesses = 0;
+                }
+                else
+                {
+                    numGuesses++;
+                }
+            }
+        }
+
     }
 }

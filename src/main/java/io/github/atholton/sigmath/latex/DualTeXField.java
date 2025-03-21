@@ -16,7 +16,7 @@ import io.github.atholton.sigmath.util.Strings;
  *  and a {@link TeXLabel}.
  */
 public class DualTeXField extends JPanel {
-    private JTextField input;
+    public JTextField input;
     private TeXLabel output;
 
     private DocumentListener labelUpdater;

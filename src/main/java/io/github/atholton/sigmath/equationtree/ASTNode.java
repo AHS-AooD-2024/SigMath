@@ -541,7 +541,7 @@ public class ASTNode {
      * @param targetOperator
      * @return
      */
-    private static List<ASTNode> flatten(ASTNode node, Operator targetOperator) {
+    public static List<ASTNode> flatten(ASTNode node, Operator targetOperator) {
         List<ASTNode> result = new ArrayList<>();
         flatten(node, targetOperator.getSymbol(), result);
         return result;
@@ -564,7 +564,7 @@ public class ASTNode {
      * @param operator
      * @return
      */
-    private static ASTNode rebuild(List<ASTNode> nodes, String operator) {
+    public static ASTNode rebuild(List<ASTNode> nodes, String operator) {
         if (nodes == null || nodes.isEmpty()) return null;
         ASTNode root = nodes.get(0);
     
