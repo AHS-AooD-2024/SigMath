@@ -189,6 +189,8 @@ public class ShuntingYardParser {
     private List<String> tokenize2(String input) {
         // it is easier to not deal with spaces
         input = input.replace(" ", "");
+        // but what if... we did?
+        // ok it actually breaks everything don't.
         List<String> tokens = new ArrayList<>();
 
         loopTokenize(input, tokens);
@@ -224,7 +226,8 @@ public class ShuntingYardParser {
                     tokens.add(String.valueOf(ch));
                 } else { // this means a var or num
                     loopTokenize_tokenizeShortMultiplication(sb, tokens);
-                    tokens.add(ASTNode.IMPLICIT_TIMES);
+                    // tokens.add(ASTNode.IMPLICIT_TIMES);
+                    // tokens.add("*");
                     tokens.add(String.valueOf(ch));
                 }
             } else if (closes.contains(dummyBuff)) {
@@ -236,7 +239,8 @@ public class ShuntingYardParser {
                 lastWasClose = false;
             } else {
                 if(lastWasClose) {
-                    tokens.add(ASTNode.IMPLICIT_TIMES);
+                    // tokens.add(ASTNode.IMPLICIT_TIMES);
+                    tokens.add("*");
                 }
                 sb.append(ch);
                 lastWasClose = false;
@@ -256,7 +260,7 @@ public class ShuntingYardParser {
                 // capture whole digits
                 if(Character.isDigit(str.charAt(i))) {
                     int j = i;
-                    while(Character.isDigit(str.charAt(++j)))
+                    while(j < str.length() - 1 && Character.isDigit(str.charAt(++j)))
                         ;
                     tokens.add(str.substring(i, j));
                     i = j;

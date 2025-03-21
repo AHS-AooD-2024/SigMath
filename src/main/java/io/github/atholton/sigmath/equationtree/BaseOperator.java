@@ -24,12 +24,12 @@ public class BaseOperator implements Operator {
 
     public static final String[] specialCharacters = {
         "alpha", "Alpha",
-        "beta ", "Beta ",
+        "beta", "Beta",
         "gamma", "Gamma",
         "delta", "Delta",
         "epsilon", "Epsilon",
-        "zeta", "Zeta ",
-        "theta ", "Theta ",
+        "zeta", "Zeta",
+        "theta", "Theta",
         "Eta", "eta",
         "iota", "Iota",
         "kappa", "Kappa",
