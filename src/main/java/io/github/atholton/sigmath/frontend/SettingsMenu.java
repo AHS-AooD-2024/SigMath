@@ -17,6 +17,7 @@ public class SettingsMenu extends JPanel implements Serializable{
     private JSlider fontSize;
     private GridBagLayout layout;
     private GridBagConstraints c;
+    
     private void addComponent(Component comp)
     {
         layout.setConstraints(comp, c);
@@ -27,6 +28,7 @@ public class SettingsMenu extends JPanel implements Serializable{
         super();
         fontSizeLabel = new JLabel("Font Size");
         fontSize = new JSlider(1, 100);
+        
         fontSize.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e)
             {

@@ -20,6 +20,7 @@ public class Application extends JFrame implements Runnable
 
     private Application() {
         super("SigMath");
+        setExtendedState(JFrame.MAXIMIZED_BOTH); 
     }
 
     @Override
