@@ -11,6 +11,7 @@ public class UserSettings implements Serializable
     {
         //default
         fontSize = 100;
+        toolBarSize = 100;
     }
     public int getFontSize()
     {

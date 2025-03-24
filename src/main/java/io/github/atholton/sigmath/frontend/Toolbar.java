@@ -3,14 +3,18 @@ package io.github.atholton.sigmath.frontend;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import java.io.File;
+
 import io.github.atholton.sigmath.user.UserSettings;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class Toolbar extends JPanel{
     private JButton topics, settings, logo;
+    private Font lexend;
     private static Toolbar instance;
 
     public static Toolbar get()
@@ -35,12 +39,21 @@ public class Toolbar extends JPanel{
     }
 
     private Toolbar() {
+        try {
+            lexend = Font.createFont(Font.TRUETYPE_FONT, new File("Lexend-VariableFont_wght.ttf"));
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(lexend);
+            //lexend.decode(TOOL_TIP_TEXT_KEY);
+        }
+        catch (IOException | FontFormatException e) {
+
+        }
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
         //logo should redirect to recent Topics
         logo = new JButton("SigΣath");
-        logo.setFont(new Font("Sans Serif", Font.BOLD, 60));
+        logo.setFont(lexend);
         logo.setBackground(new Color(201, 218, 248));
         logo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

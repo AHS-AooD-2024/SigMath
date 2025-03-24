@@ -1,4 +1,4 @@
--package io.github.atholton.sigmath.frontend;
+package io.github.atholton.sigmath.frontend;
 
 import javax.swing.*;
 
@@ -41,4 +41,3 @@ public class Application extends JFrame implements Runnable
         return instance;
     }
 }
-+
