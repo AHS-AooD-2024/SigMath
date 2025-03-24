@@ -14,7 +14,7 @@ public class QuestionGenerator {
     }
 
     public String generateQuestion() {
-        String formula = topic.getFormula(); // Retrieve a formula for the selected topic
+        String formula = topic.getFormula(0); // Retrieve a formula for the selected topic
         String formattedQuestion = replaceVariables(formula); // Replace variables with numbers
         return new String(formattedQuestion);
     }
@@ -29,7 +29,6 @@ public class QuestionGenerator {
                        .replaceAll("n2", String.valueOf(random.nextInt(5) + 1))
                        .replaceAll("n3", String.valueOf(random.nextInt(5) + 1));//this is a horrendous line btw
     }
-    /*
     public static void main(String[] args) {
         QuestionGenerator gen = new QuestionGenerator(PolynomialDerivative.get());
         String eq = gen.generateQuestion();
@@ -38,7 +37,10 @@ public class QuestionGenerator {
         equation.print();
         PolynomialDerivative.get().returnAnswer(equation);
         equation.print();
+        equation.simplify();
+        System.out.println();
+        equation.print();
     }
-        */
+        
 }
 

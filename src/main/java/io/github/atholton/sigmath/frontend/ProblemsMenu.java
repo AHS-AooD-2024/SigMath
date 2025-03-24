@@ -98,7 +98,8 @@ public class ProblemsMenu extends JPanel{
             try
             {
                 ASTNode userEquation = ShuntingYardParser.get().convertInfixNotationToAST(userAnswer);
-                ASTNode answer = t.returnAnswer(ShuntingYardParser.get().convertInfixNotationToAST(problemText.getText()));
+                ASTNode answer = ShuntingYardParser.get().convertInfixNotationToAST(problemText.getText());
+                t.returnAnswer(answer);
                 right = QuestionTester.testEquations(userEquation, answer);
             }
             catch(Exception exception)

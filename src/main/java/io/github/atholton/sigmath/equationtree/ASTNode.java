@@ -200,14 +200,10 @@ public class ASTNode {
         if (node.type == Type.OPERATOR)
         {
             simplificationRules(node);
-            if (left.type == Type.NUMBER && right.type == Type.NUMBER)
-            {
-                arithmeticSolve(node);
-            }
-            else if (left.type == Type.OPERATOR || right.type == Type.OPERATOR)
+            arithmetic(node);
+            if (left.type == Type.OPERATOR || right.type == Type.OPERATOR)
             {
                 distribute(node);
-
                 //maybe combine like terms???
                 combineLikeTerms(node);
             }
@@ -251,21 +247,27 @@ public class ASTNode {
      */
     private void arithmetic(ASTNode node)
     {
-        if (node == null) return;
-    
-        ASTNode left = node.getLeftASTNode();
-        ASTNode right = node.getRightASTNode();
-
-        arithmetic(left);
-        arithmetic(right);
-
-        if (node.type == Type.OPERATOR)
+        if (node.type != Type.OPERATOR) return;
+        Operator op = BaseOperator.getOperator(node.value);
+        List<ASTNode> list = flatten(copy(node), op);
+        for (int i = 0; i < list.size(); i++)
         {
-            if (left.type == Type.NUMBER && right.type == Type.NUMBER)
+            for (int j = i + 1; j < list.size(); j++)
             {
-                arithmeticSolve(node);
+                if (j >= list.size() || i >= list.size()) continue;
+                if (list.get(i).type == Type.NUMBER && list.get(j).type == Type.NUMBER)
+                {
+                    ASTNode a = list.get(i), b = list.get(j);
+                    double leftValue = Double.parseDouble(a.value);
+                    double rightValue = Double.parseDouble(b.value);
+                    double value = computeOperator.get(node.getValue()).apply(leftValue, rightValue);
+                    list.remove(a);
+                    list.remove(b);
+                    list.add(new ASTNode(String.valueOf(value), null, null, Type.NUMBER));
+                }
             }
         }
+        replaceNode(node, rebuild(list, op.getSymbol()));
     }
     private void arithmeticSolve(ASTNode node)
     {
@@ -295,8 +297,9 @@ public class ASTNode {
             Operator operator = BaseOperator.getOperator(node.value);
 
             List<ASTNode> flattenedNodes = flatten(node, operator);
-            System.out.println(node.value);
-            System.out.println(flattenedNodes);
+
+            //System.out.println(node.value);
+            //System.out.println(flattenedNodes);
 
             Map<ASTNode, List<ASTNode>> likeTerms = new HashMap<>();
 
@@ -311,8 +314,8 @@ public class ASTNode {
             }
 
             flattenedNodes = combine(likeTerms, operator);
-            System.out.println(flattenedNodes);
-            System.out.println();
+            //System.out.println(flattenedNodes);
+            //System.out.println();
             ASTNode newTree = rebuild(flattenedNodes, operator.getSymbol());
             replaceNode(node, newTree);
         }
@@ -331,7 +334,7 @@ public class ASTNode {
             {
                 if (coefficient.type == Type.NUMBER)
                 {
-                    //computeOperator.get(operator.getSymbol()).apply(Double.parseDouble(coefficient.value), num);
+                    //num = computeOperator.get(operator.getSymbol()).apply(Double.parseDouble(coefficient.value), num);
                     num += Double.parseDouble(coefficient.value);
                 }
                 else
@@ -396,14 +399,14 @@ public class ASTNode {
         }
         //if its a number, then its just a constant, without any base
         //though its being multiplied so just put in 1
-        if (node.type == Type.NUMBER) return new ASTNode("1.0", null, null, Type.NUMBER);
+        if (node.type == Type.NUMBER && operator.getSymbol().equals("+")) return new ASTNode("1.0", null, null, Type.NUMBER);
 
         //assume whole thing is base, but this is not always the case...
         return node;
     }
     private ASTNode getCoefficient(ASTNode node, Operator operator)
     {
-        if (node.type == Type.NUMBER) return node;
+        if (node.type == Type.NUMBER && operator.getSymbol().equals("+")) return node;
 
         String above = operator.getSymbol().equals("+") ? "*" : "^";
 
@@ -595,6 +598,10 @@ public class ASTNode {
                 if (Double.parseDouble(right.getValue()) == 1.0)
                 {
                     replaceNode(node, left);
+                }
+                if (Double.parseDouble(right.getValue()) == 0.0)
+                {
+                    replaceNode(node, new ASTNode("1", null, null, Type.NUMBER));
                 }
             }
             else if (left.type == Type.NUMBER)
