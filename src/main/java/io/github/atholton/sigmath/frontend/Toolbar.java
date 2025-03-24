@@ -38,7 +38,7 @@ public class Toolbar extends JPanel{
         revalidate();
     }
 
-    public Toolbar() {
+    private Toolbar() {
         try {
             lexend = Font.createFont(Font.TRUETYPE_FONT, new File("Lexend-VariableFont_wght.ttf"));
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
