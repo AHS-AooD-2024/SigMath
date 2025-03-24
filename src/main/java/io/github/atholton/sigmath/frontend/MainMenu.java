@@ -9,7 +9,7 @@ public class MainMenu extends JPanel {
     private MainMenu() {
         
         setLayout(new BorderLayout());
-        add(new Toolbar(), BorderLayout.NORTH);
+        add(Toolbar.get(), BorderLayout.NORTH);
         add(RecentTopicsMenu.get());
     }
     public static MainMenu get()

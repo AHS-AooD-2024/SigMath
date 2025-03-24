@@ -59,6 +59,7 @@ public class ProblemsMenu extends JPanel{
         c.weighty = 1;
         c.insets = new Insets(100, 20, 100, 20);
         percentageText = new JLabel("0%");
+        percentageText.setOpaque(true);
         percentageText.setBackground(new Color(255, 0, 255));
         makeComponent(percentageText, layout, c);
 
@@ -71,7 +72,7 @@ public class ProblemsMenu extends JPanel{
         makeComponent(inputBox, layout, c);
 
         c.weighty = 0.2;
-        c.insets = new Insets(30, 100, 30, 100);
+        c.insets = new Insets(30, 300, 30, 100);
         submitButton = new JButton("Submit");
         submitButton.addActionListener(new Submit());
         makeComponent(submitButton, layout, c);

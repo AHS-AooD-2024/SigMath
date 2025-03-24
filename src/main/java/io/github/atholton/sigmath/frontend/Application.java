@@ -1,4 +1,4 @@
-package io.github.atholton.sigmath.frontend;
+-package io.github.atholton.sigmath.frontend;
 
 import javax.swing.*;
 
@@ -15,7 +15,6 @@ public class Application extends JFrame implements Runnable
     public static void main(String[] args) {
         Application sigmath = get();
         SwingUtilities.invokeLater(sigmath);
-        sigmath.setSize(1600, 900);
     }
 
     private Application() {
@@ -42,3 +41,4 @@ public class Application extends JFrame implements Runnable
         return instance;
     }
 }
++
