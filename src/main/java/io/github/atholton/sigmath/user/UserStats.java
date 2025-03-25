@@ -1,10 +1,12 @@
 package io.github.atholton.sigmath.user;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +21,7 @@ public class UserStats implements Serializable {
     private static final long serialVersionUID = -539438982350009L;
     private List<Topic> allTopics;
     private UserSettings settings;
-    String name, path; //will look for default path only
+    public String name, path; //will look for default path only
     private static UserStats instance;
 
     private UserStats()
@@ -35,21 +37,13 @@ public class UserStats implements Serializable {
         //else make a new one
         try {
             //get file, then read all the topics
-            FileInputStream file = new FileInputStream(tempPath + ".dat");
+            FileInputStream file = new FileInputStream("data/" + tempPath + ".dat");
             ObjectInputStream in = new ObjectInputStream(file);
 
             UserStats read = (UserStats)in.readObject();
             instance = read;
-            UserSettings.set(read.settings);
-            //assign the topics their topics from file, which would hold proficiency
-            for (Topic t : instance.allTopics)
-            {
-                if (t instanceof PolynomialDerivative)
-                {
-                    PolynomialDerivative.set((PolynomialDerivative)t);
-                }
-                //horrendous code
-            }
+            setStuff(read);
+            
             in.close();
         } catch (Exception e) {
             //add all other topics
@@ -62,7 +56,19 @@ public class UserStats implements Serializable {
             path = "DEFAULT";
         }
     }
-        
+    private static void setStuff(UserStats read)
+    {
+        UserSettings.set(read.settings);
+            //assign the topics their topics from file, which would hold proficiency
+        for (Topic t : instance.allTopics)
+        {
+            if (t instanceof PolynomialDerivative)
+            {
+                PolynomialDerivative.set((PolynomialDerivative)t);
+            }
+            //horrendous code
+        }
+    }
     public static UserStats get()
     {
         if (instance == null) instance = new UserStats();
@@ -73,6 +79,11 @@ public class UserStats implements Serializable {
     {
         instance = new UserStats(path);
     }
+    public static void set(UserStats stats)
+    {
+        instance = stats;
+        setStuff(stats);
+    }
 
     public void save()
     {
@@ -80,7 +91,9 @@ public class UserStats implements Serializable {
         try
         {   
             //Saving of object in a file
-            FileOutputStream file = new FileOutputStream(get().path + ".dat");
+            File dir = new File("data/");
+            if (!dir.exists()) dir.mkdirs();
+            FileOutputStream file = new FileOutputStream("data/" + get().path + ".dat");
             ObjectOutputStream out = new ObjectOutputStream(file);
             
             // Method for serialization of object
@@ -104,6 +117,6 @@ public class UserStats implements Serializable {
         //PolynomialDerivative topic = PolynomialDerivative.get();
         //topic.setProficiency(3);
         //player.save();
-        System.out.println(PolynomialDerivative.get().getProficiency());
+        //System.out.println(PolynomialDerivative.get().getProficiency());
     }
 }
