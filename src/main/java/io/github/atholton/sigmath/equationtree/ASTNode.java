@@ -172,6 +172,7 @@ public class ASTNode {
      */
     public void simplify()
     {
+        rewrite(this);
         //add stuff to computeOperators
         initializeFuncs();
         for (int i = 0; i < 50; i++)
@@ -185,6 +186,31 @@ public class ASTNode {
         }
         //re order terms for polynomials
         reorderTerms();
+    }
+    private void rewrite(ASTNode node)
+    {
+        //writing negative into * -1 is created in tokenizer
+        if (node == null) return;
+        ASTNode left = node.getLeftASTNode();
+        ASTNode right = node.getRightASTNode();
+
+        rewrite(left);
+        rewrite(right);
+
+        if (node.value.equals("/"))
+        {
+            ASTNode temp = new ASTNode("*", left, new ASTNode(
+                "^", right, new ASTNode(
+                    "-1", null, null, Type.NUMBER
+                ), Type.OPERATOR
+            ), Type.OPERATOR);
+            replaceNode(node, temp);
+        }
+        if (node.value.equals("sqrt"))
+        {
+            ASTNode sqrt = new ASTNode("0.5", null, null, Type.NUMBER);
+            replaceNode(node, new ASTNode("^", node.leftASTNode, sqrt, Type.OPERATOR));
+        }
     }
     private void simplify(ASTNode node)
     {
@@ -383,20 +409,6 @@ public class ASTNode {
             if (left.type == Type.NUMBER) return right;
             if (right.type == Type.NUMBER) return left;
         }
-        else if (node.type == Type.OPERATOR && operator.getSymbol().equals("+") && node.value.equals("/"))
-        {
-            ASTNode left = node.getLeftASTNode();
-            ASTNode right = node.getRightASTNode();
-
-            //pick the other side
-            if (left.type == Type.NUMBER) 
-            {
-                //given 3/(x+1). The base is 1/(x+1)
-                ASTNode temp = new ASTNode("/", new ASTNode("1.0", null, null, Type.NUMBER), right, Type.OPERATOR);
-                return temp;
-            }
-            if (right.type == Type.NUMBER) return left;
-        }
         //if its a number, then its just a constant, without any base
         //though its being multiplied so just put in 1
         if (node.type == Type.NUMBER && operator.getSymbol().equals("+")) return new ASTNode("1.0", null, null, Type.NUMBER);
@@ -417,18 +429,6 @@ public class ASTNode {
 
             if (left.type == Type.NUMBER) return left;
             if (right.type == Type.NUMBER) return right;
-        }
-        else if (node.type == Type.OPERATOR && operator.getSymbol().equals("+") && node.value.equals("/")) 
-        {
-            ASTNode left = node.getLeftASTNode();
-            ASTNode right = node.getRightASTNode();
-
-            if (left.type == Type.NUMBER) return left;
-            if (right.type == Type.NUMBER) 
-            {
-                ASTNode temp = new ASTNode("/", new ASTNode("1.0", null, null, Type.NUMBER), right, Type.OPERATOR);
-                return temp;
-            }
         }
 
         // if only, base then coefficient is one ex) (x + y) is a base with coefficient of 1

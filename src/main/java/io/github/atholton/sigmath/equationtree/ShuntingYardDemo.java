@@ -3,7 +3,7 @@ package io.github.atholton.sigmath.equationtree;
 public class ShuntingYardDemo {
     public static void main(String[] args) {
         final ShuntingYardParser parser = ShuntingYardParser.get();
-        final String input = "6 * (5 * x ^ 5)";
+        final String input = "sqrt(x ^ 2 + x)";
 
 
         ASTNode parseTree = parser.convertInfixNotationToAST(input);
