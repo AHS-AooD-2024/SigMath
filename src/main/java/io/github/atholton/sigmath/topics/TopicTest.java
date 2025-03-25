@@ -19,14 +19,14 @@ public class TopicTest {
         operators.add(new BaseOperator("-", false, 2));
 
         final ShuntingYardParser parser = ShuntingYardParser.get();
-        Topic d = PolynomialDerivative.get();
-        final String input = "x ^ (0.5)";
+        final String input = "(x + 2)^2";
 
 
         final ASTNode parseTree = parser.convertInfixNotationToAST(input);
         parseTree.printTree();
 
-        ASTNode answer = d.returnAnswer(parseTree);
+        ASTNode answer = PolynomialDerivative.returnAnswer(parseTree);
+        //answer.simplify();
         answer.printTree();
     }
 }

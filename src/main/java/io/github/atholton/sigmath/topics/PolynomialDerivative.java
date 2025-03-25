@@ -28,43 +28,12 @@ public class PolynomialDerivative extends Topic {
         formulaList.add("a*x^n1 + b*x^n2 + c*x^n3");
     }
 
-    @Override
     //TODO: broken lol
-    public ASTNode returnAnswer(ASTNode question) {
+    public static ASTNode returnAnswer(ASTNode question) {
         //return question;
         deriveConstants(question);
         reformatX(question);
-        
-        ASTNode qL = question.getLeftASTNode();
-        ASTNode qR = question.getRightASTNode();
-
-        if (qL == null || qR == null) {
-            //Do nothing
-        }
-        else if (!(question.getLeftASTNode().getValue().equals("x") && question.getValue().equals("^"))) {
-            returnAnswer(question.getLeftASTNode());
-            returnAnswer(question.getRightASTNode());
-        }
-        else {
-            ASTNode copiedQuestion = ASTNode.copy(question);
-            ASTNode.replaceNode(question, new ASTNode("*", ASTNode.copy(copiedQuestion.getRightASTNode()), copiedQuestion, Type.OPERATOR));
-
-            //question = new ASTNode("*", ASTNode.copy(copiedQuestion.getRightASTNode()), copiedQuestion, Type.OPERATOR);
-            qR = question.getRightASTNode();
-            qL = question.getLeftASTNode();
-            qR.getRightASTNode().setValue(Double.parseDouble(qR.getRightASTNode().getValue()) - 1);
-        }
-        return question;
-    }
-    
-    @Override
-    protected ASTNode solve(ASTNode question) {
-        ASTNode qL = question.getLeftASTNode();
-        ASTNode qR = question.getRightASTNode();
-
-        qL.multByConstant(Double.parseDouble(qR.getValue()));
-        qR.setValue(Double.parseDouble(qR.getValue()) - 1);
-
+        deriveAll(question);
         return question;
     }
 
@@ -72,7 +41,7 @@ public class PolynomialDerivative extends Topic {
      * Reformats all x's to be x^1 to be processed by returnAnswer
      * @param question question to process x's in
      */
-    protected void reformatX(ASTNode question) {
+    protected static void reformatX(ASTNode question) {
         ASTNode qL = question.getLeftASTNode();
         ASTNode qR = question.getRightASTNode(); 
         
@@ -83,21 +52,34 @@ public class PolynomialDerivative extends Topic {
                 reformatX(qR);
         }
         else {
+            if (qR.getValue().equals("x") && !question.getValue().equals("^"))
             qR.addExponent(1);
         }
+
+        if (qL == null || !(qL.getValue().equals("x"))) {
+            if (qL != null)
+                reformatX(qL);
+            if (qR != null)
+                reformatX(qR);
+        }
+        else {
+            if (qL.getValue().equals("x") && !question.getValue().equals("^"))
+            qL.addExponent(1);
+        } 
+    }
         
         /*
         if (question.getValue().equals("x")) {
             question.addExponent(1);
         }
         */
-    }
+    
 
     /**
      * Derives constants which can't be reached by returnAnswer
      * @param question question to derive constants in
      */
-    protected void deriveConstants(ASTNode question) {
+    protected static void deriveConstants(ASTNode question) {
         ASTNode qL = question.getLeftASTNode();
         ASTNode qR = question.getRightASTNode(); 
         try {
@@ -125,4 +107,26 @@ public class PolynomialDerivative extends Topic {
         }
     }
     
+    private static ASTNode deriveAll(ASTNode question) {
+        ASTNode qL = question.getLeftASTNode();
+        ASTNode qR = question.getRightASTNode();
+
+        if (qL == null || qR == null) {
+            //Do nothing
+        }
+        else if (!(/*question.getLeftASTNode().getValue().equals("x") &&*/ question.getValue().equals("^"))) {
+            deriveAll(question.getLeftASTNode());
+            deriveAll(question.getRightASTNode());
+        }
+        else {
+            ASTNode copiedQuestion = ASTNode.copy(question);
+            ASTNode.replaceNode(question, new ASTNode("*", ASTNode.copy(copiedQuestion.getRightASTNode()), copiedQuestion, Type.OPERATOR));
+
+            //question = new ASTNode("*", ASTNode.copy(copiedQuestion.getRightASTNode()), copiedQuestion, Type.OPERATOR);
+            qR = question.getRightASTNode();
+            qL = question.getLeftASTNode();
+            qR.getRightASTNode().setValue(Double.parseDouble(qR.getRightASTNode().getValue()) - 1);
+        }
+        return question;
+    }
 }
