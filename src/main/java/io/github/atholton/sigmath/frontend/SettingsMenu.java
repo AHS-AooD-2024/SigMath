@@ -41,8 +41,7 @@ public class SettingsMenu extends JPanel{
             {
                 int num = fontSize.getValue();
                 UserSettings.get().setFontSize(num);
-                //TODO: update states for all singletons and have ProblemsMenu set font to this size
-                update();
+                if (!fontSize.getValueIsAdjusting()) update();
 
             }
         });
@@ -54,8 +53,7 @@ public class SettingsMenu extends JPanel{
             {
                 int num = toolBarSize.getValue();
                 UserSettings.get().setToolBarSize(num);
-                if(!toolBarSize.getValueIsAdjusting()) Toolbar.updateSize();
-                update();
+                if(!toolBarSize.getValueIsAdjusting()) update();
             }
         });
 
@@ -66,6 +64,7 @@ public class SettingsMenu extends JPanel{
             public void actionPerformed(ActionEvent e) {
                 UserStats.get().path = "DEFAULT";
                 UserStats.get().save();
+                JOptionPane.showMessageDialog(Application.get(), "Saved Default Profile to: " + UserStats.get().name);
             }
             
         });
@@ -77,6 +76,7 @@ public class SettingsMenu extends JPanel{
             public void actionPerformed(ActionEvent e) {
                 UserStats.get().path = UserStats.get().name;
                 UserStats.get().save();
+                JOptionPane.showMessageDialog(Application.get(), "Saved Current Profile to: " + UserStats.get().name);
             }
             
         });
@@ -87,6 +87,7 @@ public class SettingsMenu extends JPanel{
             @Override
             public void actionPerformed(ActionEvent e) {
                 UserStats.get().name = setName.getText();
+                JOptionPane.showMessageDialog(Application.get(), "Set Profile Name to: " + UserStats.get().name);
             }
             
         });
@@ -98,7 +99,7 @@ public class SettingsMenu extends JPanel{
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weighty = 1;
         c.weightx = 1;
-        c.insets = new Insets(20, 50, 20, 50);
+        c.insets = new Insets(10, 50, 10, 50);
         c.gridwidth = GridBagConstraints.REMAINDER;
         addComponent(fontSizeLabel);
         addComponent(fontSize);
@@ -109,13 +110,28 @@ public class SettingsMenu extends JPanel{
         addComponent(saveButton);
         addComponent(saveB);
         addComponent(setName);
+
+        Application.get().pack();
+        SettingsMenu.update();
     }
     
+    /**
+     * General update fonts function for SINGLETON PANELS
+     */
     public static void update()
     {
         SettingsMenu menu = SettingsMenu.get();
-        menu.fontSize.setValue(UserSettings.get().getFontSize());
-        menu.toolBarSize.setValue(UserSettings.get().getToolBarSize());
+        UserSettings settings = UserSettings.get();
+        menu.fontSize.setValue(settings.getFontSize());
+        menu.toolBarSize.setValue(settings.getToolBarSize());
+
+        //update fonts
+        menu.fontSizeLabel.setFont(new Font("Sans Serif", Font.PLAIN, settings.getFontSize() / 2));
+        menu.toolBarSizeLabel.setFont(new Font("Sans Serif", Font.PLAIN, settings.getFontSize() / 2));
+
+        AllTopicsMenu.updateSizes();
+        RecentTopicsMenu.updateSizes();
+        Toolbar.updateSize();
     }
 
     public static SettingsMenu get() {

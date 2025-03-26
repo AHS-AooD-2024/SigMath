@@ -8,6 +8,7 @@ import io.github.atholton.sigmath.latex.DualTeXField;
 import io.github.atholton.sigmath.topics.QuestionGenerator;
 import io.github.atholton.sigmath.topics.QuestionTester;
 import io.github.atholton.sigmath.topics.Topic;
+import io.github.atholton.sigmath.user.UserSettings;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -21,10 +22,12 @@ public class ProblemsMenu extends JPanel{
     private Topic t;
     private GridBagLayout layout;
     private GridBagConstraints c;
+    private static double initialSize = 0.4;
 
     private void makeComponent(Component comp,
                                GridBagLayout gridbag,
                                GridBagConstraints c) {
+         comp.setFont(new Font("Sans Serif", Font.PLAIN, (int)(UserSettings.get().getFontSize() * initialSize)));
          gridbag.setConstraints(comp, c);
          add(comp);
          revalidate();
@@ -87,6 +90,7 @@ public class ProblemsMenu extends JPanel{
         makeComponent(getHelpButton, layout, c);
 
         problemText.setText(questionGenerator.generateQuestion());
+        Application.get().pack();
     }
     class Submit implements ActionListener
     {

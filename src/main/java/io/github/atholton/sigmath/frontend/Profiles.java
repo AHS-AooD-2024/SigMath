@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import io.github.atholton.sigmath.user.UserStats;
@@ -40,6 +41,7 @@ public class Profiles extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     UserStats.set(p);
+                    JOptionPane.showMessageDialog(Application.get(), "Set profile to: " + p.name);
                 }
             });
             add(profileButton);

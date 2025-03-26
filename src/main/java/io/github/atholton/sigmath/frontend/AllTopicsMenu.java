@@ -3,11 +3,13 @@ package io.github.atholton.sigmath.frontend;
 import javax.swing.*;
 
 import io.github.atholton.sigmath.topics.*;
+import io.github.atholton.sigmath.user.UserSettings;
 
 import java.awt.*;
 import java.util.ArrayList;
 
 public class AllTopicsMenu extends JPanel{
+    private static double initialSize = 0.3;
     private ArrayList<TopicsButton> topics;
     private static AllTopicsMenu instance;
     
@@ -17,6 +19,17 @@ public class AllTopicsMenu extends JPanel{
         addTopic(PolynomialDerivative.get(), "Polynomial Derivatives");
         for (TopicsButton t : topics) {
             add(t);
+        }
+        Application.get().pack();
+        SettingsMenu.update();
+    }
+    public static void updateSizes()
+    {
+        AllTopicsMenu menu = AllTopicsMenu.get();
+        UserSettings settings = UserSettings.get();
+        for (TopicsButton topic : menu.topics)
+        {
+            topic.setFont(new Font("Sans Serif", Font.PLAIN, (int)(settings.getFontSize() * initialSize)));
         }
     }
     public void addTopic(Topic t, String topicString) {

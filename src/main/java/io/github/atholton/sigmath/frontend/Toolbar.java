@@ -49,7 +49,7 @@ public class Toolbar extends JPanel{
             //lexend.decode(TOOL_TIP_TEXT_KEY);
         }
         catch (IOException | FontFormatException e) {
-
+            System.out.println("LEXEND NOT REGISTERED");
         }
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
