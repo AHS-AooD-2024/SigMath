@@ -61,7 +61,7 @@ public class Derivative
         else if (node.type == Type.OPERATOR) {
             if (node.getValue().equals("*")) {
                 //powerRule calls chainrule until end, so then end
-                powerRule(node);
+                productRule(node);
             }
                 //doesn't work if smth like x^x or 2^x
             else if (node.getValue().equals("^")) {
