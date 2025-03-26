@@ -46,7 +46,7 @@ public class SettingsMenu extends JPanel{
 
             }
         });
-        toolBarSizeLabel = new JLabel("Font Size");
+        toolBarSizeLabel = new JLabel("Logo Font Size");
         toolBarSize = new JSlider(50, 200, UserSettings.get().getToolBarSize());
         
         toolBarSize.addChangeListener(new ChangeListener() {

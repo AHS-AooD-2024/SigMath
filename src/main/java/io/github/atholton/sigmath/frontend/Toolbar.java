@@ -27,7 +27,10 @@ public class Toolbar extends JPanel{
         UserSettings settings = UserSettings.get();
         int size = settings.getToolBarSize();
         Toolbar bar = Toolbar.get();
-        bar.logo.setFont(bar.logo.getFont().deriveFont((size/100.0f * bar.logo.getFont().getSize())));
+        if (bar.lexend != null)
+            bar.logo.setFont(bar.lexend.deriveFont(size / 100.0f));
+        else
+            bar.logo.setFont(new Font("Sans Serif", 1, size / 2));
     }
 
     private void makeComponent(Component comp,
