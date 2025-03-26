@@ -1,12 +1,24 @@
 package io.github.atholton.sigmath.topics;
 
+import java.util.List;
+
 import static io.github.atholton.sigmath.equationtree.ASTNode.*;
 import io.github.atholton.sigmath.equationtree.ASTNode.Type;
 import io.github.atholton.sigmath.equationtree.ASTNode;
 
 public class Derivative
 {
-
+    /**
+    * Derives equation
+    */
+    public static void derive(ASTNode equation)
+    {
+        List<ASTNode> flattened = flatten(equation, BaseOperator.getOperator("+"));
+        for (ASTNode term : flattened) {
+            chainRule(term);
+        }
+        replaceNode(equation, rebuild(flattened, BaseOperator.getOperator("+"));
+    }
     /**
      * Expects a * operator to do derivative to. Using Product rule
      */
@@ -38,31 +50,28 @@ public class Derivative
         //exit cases for recursion
         if (node.type == Type.NUMBER) {
             node.setValue(0);
-            return;
         }
         else if (node.type == Type.VARIABLE) {
             replaceNode(node, new ASTNode("1", null, null, Type.NUMBER));
-            return;
         }
-        else if (node.type == Type.FUNCTION)
-        {
+        else if (node.type == Type.FUNCTION) {
             deriveFunction(node);
             chainRule(node);
         }
-        else if (node.type == Type.OPERATOR)
-        {
-            if (node.getValue().equals("*"))
-            {
+        else if (node.type == Type.OPERATOR) {
+            if (node.getValue().equals("*")) {
                 //powerRule calls chainrule until end, so then end
                 powerRule(node);
-                return;
             }
-            else if ()
+                //doesn't work if smth like x^x or 2^x
+            else if (node.getValue().equals("^")) {
+                powerRule(node);
+                chainRule(node.getLeftASTNode());
+            }    
         }
     }
     /**
      * expects something like x ^ 2, expects carrot operator for simple powerRule
-     * or expects x.
      * RETURNS POWER RULED NODE, THE REFERENCE TO NODE SHOULD NOT BE USED AS IT IS MANIPULATED WITHOUT BEING COPIED
      * @param node
      */
@@ -84,6 +93,13 @@ public class Derivative
      * @param node
      */
     public static void deriveFunction(ASTNode node) {
-
+        if (node.type == Type.FUNCTION) {
+            if (node.getValue().equals("sin")) {
+                node.setValue("cos");
+            }
+            else if (node.getValue().equals("cos")) {
+                //
+            }
+        }
     }
 }
