@@ -137,6 +137,7 @@ public class SettingsMenu extends JPanel{
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         UserStats.set(p);
+                        JOptionPane.showMessageDialog(Application.get(), "Set profile to: " + p.name);
                     }
                 });
                 add(profileButton);
