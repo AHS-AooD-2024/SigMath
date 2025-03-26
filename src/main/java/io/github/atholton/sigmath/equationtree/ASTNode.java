@@ -416,6 +416,7 @@ public class ASTNode {
         //assume whole thing is base, but this is not always the case...
         return node;
     }
+    
     private ASTNode getCoefficient(ASTNode node, Operator operator)
     {
         if (node.type == Type.NUMBER && operator.getSymbol().equals("+")) return node;
