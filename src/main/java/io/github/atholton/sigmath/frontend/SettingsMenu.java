@@ -46,7 +46,7 @@ public class SettingsMenu extends JPanel{
 
             }
         });
-        toolBarSizeLabel = new JLabel("Font Size");
+        toolBarSizeLabel = new JLabel("Logo Font Size");
         toolBarSize = new JSlider(50, 200, UserSettings.get().getToolBarSize());
         
         toolBarSize.addChangeListener(new ChangeListener() {
@@ -54,7 +54,7 @@ public class SettingsMenu extends JPanel{
             {
                 int num = toolBarSize.getValue();
                 UserSettings.get().setToolBarSize(num);
-                Toolbar.updateSize();
+                if(!toolBarSize.getValueIsAdjusting()) Toolbar.updateSize();
                 update();
             }
         });
@@ -104,54 +104,18 @@ public class SettingsMenu extends JPanel{
         addComponent(fontSize);
         addComponent(toolBarSizeLabel);
         addComponent(toolBarSize);
+        c.fill = GridBagConstraints.BOTH;
         c.gridwidth = 1;
         addComponent(saveButton);
         addComponent(saveB);
         addComponent(setName);
     }
-    public class Profiles extends JPanel {
-        private static Profiles instance;
-        private List<UserStats> profiles;
-        private Profiles()
-        {
-            File folder = new File("data/");
-            File[] listOfFiles = folder.listFiles();
-            if(listOfFiles != null) {
-                for (int i = 0; i < listOfFiles.length; i++) {
-                    FileInputStream file;
-                    try {
-                        file = new FileInputStream(listOfFiles[i]);
-                        ObjectInputStream in = new ObjectInputStream(file);
-                        profiles.add((UserStats) in.readObject());
-                        in.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            for (UserStats profile : profiles)
-            {
-                JButton profileButton = new JButton(profile.name);
-                profileButton.addActionListener(new ActionListener() {
-                    public UserStats p = profile;
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        UserStats.set(p);
-                        JOptionPane.showMessageDialog(Application.get(), "Set profile to: " + p.name);
-                    }
-                });
-                add(profileButton);
-            }
-        }
-        public static Profiles get()
-        {
-            if (instance == null) instance = SettingsMenu.get().new Profiles();
-            return instance;
-        }
-    }
+    
     public static void update()
     {
-
+        SettingsMenu menu = SettingsMenu.get();
+        menu.fontSize.setValue(UserSettings.get().getFontSize());
+        menu.toolBarSize.setValue(UserSettings.get().getToolBarSize());
     }
 
     public static SettingsMenu get() {

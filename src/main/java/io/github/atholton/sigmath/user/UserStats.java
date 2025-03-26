@@ -59,7 +59,7 @@ public class UserStats implements Serializable {
     private static void setStuff(UserStats read)
     {
         UserSettings.set(read.settings);
-            //assign the topics their topics from file, which would hold proficiency
+        //assign the topics their topics from file, which would hold proficiency
         for (Topic t : instance.allTopics)
         {
             if (t instanceof PolynomialDerivative)

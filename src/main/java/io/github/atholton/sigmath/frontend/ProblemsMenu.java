@@ -99,7 +99,7 @@ public class ProblemsMenu extends JPanel{
             {
                 ASTNode userEquation = ShuntingYardParser.get().convertInfixNotationToAST(userAnswer);
                 ASTNode answer = ShuntingYardParser.get().convertInfixNotationToAST(problemText.getText());
-                t.returnAnswer(answer);
+                answer = t.returnAnswer(answer);
                 right = QuestionTester.testEquations(userEquation, answer);
             }
             catch(Exception exception)
