@@ -55,8 +55,11 @@ public class Derivative
             replaceNode(node, new ASTNode("1", null, null, Type.NUMBER));
         }
         else if (node.type == Type.FUNCTION) {
+            ASTNode left = copy(node.getLeftASTNode());
             deriveFunction(node);
-            chainRule(node);
+            //multiple with node that will be chain ruled
+            chainRule(left);
+            replaceNode(node, new ASTNode("*", node, left, Type.OPERATOR));
         }
         else if (node.type == Type.OPERATOR) {
             if (node.getValue().equals("*")) {
@@ -65,8 +68,11 @@ public class Derivative
             }
                 //doesn't work if smth like x^x or 2^x
             else if (node.getValue().equals("^")) {
+                ASTNode left = copy(node.getLeftASTNode());
                 powerRule(node);
-                chainRule(node.getLeftASTNode());
+                //multiple with node that will be chain ruled
+                chainRule(left);
+                replaceNode(node, new ASTNode("*",  node, left, Type.OPERATOR));
             }    
         }
     }
