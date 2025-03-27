@@ -10,23 +10,15 @@ import io.github.atholton.sigmath.equationtree.ShuntingYardParser;
 
 public class TopicTest {
     public static void main(String[] args) {
-        // Define our basic operators for arithmetic.
-        final Collection<Operator> operators = new ArrayList<>();
-        operators.add(new BaseOperator("^", true, 4));
-        operators.add(new BaseOperator("*", false, 3));
-        operators.add(new BaseOperator("/", false, 3));
-        operators.add(new BaseOperator("+", false, 2));
-        operators.add(new BaseOperator("-", false, 2));
-
         final ShuntingYardParser parser = ShuntingYardParser.get();
         Topic d = PolynomialDerivative.get();
-        final String input = "x ^ (0.5)";
+        final String input = "x^2 + 2*x";
 
 
         final ASTNode parseTree = parser.convertInfixNotationToAST(input);
-        parseTree.printTree();
+        parseTree.print();
 
-        ASTNode answer = d.returnAnswer(parseTree);
-        answer.printTree();
+        Derivative.derive(parseTree);
+        parseTree.print();
     }
 }

@@ -22,6 +22,7 @@ import io.github.atholton.sigmath.latex.DualTeXField;
 import io.github.atholton.sigmath.topics.QuestionGenerator;
 import io.github.atholton.sigmath.topics.QuestionTester;
 import io.github.atholton.sigmath.topics.Topic;
+import io.github.atholton.sigmath.user.UserSettings;
 
 public class ProblemsMenu extends JPanel{
     private DualTeXField inputBox;
@@ -31,10 +32,12 @@ public class ProblemsMenu extends JPanel{
     private Topic t;
     private GridBagLayout layout;
     private GridBagConstraints c;
+    private static double initialSize = 0.4;
 
     private void makeComponent(Component comp,
                                GridBagLayout gridbag,
                                GridBagConstraints c) {
+         comp.setFont(new Font("Sans Serif", Font.PLAIN, (int)(UserSettings.get().getFontSize() * initialSize)));
          gridbag.setConstraints(comp, c);
          add(comp);
          revalidate();
@@ -119,7 +122,8 @@ public class ProblemsMenu extends JPanel{
             try
             {
                 ASTNode userEquation = ShuntingYardParser.get().convertInfixNotationToAST(userAnswer);
-                ASTNode answer = t.returnAnswer(ShuntingYardParser.get().convertInfixNotationToAST(problemText.getText()));
+                ASTNode answer = ShuntingYardParser.get().convertInfixNotationToAST(problemText.getText());
+                answer = t.returnAnswer(answer);
                 right = QuestionTester.testEquations(userEquation, answer);
             }
             catch(Exception exception)

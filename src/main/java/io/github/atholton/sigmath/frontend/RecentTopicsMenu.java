@@ -4,10 +4,13 @@ import javax.swing.*;
 import java.awt.*;
 
 import io.github.atholton.sigmath.topics.*;
+import io.github.atholton.sigmath.user.UserSettings;
+
 import java.util.ArrayList;
 
 public class RecentTopicsMenu extends JPanel{
     private static RecentTopicsMenu instance;
+    private static double initialSize = 0.3;
     private ArrayList<TopicsButton> topics;
     private GridBagConstraints c;
 
@@ -40,12 +43,22 @@ public class RecentTopicsMenu extends JPanel{
         
         c.weightx = 1;
         c.weighty = 1;
-        c.insets = new Insets(20, 20, 20, 20);
+        c.insets = new Insets(10, 10, 10, 10);
         for (int i = 0; i < topics.size(); i++)
         {
             makeComponent(topics.get(i), (GridBagLayout)getLayout(), c, i);
         }
 
+        Application.get().pack();
+    }
+    public static void updateSizes()
+    {
+        RecentTopicsMenu menu = RecentTopicsMenu.get();
+        UserSettings settings = UserSettings.get();
+        for (TopicsButton topic : menu.topics)
+        {
+            topic.setFont(new Font("Sans Serif", Font.PLAIN, (int)(settings.getFontSize() * initialSize)));
+        }
     }
     public static RecentTopicsMenu get() {
         if (instance == null) instance = new RecentTopicsMenu();
