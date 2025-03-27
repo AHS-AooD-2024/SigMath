@@ -58,14 +58,6 @@ public abstract class Topic implements Serializable{
      */
     public abstract ASTNode returnAnswer(ASTNode question);
 
-    /**
-     * Solves an individual unit of a topic within a problem
-     * 
-     * @param question question to answer
-     * @return the answert to the question
-     */
-    protected abstract ASTNode solve(ASTNode question);
-
     @Override
     //I have no idea if this is right, supposed to be if the class is the same
     public boolean equals(Object other)

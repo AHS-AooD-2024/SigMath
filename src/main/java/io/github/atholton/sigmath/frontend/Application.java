@@ -1,5 +1,7 @@
 package io.github.atholton.sigmath.frontend;
 
+import java.awt.Dimension;
+
 import javax.swing.*;
 
 import org.scilab.forge.jlatexmath.TeXIcon;
@@ -7,6 +9,8 @@ import org.scilab.forge.jlatexmath.TeXIcon;
 import io.github.atholton.sigmath.Sigmath;
 import io.github.atholton.sigmath.latex.DualTeXField;
 import io.github.atholton.sigmath.latex.TeXLabel;
+import io.github.atholton.sigmath.user.UserSettings;
+import io.github.atholton.sigmath.user.UserStats;
 
 
 public class Application extends JFrame implements Runnable
@@ -20,6 +24,8 @@ public class Application extends JFrame implements Runnable
     private Application() {
         super("SigMath");
         setExtendedState(JFrame.MAXIMIZED_BOTH); 
+        setMinimumSize(new Dimension(1000, 700));
+        UserStats.get();
     }
 
     @Override

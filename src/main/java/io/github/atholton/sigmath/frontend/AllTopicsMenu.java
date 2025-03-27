@@ -9,7 +9,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class AllTopicsMenu extends JPanel{
-    private static double initialSize = 0.3;
+    private static double initialSize = 30;
     private ArrayList<TopicsButton> topics;
     private static AllTopicsMenu instance;
     
@@ -21,14 +21,14 @@ public class AllTopicsMenu extends JPanel{
             add(t);
         }
         Application.get().pack();
+        updateSizes();
     }
-    public static void updateSizes()
+    public void updateSizes()
     {
-        AllTopicsMenu menu = AllTopicsMenu.get();
         UserSettings settings = UserSettings.get();
-        for (TopicsButton topic : menu.topics)
+        for (TopicsButton topic : topics)
         {
-            topic.setFont(new Font("Sans Serif", Font.PLAIN, (int)(settings.getFontSize() * initialSize)));
+            topic.setFont(new Font("Sans Serif", Font.PLAIN, (int)(settings.getFontSize() / 100.0 * initialSize)));
         }
     }
     public void addTopic(Topic t, String topicString) {

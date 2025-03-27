@@ -32,12 +32,10 @@ public class ProblemsMenu extends JPanel{
     private Topic t;
     private GridBagLayout layout;
     private GridBagConstraints c;
-    private static double initialSize = 0.4;
 
     private void makeComponent(Component comp,
                                GridBagLayout gridbag,
                                GridBagConstraints c) {
-         comp.setFont(new Font("Sans Serif", Font.PLAIN, (int)(UserSettings.get().getFontSize() * initialSize)));
          gridbag.setConstraints(comp, c);
          add(comp);
          revalidate();
@@ -60,7 +58,7 @@ public class ProblemsMenu extends JPanel{
         c.weightx = 1;
         c.weighty = 0.6;
         problemText = new JLabel("SAMPLE TEXT");
-        problemText.setFont(new Font("Sans Serif", Font.BOLD, 40));
+        problemText.setFont(new Font("Sans Serif", Font.BOLD, (int)(40.0 * UserSettings.get().getFontSize() / 100.0)));
         problemText.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         problemText.setHorizontalAlignment(SwingConstants.CENTER);
@@ -73,7 +71,7 @@ public class ProblemsMenu extends JPanel{
         c.gridx = GridBagConstraints.RELATIVE;
         c.insets = new Insets(180, 20, 350, 0);
         percentageText = new JLabel("Progress:\n50%");
-        percentageText.setFont(new Font("Sans Serif", Font.PLAIN, 18));
+        percentageText.setFont(new Font("Sans Serif", Font.PLAIN, (int)(18.0 * UserSettings.get().getFontSize() / 100.0)));
         percentageText.setHorizontalAlignment(SwingConstants.CENTER);
         percentageText.setOpaque(true);
         percentageText.setBackground(new Color(255,229,153));
@@ -90,7 +88,7 @@ public class ProblemsMenu extends JPanel{
         c.weighty = 0.1;
         c.insets = new Insets(30, 150, 30, 100);
         submitButton = new JButton("Submit");
-        submitButton.setFont(new Font("Sans Serif", Font.PLAIN, 40));
+        submitButton.setFont(new Font("Sans Serif", Font.PLAIN, (int)(40.0 * UserSettings.get().getFontSize() / 100.0)));
         submitButton.addActionListener(new Submit());
         submitButton.setBackground(new Color(201, 218, 248));
         submitButton.setBorder(BorderFactory.createLineBorder(Color.black, 2));
@@ -104,7 +102,7 @@ public class ProblemsMenu extends JPanel{
         c.gridx = GridBagConstraints.RELATIVE;
         c.gridwidth = GridBagConstraints.REMAINDER;
         getHelpButton = new JButton("Need Help?");
-        getHelpButton.setFont(new Font("Sans Serif", Font.PLAIN, 18));
+        getHelpButton.setFont(new Font("Sans Serif", Font.PLAIN, (int)(18.0 * UserSettings.get().getFontSize() / 100.0)));
         getHelpButton.setBackground(new Color(213, 166, 189));
         getHelpButton.setOpaque(true);
         getHelpButton.setBorderPainted(false);
@@ -112,6 +110,10 @@ public class ProblemsMenu extends JPanel{
 
         problemText.setText("Derive y = " + questionGenerator.generateQuestion() + " in terms of x.");
     }
+
+
+
+
     class Submit implements ActionListener
     {
         private int numGuesses = 0;

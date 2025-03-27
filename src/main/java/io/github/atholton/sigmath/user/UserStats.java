@@ -41,7 +41,12 @@ public class UserStats implements Serializable {
             ObjectInputStream in = new ObjectInputStream(file);
 
             UserStats read = (UserStats)in.readObject();
-            instance = read;
+            System.out.println("IN USER STATS: " + read.name + "    \n" + read.path);
+            allTopics = read.allTopics;
+            settings = read.settings;
+            name = read.name;
+            path = read.path;
+            
             setStuff(read);
             
             in.close();
@@ -77,12 +82,7 @@ public class UserStats implements Serializable {
     
     public static void set(String path)
     {
-        instance = new UserStats(path);
-    }
-    public static void set(UserStats stats)
-    {
-        instance = stats;
-        setStuff(stats);
+        UserStats.instance = new UserStats(path);
     }
 
     public void save()
@@ -93,6 +93,9 @@ public class UserStats implements Serializable {
             //Saving of object in a file
             File dir = new File("data/");
             if (!dir.exists()) dir.mkdirs();
+            File temp = new File("data/" + get().path + ".dat");
+            if (temp.exists())
+                temp.delete();
             FileOutputStream file = new FileOutputStream("data/" + get().path + ".dat");
             ObjectOutputStream out = new ObjectOutputStream(file);
             
@@ -103,7 +106,6 @@ public class UserStats implements Serializable {
             file.close();
             
             System.out.println("SAVED");
-
         }
         
         catch(Exception ex)

@@ -50,12 +50,12 @@ public class RecentTopicsMenu extends JPanel{
         }
 
         Application.get().pack();
+        updateSizes();
     }
-    public static void updateSizes()
+    public void updateSizes()
     {
-        RecentTopicsMenu menu = RecentTopicsMenu.get();
         UserSettings settings = UserSettings.get();
-        for (TopicsButton topic : menu.topics)
+        for (TopicsButton topic : topics)
         {
             topic.setFont(new Font("Sans Serif", Font.PLAIN, (int)(settings.getFontSize() * initialSize)));
         }

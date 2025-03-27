@@ -58,6 +58,7 @@ public class SettingsMenu extends JPanel{
         });
 
         saveButton = new JButton("Save as Default");
+        saveButton.setBackground(new Color(201, 218, 248));
         saveButton.addActionListener(new ActionListener() {
 
             @Override
@@ -65,11 +66,13 @@ public class SettingsMenu extends JPanel{
                 UserStats.get().path = "DEFAULT";
                 UserStats.get().save();
                 JOptionPane.showMessageDialog(Application.get(), "Saved Default Profile to: " + UserStats.get().name);
+                Toolbar.get().updateSizes();
             }
             
         });
 
         JButton saveB = new JButton("Save");
+        saveB.setBackground(new Color(201, 218, 248));
         saveB.addActionListener(new ActionListener() {
 
             @Override
@@ -82,6 +85,7 @@ public class SettingsMenu extends JPanel{
         });
 
         JTextField setName = new JTextField();
+        setName.setToolTipText("Set Profile Name");
         setName.addActionListener(new ActionListener() {
 
             @Override
@@ -109,9 +113,12 @@ public class SettingsMenu extends JPanel{
         c.gridwidth = 1;
         addComponent(saveButton);
         addComponent(saveB);
+        c.insets = new Insets(10, 10, 10, 10);
+        c.weightx = 0.5;
+        addComponent(new JLabel("Set Profile Name: ", 0));
+        c.weightx = 1;
+        c.gridwidth = GridBagConstraints.REMAINDER;
         addComponent(setName);
-
-        Application.get().setMinimumSize(new Dimension(1000, 600));
     }
     
     /**
@@ -128,9 +135,9 @@ public class SettingsMenu extends JPanel{
         menu.fontSizeLabel.setFont(new Font("Sans Serif", Font.PLAIN, settings.getFontSize() / 2));
         menu.toolBarSizeLabel.setFont(new Font("Sans Serif", Font.PLAIN, settings.getFontSize() / 2));
 
-        AllTopicsMenu.updateSizes();
-        RecentTopicsMenu.updateSizes();
-        Toolbar.updateSize();
+        AllTopicsMenu.get().updateSizes();
+        RecentTopicsMenu.get().updateSizes();
+        Toolbar.get().updateSizes();
     }
 
     public static SettingsMenu get() {

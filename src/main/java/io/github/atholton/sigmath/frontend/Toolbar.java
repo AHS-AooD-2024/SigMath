@@ -6,6 +6,7 @@ import javax.swing.border.EmptyBorder;
 import java.io.File;
 
 import io.github.atholton.sigmath.user.UserSettings;
+import io.github.atholton.sigmath.user.UserStats;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -15,6 +16,7 @@ import java.io.IOException;
 public class Toolbar extends JPanel{
     private JButton topics, settings, logo;
     private Font lexend;
+    private JLabel user;
     private static Toolbar instance;
 
     public static Toolbar get()
@@ -22,15 +24,15 @@ public class Toolbar extends JPanel{
         if (instance == null) instance = new Toolbar();
         return instance;
     }
-    public static void updateSize()
+    public void updateSizes()
     {
         UserSettings settings = UserSettings.get();
         int size = settings.getToolBarSize();
-        Toolbar bar = Toolbar.get();
-        if (bar.lexend != null)
-            bar.logo.setFont(bar.lexend.deriveFont(size / 100.0f));
+        user.setText("Profile: " + UserStats.get().name);
+        if (lexend != null)
+            logo.setFont(lexend.deriveFont(size / 100.0f));
         else
-            bar.logo.setFont(new Font("Sans Serif", 1, size / 2));
+            logo.setFont(new Font("Sans Serif", 1, size / 2));
     }
 
     private void makeComponent(Component comp,
@@ -136,9 +138,19 @@ public class Toolbar extends JPanel{
         c.insets = new Insets(30, 50, 30, 50);
         makeComponent(topics, (GridBagLayout)getLayout(), c);
         makeComponent(logo, (GridBagLayout)getLayout(), c);
+        c.gridwidth = GridBagConstraints.REMAINDER;
         makeComponent(settings, (GridBagLayout)getLayout(), c);
+        c.gridwidth = 1;
+        c.insets = new Insets(0, 10, 0, 0);
+        c.weightx = 0;
+        
+        System.out.println(UserStats.get().name);
+        user = new JLabel("Profile: " + UserStats.get().name);
+        user.setFont(new Font("Sans Serif", Font.BOLD, 20));
+        makeComponent(user, (GridBagLayout)getLayout(), c);
 
         setBackground(new Color(201, 218, 248));
+        updateSizes();
     }
 
     public void alignItems(int gap) {

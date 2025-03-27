@@ -40,7 +40,7 @@ public class Profiles extends JPanel {
                 public UserStats p = profile;
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    UserStats.set(p);
+                    UserStats.set(p.name);
                     JOptionPane.showMessageDialog(Application.get(), "Set profile to: " + p.name);
                 }
             });

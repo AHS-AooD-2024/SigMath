@@ -26,6 +26,9 @@ public class PolynomialDerivative extends Topic {
         formulaList.add("a*x^n1");
         formulaList.add("a*x^n1 + b*x^n2");
         formulaList.add("a*x^n1 + b*x^n2 + c*x^n3");
+        formulaList.add("(a + b*x^n1)*x^n2");
+        formulaList.add("(x^n1 + a * x^n2)/x");
+        formulaList.add("x^(1-n1)");
     }
 
     @Override
@@ -56,18 +59,6 @@ public class PolynomialDerivative extends Topic {
         }
         return question;
     }
-    
-    @Override
-    protected ASTNode solve(ASTNode question) {
-        ASTNode qL = question.getLeftASTNode();
-        ASTNode qR = question.getRightASTNode();
-
-        qL.multByConstant(Double.parseDouble(qR.getValue()));
-        qR.setValue(Double.parseDouble(qR.getValue()) - 1);
-
-        return question;
-    }
-
     /**
      * Reformats all x's to be x^1 to be processed by returnAnswer
      * @param question question to process x's in
