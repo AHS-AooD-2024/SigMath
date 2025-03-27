@@ -4,6 +4,7 @@ import java.util.List;
 
 import static io.github.atholton.sigmath.equationtree.ASTNode.*;
 import io.github.atholton.sigmath.equationtree.ASTNode.Type;
+import io.github.atholton.sigmath.equationtree.BaseOperator;
 import io.github.atholton.sigmath.equationtree.ASTNode;
 
 public class Derivative
@@ -17,12 +18,12 @@ public class Derivative
         for (ASTNode term : flattened) {
             chainRule(term);
         }
-        replaceNode(equation, rebuild(flattened, BaseOperator.getOperator("+"));
+        replaceNode(equation, rebuild(flattened, "+"));
     }
     /**
      * Expects a * operator to do derivative to. Using Product rule
      */
-    public static void productRule(ASTNode node) {
+    private static void productRule(ASTNode node) {
         if (node == null) return;
         if (node.getValue().equals("*"))
         {
@@ -46,7 +47,7 @@ public class Derivative
      * Recursive Function meant to derive all/almost all terms.
      * @param node
      */
-    public static void chainRule(ASTNode node) {
+    private static void chainRule(ASTNode node) {
         //exit cases for recursion
         if (node.type == Type.NUMBER) {
             node.setValue(0);
@@ -59,7 +60,7 @@ public class Derivative
             deriveFunction(node);
             //multiple with node that will be chain ruled
             chainRule(left);
-            replaceNode(node, new ASTNode("*", node, left, Type.OPERATOR));
+            replaceNode(node, new ASTNode("*",  copy(node), copy(left), Type.OPERATOR));
         }
         else if (node.type == Type.OPERATOR) {
             if (node.getValue().equals("*")) {
@@ -72,7 +73,7 @@ public class Derivative
                 powerRule(node);
                 //multiple with node that will be chain ruled
                 chainRule(left);
-                replaceNode(node, new ASTNode("*",  node, left, Type.OPERATOR));
+                replaceNode(node, new ASTNode("*",  copy(node), copy(left), Type.OPERATOR));
             }    
         }
     }
@@ -81,7 +82,7 @@ public class Derivative
      * RETURNS POWER RULED NODE, THE REFERENCE TO NODE SHOULD NOT BE USED AS IT IS MANIPULATED WITHOUT BEING COPIED
      * @param node
      */
-    public static void powerRule(ASTNode node) {
+    private static void powerRule(ASTNode node) {
         if (node.type == Type.OPERATOR)
         {
             if (node.getValue().equals("^"))
@@ -90,7 +91,7 @@ public class Derivative
                 double num = Double.parseDouble(right.getValue());
                 right.setValue(num - 1);
                 replaceNode(node, new ASTNode("*", new ASTNode(String.valueOf(num), null, null, Type.NUMBER), 
-                    node, Type.OPERATOR));
+                    copy(node), Type.OPERATOR));
             }
         }
     }
@@ -98,7 +99,7 @@ public class Derivative
      * WILL ONLY CHANGE A FUNCTION, like SIN TO COS, should be used in chain rule
      * @param node
      */
-    public static void deriveFunction(ASTNode node) {
+    private static void deriveFunction(ASTNode node) {
         if (node.type == Type.FUNCTION) {
             if (node.getValue().equals("sin")) {
                 node.setValue("cos");

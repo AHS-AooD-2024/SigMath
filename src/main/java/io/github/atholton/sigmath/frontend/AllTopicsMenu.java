@@ -21,7 +21,6 @@ public class AllTopicsMenu extends JPanel{
             add(t);
         }
         Application.get().pack();
-        SettingsMenu.update();
     }
     public static void updateSizes()
     {

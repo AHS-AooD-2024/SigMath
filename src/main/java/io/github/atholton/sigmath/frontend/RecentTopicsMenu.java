@@ -50,7 +50,6 @@ public class RecentTopicsMenu extends JPanel{
         }
 
         Application.get().pack();
-        SettingsMenu.update();
     }
     public static void updateSizes()
     {

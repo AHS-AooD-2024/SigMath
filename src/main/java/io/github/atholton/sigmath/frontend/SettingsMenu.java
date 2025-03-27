@@ -111,8 +111,7 @@ public class SettingsMenu extends JPanel{
         addComponent(saveB);
         addComponent(setName);
 
-        Application.get().pack();
-        SettingsMenu.update();
+        Application.get().setMinimumSize(new Dimension(1000, 600));
     }
     
     /**
