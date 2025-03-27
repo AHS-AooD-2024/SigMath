@@ -1,6 +1,20 @@
 package io.github.atholton.sigmath.frontend;
 
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import io.github.atholton.sigmath.equationtree.ASTNode;
 import io.github.atholton.sigmath.equationtree.ShuntingYardParser;
@@ -8,10 +22,6 @@ import io.github.atholton.sigmath.latex.DualTeXField;
 import io.github.atholton.sigmath.topics.QuestionGenerator;
 import io.github.atholton.sigmath.topics.QuestionTester;
 import io.github.atholton.sigmath.topics.Topic;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class ProblemsMenu extends JPanel{
     private DualTeXField inputBox;
@@ -47,22 +57,26 @@ public class ProblemsMenu extends JPanel{
         c.weightx = 1;
         c.weighty = 0.6;
         problemText = new JLabel("SAMPLE TEXT");
-        problemText.setFont(new Font("Sans Serif", Font.BOLD, 60));
+        problemText.setFont(new Font("Sans Serif", Font.BOLD, 40));
         problemText.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-        problemText.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        problemText.setHorizontalAlignment(SwingConstants.CENTER);
         makeComponent(problemText, layout, c);  
 
         c.gridwidth = 1;
         c.gridheight = 2;
         c.weightx = 1;
         c.weighty = 1;
-        c.insets = new Insets(100, 20, 100, 20);
-        percentageText = new JLabel("0%");
-        percentageText.setBackground(new Color(255, 0, 255));
+        c.gridx = GridBagConstraints.RELATIVE;
+        c.insets = new Insets(180, 20, 350, 0);
+        percentageText = new JLabel("Progress:\n50%");
+        percentageText.setFont(new Font("Sans Serif", Font.PLAIN, 18));
+        percentageText.setHorizontalAlignment(SwingConstants.CENTER);
+        percentageText.setOpaque(true);
+        percentageText.setBackground(new Color(255,229,153));
         makeComponent(percentageText, layout, c);
 
-        c.insets = new Insets(0, 0, 0, 0);
+        c.insets = new Insets(30, 0, 0, 0);
         c.gridheight = 1;
         c.weightx = 6;
         c.gridx = 1;
@@ -70,22 +84,30 @@ public class ProblemsMenu extends JPanel{
         inputBox = new DualTeXField();
         makeComponent(inputBox, layout, c);
 
-        c.weighty = 0.2;
-        c.insets = new Insets(30, 100, 30, 100);
+        c.weighty = 0.1;
+        c.insets = new Insets(30, 150, 30, 100);
         submitButton = new JButton("Submit");
+        submitButton.setFont(new Font("Sans Serif", Font.PLAIN, 40));
         submitButton.addActionListener(new Submit());
+        submitButton.setBackground(new Color(201, 218, 248));
+        submitButton.setBorder(BorderFactory.createLineBorder(Color.black, 2));
+        submitButton.setOpaque(true);
         makeComponent(submitButton, layout, c);
 
-        c.insets = new Insets(0, 0, 0, 0);
+        c.insets = new Insets(180, 0, 350, 20);
         c.weighty = 1;
         c.weightx = 1;
         c.gridheight = 2;
         c.gridx = GridBagConstraints.RELATIVE;
         c.gridwidth = GridBagConstraints.REMAINDER;
-        getHelpButton = new JButton("HELP");
+        getHelpButton = new JButton("Need Help?");
+        getHelpButton.setFont(new Font("Sans Serif", Font.PLAIN, 18));
+        getHelpButton.setBackground(new Color(213, 166, 189));
+        getHelpButton.setOpaque(true);
+        getHelpButton.setBorderPainted(false);
         makeComponent(getHelpButton, layout, c);
 
-        problemText.setText(questionGenerator.generateQuestion());
+        problemText.setText("Derive y = " + questionGenerator.generateQuestion() + " in terms of x.");
     }
     class Submit implements ActionListener
     {
