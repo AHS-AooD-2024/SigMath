@@ -46,11 +46,12 @@ public class UserStats implements Serializable {
             settings = read.settings;
             name = read.name;
             path = read.path;
-            
+
             setStuff(read);
             
             in.close();
         } catch (Exception e) {
+            e.printStackTrace();
             //add all other topics
             allTopics = new ArrayList<>();
             allTopics.add(PolynomialDerivative.get());
@@ -65,7 +66,7 @@ public class UserStats implements Serializable {
     {
         UserSettings.set(read.settings);
         //assign the topics their topics from file, which would hold proficiency
-        for (Topic t : instance.allTopics)
+        for (Topic t : read.allTopics)
         {
             if (t instanceof PolynomialDerivative)
             {
