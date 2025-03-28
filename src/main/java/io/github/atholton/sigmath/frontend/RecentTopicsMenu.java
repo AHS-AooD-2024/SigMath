@@ -33,8 +33,6 @@ public class RecentTopicsMenu extends Menu{
     private RecentTopicsMenu() {
         super();
         topics = new ArrayList<TopicsButton>();
-
-        addTopic(PolynomialDerivative.get(), "Polynomial Derivatives");
         
         c.weightx = 1;
         c.weighty = 1;
@@ -52,6 +50,17 @@ public class RecentTopicsMenu extends Menu{
     public void addTopic(Topic t, String topicString) {
         TopicsButton b = new TopicsButton(t, topicString);
         topics.add(b);
+<<<<<<< Updated upstream
         originalFont.put(b, new Font("Sans Serif", Font.PLAIN, 30));
+=======
+    }
+
+    public ArrayList<TopicsButton> getTopics() {
+        return topics;
+    }
+
+    public void addTopicIfAbsent(Topic t, String topicString) {
+        //only add topic if absent, and if size is less than 6, supposed to be recent, not all
+>>>>>>> Stashed changes
     }
 }
