@@ -8,8 +8,7 @@ import io.github.atholton.sigmath.user.UserSettings;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class AllTopicsMenu extends JPanel{
-    private static double initialSize = 30;
+public class AllTopicsMenu extends Menu {
     private ArrayList<TopicsButton> topics;
     private static AllTopicsMenu instance;
     
@@ -20,20 +19,11 @@ public class AllTopicsMenu extends JPanel{
         for (TopicsButton t : topics) {
             add(t);
         }
-        Application.get().pack();
-        updateSizes();
-    }
-    public void updateSizes()
-    {
-        UserSettings settings = UserSettings.get();
-        for (TopicsButton topic : topics)
-        {
-            topic.setFont(new Font("Sans Serif", Font.PLAIN, (int)(settings.getFontSize() / 100.0 * initialSize)));
-        }
     }
     public void addTopic(Topic t, String topicString) {
         TopicsButton b = new TopicsButton(t, topicString);
         topics.add(b);
+        originalFont.put(b, new Font("Sans Serif", Font.PLAIN, 30));
     }
     public static AllTopicsMenu get()
     {

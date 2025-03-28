@@ -3,6 +3,7 @@ package io.github.atholton.sigmath.user;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -32,35 +33,25 @@ public class UserStats implements Serializable {
     
     private UserStats(String tempPath)
     {
+        //add all other topics
+        allTopics = new ArrayList<>();
+        allTopics.add(PolynomialDerivative.get());
+        //add settings
+        settings = UserSettings.get(); //pointer so dynamic
+        //get name
+        name = "User";
+        path = "DEFAULT";
+    }
+    private static void tryRead(String path) throws Exception
+    {
+        FileInputStream file = new FileInputStream("data/" + path + ".dat");
+        ObjectInputStream in = new ObjectInputStream(file);
+
+        UserStats read = (UserStats)in.readObject();
+        set(read);
+        setStuff(read);
         
-        //look for file with default. ex) default.osufile idk
-        //else make a new one
-        try {
-            //get file, then read all the topics
-            FileInputStream file = new FileInputStream("data/" + tempPath + ".dat");
-            ObjectInputStream in = new ObjectInputStream(file);
-
-            UserStats read = (UserStats)in.readObject();
-            System.out.println("IN USER STATS: " + read.name + "    \n" + read.path);
-            allTopics = read.allTopics;
-            settings = read.settings;
-            name = read.name;
-            path = read.path;
-
-            setStuff(read);
-            
-            in.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-            //add all other topics
-            allTopics = new ArrayList<>();
-            allTopics.add(PolynomialDerivative.get());
-            //add settings
-            settings = UserSettings.get(); //pointer so dynamic
-            //get name
-            name = "User";
-            path = "DEFAULT";
-        }
+        in.close();
     }
     private static void setStuff(UserStats read)
     {
@@ -68,24 +59,37 @@ public class UserStats implements Serializable {
         //assign the topics their topics from file, which would hold proficiency
         for (Topic t : read.allTopics)
         {
-            if (t instanceof PolynomialDerivative)
-            {
-                PolynomialDerivative.set((PolynomialDerivative)t);
-            }
-            //horrendous code
+            t.set();
         }
     }
     public static UserStats get()
     {
-        if (instance == null) instance = new UserStats();
+        if (instance == null)
+        {
+            try {
+                tryRead("DEFAULT");
+            }
+            catch (Exception e)
+            {
+                System.out.println("new profile");
+                instance = new UserStats();
+            }
+        }
         return instance;
     }
     
+    public static void set(UserStats stats)
+    {
+        UserStats.instance = stats;
+    }
     public static void set(String path)
     {
-        UserStats.instance = new UserStats(path);
+        try {
+            tryRead(path);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-
     public void save()
     {
         //write instance to file

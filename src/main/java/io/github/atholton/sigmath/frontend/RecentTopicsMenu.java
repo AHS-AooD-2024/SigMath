@@ -8,13 +8,11 @@ import io.github.atholton.sigmath.user.UserSettings;
 
 import java.util.ArrayList;
 
-public class RecentTopicsMenu extends JPanel{
+public class RecentTopicsMenu extends Menu{
     private static RecentTopicsMenu instance;
-    private static double initialSize = 0.3;
     private ArrayList<TopicsButton> topics;
-    private GridBagConstraints c;
 
-    private void makeComponent(Component comp, GridBagLayout gridbag, GridBagConstraints c, int index) {
+    private void makeComponent(Component comp, int index) {
         //should be like
         //0 1 2
         //3 4 5
@@ -27,16 +25,13 @@ public class RecentTopicsMenu extends JPanel{
         {
             c.gridwidth = 1;
         }
-        gridbag.setConstraints(comp, c);
+        layout.setConstraints(comp, c);
         add(comp);
         revalidate();
     }
 
     private RecentTopicsMenu() {
         super();
-        setLayout(new GridBagLayout());
-        c = new GridBagConstraints();
-
         topics = new ArrayList<TopicsButton>();
 
         addTopic(PolynomialDerivative.get(), "Polynomial Derivatives");
@@ -46,18 +41,7 @@ public class RecentTopicsMenu extends JPanel{
         c.insets = new Insets(10, 10, 10, 10);
         for (int i = 0; i < topics.size(); i++)
         {
-            makeComponent(topics.get(i), (GridBagLayout)getLayout(), c, i);
-        }
-
-        Application.get().pack();
-        updateSizes();
-    }
-    public void updateSizes()
-    {
-        UserSettings settings = UserSettings.get();
-        for (TopicsButton topic : topics)
-        {
-            topic.setFont(new Font("Sans Serif", Font.PLAIN, (int)(settings.getFontSize() * initialSize)));
+            makeComponent(topics.get(i), i);
         }
     }
     public static RecentTopicsMenu get() {
@@ -68,9 +52,6 @@ public class RecentTopicsMenu extends JPanel{
     public void addTopic(Topic t, String topicString) {
         TopicsButton b = new TopicsButton(t, topicString);
         topics.add(b);
-    }
-
-    public void addTopicIfAbsent(Topic t, String topicString) {
-        //only add topic if absent, and if size is less than 6, supposed to be recent, not all
+        originalFont.put(b, new Font("Sans Serif", Font.PLAIN, 30));
     }
 }

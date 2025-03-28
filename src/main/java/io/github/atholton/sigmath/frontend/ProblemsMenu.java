@@ -24,22 +24,13 @@ import io.github.atholton.sigmath.topics.QuestionTester;
 import io.github.atholton.sigmath.topics.Topic;
 import io.github.atholton.sigmath.user.UserSettings;
 
-public class ProblemsMenu extends JPanel{
+public class ProblemsMenu extends Menu {
     private DualTeXField inputBox;
     private JLabel problemText, percentageText;
     private JButton submitButton, getHelpButton;
     private QuestionGenerator questionGenerator;
     private Topic t;
     private GridBagLayout layout;
-    private GridBagConstraints c;
-
-    private void makeComponent(Component comp,
-                               GridBagLayout gridbag,
-                               GridBagConstraints c) {
-         gridbag.setConstraints(comp, c);
-         add(comp);
-         revalidate();
-    }
 
     public ProblemsMenu(Topic t) {
         super();
@@ -62,7 +53,7 @@ public class ProblemsMenu extends JPanel{
         problemText.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         problemText.setHorizontalAlignment(SwingConstants.CENTER);
-        makeComponent(problemText, layout, c);  
+        makeComponent(problemText);  
 
         c.gridwidth = 1;
         c.gridheight = 2;
@@ -71,11 +62,11 @@ public class ProblemsMenu extends JPanel{
         c.gridx = GridBagConstraints.RELATIVE;
         c.insets = new Insets(180, 20, 350, 0);
         percentageText = new JLabel("Progress:\n50%");
-        percentageText.setFont(new Font("Sans Serif", Font.PLAIN, (int)(18.0 * UserSettings.get().getFontSize() / 100.0)));
+        percentageText.setFont(new Font("Sans Serif", Font.PLAIN, (int)(40.0 * UserSettings.get().getFontSize() / 100.0)));
         percentageText.setHorizontalAlignment(SwingConstants.CENTER);
         percentageText.setOpaque(true);
         percentageText.setBackground(new Color(255,229,153));
-        makeComponent(percentageText, layout, c);
+        makeComponent(percentageText);
 
         c.insets = new Insets(30, 0, 0, 0);
         c.gridheight = 1;
@@ -83,7 +74,7 @@ public class ProblemsMenu extends JPanel{
         c.gridx = 1;
         c.weighty = 1;
         inputBox = new DualTeXField();
-        makeComponent(inputBox, layout, c);
+        makeComponent(inputBox);
 
         c.weighty = 0.1;
         c.insets = new Insets(30, 150, 30, 100);
@@ -93,7 +84,7 @@ public class ProblemsMenu extends JPanel{
         submitButton.setBackground(new Color(201, 218, 248));
         submitButton.setBorder(BorderFactory.createLineBorder(Color.black, 2));
         submitButton.setOpaque(true);
-        makeComponent(submitButton, layout, c);
+        makeComponent(submitButton);
 
         c.insets = new Insets(180, 0, 350, 20);
         c.weighty = 1;
@@ -102,11 +93,11 @@ public class ProblemsMenu extends JPanel{
         c.gridx = GridBagConstraints.RELATIVE;
         c.gridwidth = GridBagConstraints.REMAINDER;
         getHelpButton = new JButton("Need Help?");
-        getHelpButton.setFont(new Font("Sans Serif", Font.PLAIN, (int)(18.0 * UserSettings.get().getFontSize() / 100.0)));
+        getHelpButton.setFont(new Font("Sans Serif", Font.PLAIN, (int)(40.0 * UserSettings.get().getFontSize() / 100.0)));
         getHelpButton.setBackground(new Color(213, 166, 189));
         getHelpButton.setOpaque(true);
         getHelpButton.setBorderPainted(false);
-        makeComponent(getHelpButton, layout, c);
+        makeComponent(getHelpButton);
 
         problemText.setText("Derive y = " + questionGenerator.generateQuestion() + " in terms of x.");
     }

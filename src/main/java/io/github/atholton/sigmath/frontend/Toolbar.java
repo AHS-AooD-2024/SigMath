@@ -12,8 +12,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.Map;
 
-public class Toolbar extends JPanel{
+public class Toolbar extends Menu {
     private JButton topics, settings, logo;
     private Font lexend;
     private JLabel user;
@@ -23,24 +24,6 @@ public class Toolbar extends JPanel{
     {
         if (instance == null) instance = new Toolbar();
         return instance;
-    }
-    public void updateSizes()
-    {
-        UserSettings settings = UserSettings.get();
-        int size = settings.getToolBarSize();
-        user.setText("Profile: " + UserStats.get().name);
-        if (lexend != null)
-            logo.setFont(lexend.deriveFont(size / 100.0f));
-        else
-            logo.setFont(new Font("Sans Serif", 1, size / 2));
-    }
-
-    private void makeComponent(Component comp,
-                               GridBagLayout gridbag,
-                               GridBagConstraints c) {
-        gridbag.setConstraints(comp, c);
-        add(comp);
-        revalidate();
     }
 
     private Toolbar() {
@@ -53,8 +36,6 @@ public class Toolbar extends JPanel{
         catch (IOException | FontFormatException e) {
             System.out.println("LEXEND NOT REGISTERED");
         }
-        setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
 
         //logo should redirect to recent Topics
         logo = new JButton("SigΣath");
@@ -136,10 +117,10 @@ public class Toolbar extends JPanel{
         c.weightx = 1;
         c.weighty = 1;
         c.insets = new Insets(30, 50, 30, 50);
-        makeComponent(topics, (GridBagLayout)getLayout(), c);
-        makeComponent(logo, (GridBagLayout)getLayout(), c);
+        makeComponent(topics);
+        makeComponent(logo);
         c.gridwidth = GridBagConstraints.REMAINDER;
-        makeComponent(settings, (GridBagLayout)getLayout(), c);
+        makeComponent(settings);
         c.gridwidth = 1;
         c.insets = new Insets(0, 10, 0, 0);
         c.weightx = 0;
@@ -147,10 +128,21 @@ public class Toolbar extends JPanel{
         System.out.println(UserStats.get().name);
         user = new JLabel("Profile: " + UserStats.get().name);
         user.setFont(new Font("Sans Serif", Font.BOLD, 20));
-        makeComponent(user, (GridBagLayout)getLayout(), c);
+        makeComponent(user);
+
+        originalFont.put(logo, new Font("Sans Serif", Font.BOLD, 100));
 
         setBackground(new Color(201, 218, 248));
-        updateSizes();
+    }
+
+    @Override
+    public void updateFontSizes()
+    {
+        for(Map.Entry<Component, Font> entry : originalFont.entrySet())
+        {
+            entry.getKey().setFont(entry.getValue().deriveFont(UserSettings.get().getToolBarSize() / 100.0f * entry.getValue().getSize2D()));
+        }
+        revalidate();
     }
 
     public void alignItems(int gap) {

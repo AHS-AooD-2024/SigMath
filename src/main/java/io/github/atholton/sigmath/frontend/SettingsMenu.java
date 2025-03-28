@@ -17,20 +17,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-public class SettingsMenu extends JPanel{
+public class SettingsMenu extends Menu {
     private static SettingsMenu instance;
     private JLabel fontSizeLabel, toolBarSizeLabel;
     private JSlider fontSize, toolBarSize;
     private JButton saveButton;
-    private GridBagLayout layout;
-    private GridBagConstraints c;
 
-    private void addComponent(Component comp)
-    {
-        layout.setConstraints(comp, c);
-        add(comp);
-        revalidate();
-    }
     private SettingsMenu() {
         super();
         fontSizeLabel = new JLabel("Font Size");
@@ -41,7 +33,7 @@ public class SettingsMenu extends JPanel{
             {
                 int num = fontSize.getValue();
                 UserSettings.get().setFontSize(num);
-                if (!fontSize.getValueIsAdjusting()) update();
+                if (!fontSize.getValueIsAdjusting()) Application.resizeFonts();
 
             }
         });
@@ -53,7 +45,7 @@ public class SettingsMenu extends JPanel{
             {
                 int num = toolBarSize.getValue();
                 UserSettings.get().setToolBarSize(num);
-                if(!toolBarSize.getValueIsAdjusting()) update();
+                if(!toolBarSize.getValueIsAdjusting()) Application.resizeFonts();
             }
         });
 
@@ -66,7 +58,7 @@ public class SettingsMenu extends JPanel{
                 UserStats.get().path = "DEFAULT";
                 UserStats.get().save();
                 JOptionPane.showMessageDialog(Application.get(), "Saved Default Profile to: " + UserStats.get().name);
-                Toolbar.get().updateSizes();
+                Application.resizeFonts();
             }
             
         });
@@ -105,41 +97,26 @@ public class SettingsMenu extends JPanel{
         c.weightx = 1;
         c.insets = new Insets(10, 50, 10, 50);
         c.gridwidth = GridBagConstraints.REMAINDER;
-        addComponent(fontSizeLabel);
-        addComponent(fontSize);
-        addComponent(toolBarSizeLabel);
-        addComponent(toolBarSize);
+        makeComponent(fontSizeLabel);
+        originalFont.put(fontSizeLabel, new Font("Sans Serif", Font.PLAIN, 30));
+        makeComponent(fontSize);
+        makeComponent(toolBarSizeLabel);
+        originalFont.put(toolBarSizeLabel, new Font("Sans Serif", Font.PLAIN, 30));
+        makeComponent(toolBarSize);
         c.fill = GridBagConstraints.BOTH;
         c.gridwidth = 1;
-        addComponent(saveButton);
-        addComponent(saveB);
+        makeComponent(saveButton);
+        originalFont.put(saveButton, new Font("Sans Serif", Font.PLAIN, 30));
+        makeComponent(saveB);
+        originalFont.put(saveB, new Font("Sans Serif", Font.PLAIN, 30));
         c.insets = new Insets(10, 10, 10, 10);
         c.weightx = 0.5;
-        addComponent(new JLabel("Set Profile Name: ", 0));
+        makeComponent(new JLabel("Set Profile Name: ", 0));
         c.weightx = 1;
         c.gridwidth = GridBagConstraints.REMAINDER;
-        addComponent(setName);
+        makeComponent(setName);
     }
     
-    /**
-     * General update fonts function for SINGLETON PANELS
-     */
-    public static void update()
-    {
-        SettingsMenu menu = SettingsMenu.get();
-        UserSettings settings = UserSettings.get();
-        menu.fontSize.setValue(settings.getFontSize());
-        menu.toolBarSize.setValue(settings.getToolBarSize());
-
-        //update fonts
-        menu.fontSizeLabel.setFont(new Font("Sans Serif", Font.PLAIN, settings.getFontSize() / 2));
-        menu.toolBarSizeLabel.setFont(new Font("Sans Serif", Font.PLAIN, settings.getFontSize() / 2));
-
-        AllTopicsMenu.get().updateSizes();
-        RecentTopicsMenu.get().updateSizes();
-        Toolbar.get().updateSizes();
-    }
-
     public static SettingsMenu get() {
         if(instance == null) {
             instance = new SettingsMenu();

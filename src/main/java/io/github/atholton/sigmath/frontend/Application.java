@@ -16,6 +16,7 @@ import io.github.atholton.sigmath.user.UserStats;
 public class Application extends JFrame implements Runnable
 {
     private static Application instance;
+    public static Menu[] resizableMenus;
     public static void main(String[] args) {
         Application sigmath = get();
         SwingUtilities.invokeLater(sigmath);
@@ -26,6 +27,8 @@ public class Application extends JFrame implements Runnable
         setExtendedState(JFrame.MAXIMIZED_BOTH); 
         setMinimumSize(new Dimension(1000, 700));
         UserStats.get();
+        resizableMenus = new Menu[]{AllTopicsMenu.get(), RecentTopicsMenu.get(), SettingsMenu.get(), Toolbar.get()};
+        resizeFonts();
     }
 
     @Override
@@ -40,6 +43,13 @@ public class Application extends JFrame implements Runnable
         //add(lm);
 
         pack();
+    }
+    public static void resizeFonts()
+    {
+        for (Menu menu : resizableMenus)
+        {
+            menu.updateFontSizes();
+        }
     }
     public static Application get()
     {
