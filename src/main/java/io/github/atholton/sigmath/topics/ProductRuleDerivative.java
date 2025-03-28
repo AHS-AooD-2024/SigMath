@@ -21,6 +21,11 @@ public class ProductRuleDerivative extends Topic {
     {
         ProductRuleDerivative.instance = instance;
     }
+    @Override
+    public void set()
+    {
+        set(this);
+    }
     private ProductRuleDerivative() {
         super();
         formulaList.add("(a * x) * (b * x ^ n)");//placeholder
