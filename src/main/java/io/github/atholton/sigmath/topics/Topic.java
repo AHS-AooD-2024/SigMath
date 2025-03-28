@@ -18,6 +18,8 @@ public abstract class Topic implements Serializable{
      */
     protected ArrayList<String> formulaList = new ArrayList<String>();
 
+    public abstract void set();
+
     /**
      * Gets the proficiency level of the user in this specific topic
      * 
@@ -57,14 +59,6 @@ public abstract class Topic implements Serializable{
      * @return answer to the question in tree format
      */
     public abstract ASTNode returnAnswer(ASTNode question);
-
-    /**
-     * Solves an individual unit of a topic within a problem
-     * 
-     * @param question question to answer
-     * @return the answert to the question
-     */
-    protected abstract ASTNode solve(ASTNode question);
 
     @Override
     //I have no idea if this is right, supposed to be if the class is the same

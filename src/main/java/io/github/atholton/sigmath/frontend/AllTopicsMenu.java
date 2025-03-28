@@ -8,8 +8,7 @@ import io.github.atholton.sigmath.user.UserSettings;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class AllTopicsMenu extends JPanel{
-    private static double initialSize = 0.3;
+public class AllTopicsMenu extends Menu {
     private ArrayList<TopicsButton> topics;
     private static AllTopicsMenu instance;
     
@@ -17,23 +16,15 @@ public class AllTopicsMenu extends JPanel{
         topics = new ArrayList<TopicsButton>();
 
         addTopic(PolynomialDerivative.get(), "Polynomial Derivatives");
+        addTopic(ProductRuleDerivative.get(), "Product Rule");
         for (TopicsButton t : topics) {
             add(t);
-        }
-        Application.get().pack();
-    }
-    public static void updateSizes()
-    {
-        AllTopicsMenu menu = AllTopicsMenu.get();
-        UserSettings settings = UserSettings.get();
-        for (TopicsButton topic : menu.topics)
-        {
-            topic.setFont(new Font("Sans Serif", Font.PLAIN, (int)(settings.getFontSize() * initialSize)));
         }
     }
     public void addTopic(Topic t, String topicString) {
         TopicsButton b = new TopicsButton(t, topicString);
         topics.add(b);
+        originalFont.put(b, new Font("Sans Serif", Font.PLAIN, 30));
     }
     public static AllTopicsMenu get()
     {
