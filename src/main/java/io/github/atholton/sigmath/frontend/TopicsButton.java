@@ -4,11 +4,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import io.github.atholton.sigmath.topics.*;
 
 public class TopicsButton extends JButton implements ActionListener{
     private Topic topic;
+    private String topicString;
 
     public TopicsButton(Topic topic, String topicString) {
         super(topicString);
@@ -39,11 +41,20 @@ public class TopicsButton extends JButton implements ActionListener{
         menu.revalidate();
         menu.repaint();
 
+        boolean addTopic = true;
         for (TopicsButton t : RecentTopicsMenu.get().getTopics()) {
             if (t.equals(this)) {
+                addTopic = false;
                 break;
             }
-            RecentTopicsMenu.get().getTopics().add(this);
+        }
+        if (addTopic) {
+            ArrayList<TopicsButton> topicsList = RecentTopicsMenu.get().getTopics();
+            RecentTopicsMenu.get().addTopic(topic, getText());
+            RecentTopicsMenu.get().makeComponent(topicsList.get(topicsList.size() - 1), topicsList.size() - 1);
+            RecentTopicsMenu.get().revalidate();
+            RecentTopicsMenu.get().updateFontSizes();
+            //System.out.println(RecentTopicsMenu.get().getTopics().get(0));
         }
     }
 }

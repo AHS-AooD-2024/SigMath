@@ -12,7 +12,7 @@ public class RecentTopicsMenu extends Menu{
     private static RecentTopicsMenu instance;
     private ArrayList<TopicsButton> topics;
 
-    private void makeComponent(Component comp, int index) {
+    public void makeComponent(Component comp, int index) {
         //should be like
         //0 1 2
         //3 4 5
@@ -49,6 +49,11 @@ public class RecentTopicsMenu extends Menu{
 
     public void addTopic(Topic t, String topicString) {
         TopicsButton b = new TopicsButton(t, topicString);
+        topics.add(b);
+        originalFont.put(b, new Font("Sans Serif", Font.PLAIN, 30));
+    }
+    public void addTopic(TopicsButton b)
+    {
         topics.add(b);
         originalFont.put(b, new Font("Sans Serif", Font.PLAIN, 30));
     }
