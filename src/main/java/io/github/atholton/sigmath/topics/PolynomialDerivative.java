@@ -21,6 +21,13 @@ public class PolynomialDerivative extends Topic {
     {
         PolynomialDerivative.instance = instance;
     }
+
+    @Override
+    public void set()
+    {
+        set(this);
+    }
+    
     private PolynomialDerivative() {
         super();
         formulaList.add("a*x^n1");

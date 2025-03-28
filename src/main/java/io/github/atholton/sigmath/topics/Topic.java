@@ -18,6 +18,8 @@ public abstract class Topic implements Serializable{
      */
     protected ArrayList<String> formulaList = new ArrayList<String>();
 
+    public abstract void set();
+
     /**
      * Gets the proficiency level of the user in this specific topic
      * 
