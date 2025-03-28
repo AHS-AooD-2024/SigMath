@@ -2,6 +2,8 @@ package io.github.atholton.sigmath.frontend;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -89,7 +91,12 @@ public class ProblemsMenu extends JPanel{
 
         c.weighty = 0.1;
         c.insets = new Insets(30, 150, 30, 100);
-        submitButton = new JButton("Submit");
+        submitButton = new JButton("Submit"){
+            {
+                setSize(150, 75);
+                setMaximumSize(getSize());
+            }
+        };
         submitButton.setFont(new Font("Sans Serif", Font.PLAIN, 40));
         submitButton.addActionListener(new Submit());
         submitButton.setBackground(new Color(201, 218, 248));
