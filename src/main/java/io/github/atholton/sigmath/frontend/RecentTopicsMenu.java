@@ -59,6 +59,10 @@ public class RecentTopicsMenu extends Menu{
         return topics;
     }
 
+    public ArrayList<TopicsButton> getTopics() {
+        return topics;
+    }
+
     public void addTopicIfAbsent(Topic t, String topicString) {
         //only add topic if absent, and if size is less than 6, supposed to be recent, not all
 >>>>>>> Stashed changes
