@@ -47,8 +47,8 @@ public class ProblemsMenu extends Menu {
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.gridheight = 1;
         c.weightx = 1;
-        c.weighty = 0.6;
-        problemText = new JLabel("SAMPLE TEXT");
+        c.weighty = 0.7;
+        problemText = new JLabel("PROBLEM TEXT");
         problemText.setFont(new Font("Sans Serif", Font.BOLD, (int)(40.0 * UserSettings.get().getFontSize() / 100.0)));
         problemText.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
@@ -57,10 +57,11 @@ public class ProblemsMenu extends Menu {
 
         c.gridwidth = 1;
         c.gridheight = 2;
-        c.weightx = 1;
+        c.weightx = 0.8;
         c.weighty = 1;
         c.gridx = GridBagConstraints.RELATIVE;
-        c.insets = new Insets(180, 20, 350, 0);
+        //c.insets = new Insets(180, 20, 350, 0);
+        c.insets = new Insets(100, 100, 100, 100);
         percentageText = new JLabel("Progress:\n50%");
         percentageText.setFont(new Font("Sans Serif", Font.PLAIN, (int)(40.0 * UserSettings.get().getFontSize() / 100.0)));
         percentageText.setHorizontalAlignment(SwingConstants.CENTER);
@@ -86,9 +87,10 @@ public class ProblemsMenu extends Menu {
         submitButton.setOpaque(true);
         makeComponent(submitButton);
 
-        c.insets = new Insets(180, 0, 350, 20);
+        //c.insets = new Insets(180, 0, 350, 20);
+        c.insets = new Insets(100, 100, 100, 100);
         c.weighty = 1;
-        c.weightx = 1;
+        c.weightx = 0.8;
         c.gridheight = 2;
         c.gridx = GridBagConstraints.RELATIVE;
         c.gridwidth = GridBagConstraints.REMAINDER;
