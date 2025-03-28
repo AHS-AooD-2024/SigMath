@@ -87,7 +87,7 @@ public class ProblemsMenu extends Menu {
                 setMaximumSize(getSize());
             }
         };
-        submitButton.setFont(new Font("Sans Serif", Font.PLAIN, 40));
+        originalFont.put(submitButton, new Font("Sans Serif", Font.PLAIN, 40));
         submitButton.addActionListener(new Submit());
         submitButton.setBackground(new Color(201, 218, 248));
         submitButton.setBorder(BorderFactory.createLineBorder(Color.black, 2));
@@ -102,7 +102,7 @@ public class ProblemsMenu extends Menu {
         c.gridx = GridBagConstraints.RELATIVE;
         c.gridwidth = GridBagConstraints.REMAINDER;
         getHelpButton = new JButton("Need Help?");
-        getHelpButton.setFont(new Font("Sans Serif", Font.PLAIN, (int)(40.0 * UserSettings.get().getFontSize() / 100.0)));
+        originalFont.put(getHelpButton, new Font("Sans Serif", Font.PLAIN, 40));
         getHelpButton.setBackground(new Color(213, 166, 189));
         getHelpButton.setOpaque(true);
         getHelpButton.setBorderPainted(false);

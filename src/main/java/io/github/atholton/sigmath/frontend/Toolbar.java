@@ -17,7 +17,7 @@ import java.util.Map;
 public class Toolbar extends Menu {
     private JButton topics, settings, logo;
     private Font lexend;
-    private JLabel user;
+    public JLabel user;
     private static Toolbar instance;
 
     public static Toolbar get()
