@@ -40,9 +40,10 @@ public class TopicsButton extends JButton implements ActionListener{
         menu.repaint();
 
         for (TopicsButton t : RecentTopicsMenu.get().getTopics()) {
-            if (!t.equals(this)) {
-                RecentTopicsMenu.get().getTopics().add(this);
+            if (t.equals(this)) {
+                break;
             }
+            RecentTopicsMenu.get().getTopics().add(this);
         }
     }
 }
