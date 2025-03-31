@@ -162,6 +162,7 @@ public class ASTNode {
             computeFunction.put("cos", Math::cos);
             computeFunction.put("tan", Math::tan);
             computeFunction.put("sqrt", Math::sqrt);
+            computeFunction.put("ln", Math::log);
         }
     }
     /**
