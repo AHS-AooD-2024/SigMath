@@ -16,6 +16,7 @@ import io.github.atholton.sigmath.user.UserSettings;
 public class ProblemsMenu extends Menu {
     private DualTeXField inputBox;
     private JLabel problemText, percentageText;
+    private JFrame helpPopup;
     private JButton submitButton, getHelpButton;
     private QuestionGenerator questionGenerator;
     private Topic t;
@@ -68,12 +69,7 @@ public class ProblemsMenu extends Menu {
 
         c.weighty = 0.1;
         c.insets = new Insets(30, 150, 30, 100);
-        submitButton = new JButton("Submit"){
-            {
-                setSize(150, 75);
-                setMaximumSize(getSize());
-            }
-        };
+        submitButton = new JButton("Submit");
         submitButton.setFont(new Font("Sans Serif", Font.PLAIN, 40));
         submitButton.addActionListener(new Submit());
         submitButton.setBackground(new Color(201, 218, 248));
@@ -91,15 +87,13 @@ public class ProblemsMenu extends Menu {
         getHelpButton = new JButton("Need Help?");
         getHelpButton.setFont(new Font("Sans Serif", Font.PLAIN, (int)(40.0 * UserSettings.get().getFontSize() / 100.0)));
         getHelpButton.setBackground(new Color(213, 166, 189));
+        getHelpButton.addActionListener(new Help());
         getHelpButton.setOpaque(true);
         getHelpButton.setBorderPainted(false);
         makeComponent(getHelpButton);
 
         problemText.setText("Derive y = " + questionGenerator.generateQuestion() + " in terms of x.");
     }
-
-
-
 
     class Submit implements ActionListener
     {
@@ -121,8 +115,8 @@ public class ProblemsMenu extends Menu {
             }
             finally
             {
-                JOptionPane.showMessageDialog(Application.get(), right ? "RIGHT ANSWER":"WRONG ANSWER");
-                if (right || numGuesses > 3)
+                JOptionPane.showMessageDialog(Application.get(), right ? "RIGHT ANSWER":"WRONG ANSWER: " + (3 - numGuesses) + " CHANCES LEFT.");
+                if (right || numGuesses >= 3)
                 {
                     if (right) t.setProficiency(t.getProficiency() + 0.1);
 
@@ -137,4 +131,28 @@ public class ProblemsMenu extends Menu {
         }
 
     }
+
+    class Help implements ActionListener 
+    {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            System.out.println("(fweh)");
+
+            helpPopup = new JFrame("(FWEH HXMICIDE)");
+            helpPopup.setUndecorated(true);
+            helpPopup.setAlwaysOnTop(true);
+            helpPopup.getRootPane().putClientProperty("apple.awt.draggableWindowBackground", false);
+            helpPopup.getContentPane().setLayout(new java.awt.BorderLayout());
+            helpPopup.getContentPane().add(new JTextField("text field north"), java.awt.BorderLayout.NORTH);
+            helpPopup.setFont(new Font("Sans Serif", Font.PLAIN, (int)(40.0 * UserSettings.get().getFontSize() / 100.0)));
+            helpPopup.setBackground(new Color(213, 166, 189));
+            makeComponent(helpPopup);
+            helpPopup.setVisible(true);
+            helpPopup.pack();
+    }
+
+    }   
+    
 }
+
