@@ -15,8 +15,8 @@ import io.github.atholton.sigmath.user.UserSettings;
 
 public class ProblemsMenu extends Menu {
     private DualTeXField inputBox;
-    private JLabel problemText, percentageText;
-    private JFrame helpPopup;
+    private ProgressText percentageText;
+    private ProblemText problemText;
     private JButton submitButton, getHelpButton;
     private QuestionGenerator questionGenerator;
     private Topic t;
@@ -38,8 +38,8 @@ public class ProblemsMenu extends Menu {
         c.gridheight = 1;
         c.weightx = 1;
         c.weighty = 0.7;
-        problemText = new JLabel("PROBLEM TEXT");
-        problemText.setFont(new Font("Sans Serif", Font.BOLD, (int)(40.0 * UserSettings.get().getFontSize() / 100.0)));
+        problemText = new ProblemText();
+        originalFont.put(problemText, new Font("Sans Serif", Font.BOLD, 40));
         problemText.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         problemText.setHorizontalAlignment(SwingConstants.CENTER);
@@ -52,8 +52,8 @@ public class ProblemsMenu extends Menu {
         c.gridx = GridBagConstraints.RELATIVE;
         //c.insets = new Insets(180, 20, 350, 0);
         c.insets = new Insets(100, 100, 100, 100);
-        percentageText = new JLabel("Progress:\n50%");
-        percentageText.setFont(new Font("Sans Serif", Font.PLAIN, (int)(40.0 * UserSettings.get().getFontSize() / 100.0)));
+        percentageText = new ProgressText(t);
+        originalFont.put(percentageText, new Font("Sans Serif", Font.PLAIN, 40));
         percentageText.setHorizontalAlignment(SwingConstants.CENTER);
         percentageText.setOpaque(true);
         percentageText.setBackground(new Color(255,229,153));
@@ -69,8 +69,13 @@ public class ProblemsMenu extends Menu {
 
         c.weighty = 0.1;
         c.insets = new Insets(30, 150, 30, 100);
-        submitButton = new JButton("Submit");
-        submitButton.setFont(new Font("Sans Serif", Font.PLAIN, 40));
+        submitButton = new JButton("Submit"){
+            {
+                setSize(150, 75);
+                setMaximumSize(getSize());
+            }
+        };
+        originalFont.put(submitButton, new Font("Sans Serif", Font.PLAIN, 40));
         submitButton.addActionListener(new Submit());
         submitButton.setBackground(new Color(201, 218, 248));
         submitButton.setBorder(BorderFactory.createLineBorder(Color.black, 2));
@@ -85,14 +90,15 @@ public class ProblemsMenu extends Menu {
         c.gridx = GridBagConstraints.RELATIVE;
         c.gridwidth = GridBagConstraints.REMAINDER;
         getHelpButton = new JButton("Need Help?");
-        getHelpButton.setFont(new Font("Sans Serif", Font.PLAIN, (int)(40.0 * UserSettings.get().getFontSize() / 100.0)));
+        originalFont.put(getHelpButton, new Font("Sans Serif", Font.PLAIN, 40));
         getHelpButton.setBackground(new Color(213, 166, 189));
         getHelpButton.addActionListener(new Help());
         getHelpButton.setOpaque(true);
         getHelpButton.setBorderPainted(false);
         makeComponent(getHelpButton);
 
-        problemText.setText("Derive y = " + questionGenerator.generateQuestion() + " in terms of x.");
+        problemText.setText("Derive y = ", questionGenerator.generateQuestion(), " in terms of x.");
+        updateFontSizes();
     }
 
     class Submit implements ActionListener
@@ -105,7 +111,7 @@ public class ProblemsMenu extends Menu {
             try
             {
                 ASTNode userEquation = ShuntingYardParser.get().convertInfixNotationToAST(userAnswer);
-                ASTNode answer = ShuntingYardParser.get().convertInfixNotationToAST(problemText.getText());
+                ASTNode answer = ShuntingYardParser.get().convertInfixNotationToAST(problemText.getQuestion());
                 answer = t.returnAnswer(answer);
                 right = QuestionTester.testEquations(userEquation, answer);
             }
@@ -119,8 +125,8 @@ public class ProblemsMenu extends Menu {
                 if (right || numGuesses >= 3)
                 {
                     if (right) t.setProficiency(t.getProficiency() + 0.1);
-
-                    problemText.setText(questionGenerator.generateQuestion());
+                    percentageText.updateText();
+                    problemText.setText("Derive y = ", questionGenerator.generateQuestion(), " in terms of x.");
                     numGuesses = 0;
                 }
                 else
