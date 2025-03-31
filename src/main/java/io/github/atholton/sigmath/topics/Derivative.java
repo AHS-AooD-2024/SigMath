@@ -105,7 +105,35 @@ public class Derivative
                 node.setValue("cos");
             }
             else if (node.getValue().equals("cos")) {
-                //
+                node.setValue("sin");
+                ASTNode temp = new ASTNode("*", 
+                    new ASTNode("-1", null, null, Type.NUMBER),
+                    copy(node),
+                    Type.OPERATOR
+                );
+                replaceNode(node, temp);
+            }
+            else if (node.getValue().equals("tan")) {
+                node.setValue("sec");
+                ASTNode temp = new ASTNode("^", 
+                    copy(node),
+                    new ASTNode("2", null, null, Type.NUMBER),
+                    Type.OPERATOR
+                );
+                replaceNode(node, temp);
+            }
+            else if (node.getValue().equals("sec"))
+            {
+                ASTNode temp = new ASTNode("*", 
+                    new ASTNode("tan", node.getLeftASTNode(), null, Type.FUNCTION),
+                    copy(node),
+                    Type.OPERATOR
+                );
+                replaceNode(node, temp);
+            }
+            else if (node.getValue().equals("ln")) 
+            {
+                //DO THINGS
             }
         }
     }

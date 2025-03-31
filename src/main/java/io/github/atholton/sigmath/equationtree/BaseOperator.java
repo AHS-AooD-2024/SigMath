@@ -17,6 +17,7 @@ public class BaseOperator implements Operator {
         "cos",
         "tan",
         "sqrt",
+        "ln",
     };
     public static BaseOperator getOperator(String symbol)
     {
