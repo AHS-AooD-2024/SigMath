@@ -84,6 +84,7 @@ public class SettingsMenu extends Menu {
             public void actionPerformed(ActionEvent e) {
                 UserStats.get().name = setName.getText();
                 JOptionPane.showMessageDialog(Application.get(), "Set Profile Name to: " + UserStats.get().name);
+                Toolbar.get().user.setText("Profile: " + UserStats.get().name);
             }
             
         });
