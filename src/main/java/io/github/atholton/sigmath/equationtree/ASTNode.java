@@ -141,32 +141,37 @@ public class ASTNode {
         switch (value) {
             case "+":
             case "-":
-                return "(" + left + " " + value + " " + right + ")";
+                return "\\left(" + left + " " + value + " " + right + "\\right)";
             case "*":
-                return left + " \\times " + right;
+                return "\\left(" + left + " \\times " + right + "\\right)";
             case IMPLICIT_TIMES:
                 return implicitTimesTex(node.getLeftASTNode(), node.getRightASTNode(), left, right);
             case "/":
-                return "\\frac{" + left + "}{" + right + "}";
+                return "\\left(\\frac{" + left + "}{" + right + "}\\right)";
             case "^":
-                return "{" + left + "}^{" + right + "}";
+                return "\\left({" + left + "}\\right)^{" + right + "}";
             case "sqrt":
                 return "\\sqrt{" + left + "}";
             case "cbrt":
                 return "\\sqrt[3]{" + left + "}";
             default:
-                if(node.type == Type.FUNCTION && !node.value.contains("(")) // The dumbest assertion I have ever had to make, and I have had to
-                                                                                // nonnull assert things that have been checked for null and enums ansd -o Wifojsmdzf lnkm I feel like Im going insane
-                    return "\\" + node.value + " (" + left + ")";    
-                else 
-                    return latexToken(value); // If it's a number or variable, return as is
+                return defaultLatex(node, value, left);
                 
         }
+    }
+
+    private static String defaultLatex(ASTNode node, String value, String left) {
+        if(node.type == Type.FUNCTION && !node.value.contains("(")) // The dumbest assertion I have ever had to make, and I have had to
+                                                                        // nonnull assert things that have been checked for null and enums ansd -o Wifojsmdzf lnkm I feel like Im going insane
+            return "\\" + node.value + " \\left(" + left + "\\right)";    
+        else 
+            return latexToken(value); // If it's a number or variable, return as is
     }
 
     public static String texify(ASTNode node) {
         StringBuilder sb = new StringBuilder();
         texify(node, sb);
+        // return sb.substring(1, sb.length() - 1);
         return sb.toString();
     }
 
@@ -245,9 +250,9 @@ public class ASTNode {
             left.type == Type.NUMBER && right.type != Type.NUMBER ||
             left.value == IMPLICIT_TIMES || right.value == IMPLICIT_TIMES
             ) {
-            return leftStr + rightStr;
+            return "\\left(" + leftStr + rightStr + "\\right)";
         } else {
-            return leftStr + " \\cdot " + rightStr;
+            return "\\left(" + leftStr + " \\cdot " + rightStr + "\\right)";
         }
     }
 

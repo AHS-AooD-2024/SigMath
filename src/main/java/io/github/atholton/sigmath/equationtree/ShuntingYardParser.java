@@ -270,6 +270,13 @@ public class ShuntingYardParser {
                 tokens.add(ASTNode.IMPLICIT_TIMES);
             }
             tokens.add(str.substring(str.length() - 1));
+            // for(String special : BaseOperator.specialCharacters) {
+            //     int i = sb.indexOf(special);
+            //     while(i != -1) {
+            //         sb.replace(i, i + special.length(), " \\" + special + " ");
+            //         i = sb.indexOf(special, i);
+            //     }
+            // }
         }
         sb.setLength(0);
     }
