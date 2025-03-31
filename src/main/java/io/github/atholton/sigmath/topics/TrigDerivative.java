@@ -9,22 +9,28 @@ public class TrigDerivative extends Topic
 
     public TrigDerivative()
     {
-        
+        super();
+        formulaList.add("sin(x)");
+        formulaList.add("cos(x)");
+        formulaList.add("tan(x)");
     }
     @Override
     public void set() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'set'");
+        set(instance);
+    }
+    public static void set(TrigDerivative instance)
+    {
+        TrigDerivative.instance = instance;
     }
     public static void get()
     {
-
+        if (instance == null) instance = new TrigDerivative();
     }
 
     @Override
     public ASTNode returnAnswer(ASTNode question) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'returnAnswer'");
+        Derivative.derive(question);
+        return question;
     }
     
 }
