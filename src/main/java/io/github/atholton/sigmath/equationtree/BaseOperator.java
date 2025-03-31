@@ -1,6 +1,7 @@
 
 package io.github.atholton.sigmath.equationtree;
 
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -83,6 +84,7 @@ public class BaseOperator implements Operator {
 
     @Override
     public int comparePrecedence(Operator o) {
+        Objects.requireNonNull(o);
         if(o instanceof BaseOperator) {
             BaseOperator other = (BaseOperator) o;
             return precedence - other.precedence;

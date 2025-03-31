@@ -134,28 +134,84 @@ public class ASTNode {
         }
 
         // Recursively process left and right subtrees
-        String left = convertToLatex(node.getLeftASTNode());
-        String right = convertToLatex(node.getRightASTNode());
+        String leftstr = convertToLatex(node.getLeftASTNode());
+        String rightstr = convertToLatex(node.getRightASTNode());
+
+        ASTNode left = node.getLeftASTNode();
+        ASTNode right = node.getRightASTNode();
+
+        boolean doParen = false;
+        if(node.type == Type.OPERATOR) {
+            Operator nop = BaseOperator.getOperator(node.getValue());
+            Operator lop = null;
+            if(left != null)
+                lop = BaseOperator.getOperator(left.getValue());
+            Operator rop = null;
+            if(right != null)
+                rop = BaseOperator.getOperator(right.getValue());
+    
+            doParen = true;
+            int comp = 0;
+            if(lop != null) {
+                comp = nop.comparePrecedence(lop);
+            } else if (rop != null) {
+                comp = nop.comparePrecedence(rop);
+            } else {
+                doParen = false;
+            }
+
+            if(doParen) {
+                // if deeper op has lower precedence, we have to 
+                // surround this op with parens
+                // 
+                // no parens
+                // 3 * x ^ 2
+                //   *      // prec = 2
+                //  / \
+                // 3   ^    // prec = 3
+                //    / \
+                //   x   2  // 2 < 3
+                // yes parens
+                // (3 * x) ^ 2
+                //     ^    // prec = 3
+                //    / \
+                //   *   2  // prec = 2
+                //  / \
+                // 3   x    // 3 > 2
+                doParen = comp > 0; 
+            }
+        }
+
+        String leftParen;
+        String rightParen;
+
+        if(doParen) {
+            leftParen = "\\left(";
+            rightParen = "\\right)";
+        } else {
+            leftParen = "";
+            rightParen = "";
+        }
 
         // Handle different operators
         switch (value) {
             case "+":
             case "-":
-                return "\\left(" + left + " " + value + " " + right + "\\right)";
+                return leftParen + leftstr + " " + value + " " + rightstr + rightParen;
             case "*":
-                return "\\left(" + left + " \\times " + right + "\\right)";
+                return leftParen + leftstr + " \\times " + rightstr + rightParen;
             case IMPLICIT_TIMES:
-                return implicitTimesTex(node.getLeftASTNode(), node.getRightASTNode(), left, right);
+                return implicitTimesTex(node.getLeftASTNode(), node.getRightASTNode(), leftstr, rightstr);
             case "/":
-                return "\\left(\\frac{" + left + "}{" + right + "}\\right)";
+                return leftParen + "\\frac{" + leftstr + "}{" + rightstr + "}" + rightParen;
             case "^":
-                return "\\left({" + left + "}\\right)^{" + right + "}";
+                return leftParen + "{" + leftstr + "}" + rightParen + "^{" + rightstr + "}";
             case "sqrt":
-                return "\\sqrt{" + left + "}";
+                return "\\sqrt{" + leftstr + "}";
             case "cbrt":
-                return "\\sqrt[3]{" + left + "}";
+                return "\\sqrt[3]{" + leftstr + "}";
             default:
-                return defaultLatex(node, value, left);
+                return defaultLatex(node, value, leftstr);
                 
         }
     }
