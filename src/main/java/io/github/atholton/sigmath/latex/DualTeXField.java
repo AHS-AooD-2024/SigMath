@@ -1,6 +1,7 @@
 package io.github.atholton.sigmath.latex;
 
 import java.awt.LayoutManager;
+import java.awt.Font;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -16,7 +17,7 @@ import io.github.atholton.sigmath.util.Strings;
  *  and a {@link TeXLabel}.
  */
 public class DualTeXField extends JPanel {
-    private JTextField input;
+    public JTextField input;
     private TeXLabel output;
 
     private DocumentListener labelUpdater;
@@ -24,7 +25,11 @@ public class DualTeXField extends JPanel {
     public DualTeXField(LayoutManager layout, int columns) {
         super(layout);
 
-        input = new JTextField(columns);
+        input = new HintTextField("Type your answer here");
+        Font font1 = new Font("SansSerif", Font.BOLD, 20);
+        input.setFont(font1);
+
+
         labelUpdater = new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -49,7 +54,7 @@ public class DualTeXField extends JPanel {
 
         input.getDocument().addDocumentListener(labelUpdater);
         
-        output = new TeXLabel("");
+        output = new TeXLabel("Aloha");
 
         input.addKeyListener(FilterKeyListener.disallows('\\'));
 

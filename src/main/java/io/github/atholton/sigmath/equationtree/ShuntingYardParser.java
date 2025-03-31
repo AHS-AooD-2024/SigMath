@@ -1,6 +1,7 @@
 package io.github.atholton.sigmath.equationtree;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,7 +10,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import io.github.atholton.sigmath.equationtree.ASTNode.Type;
+
+/**
+ * @author nathanli5722
+ * part taken from wikipedia psuedocode
+ * part taken from a blog post
+ * 
+ * 
+ */
 public class ShuntingYardParser {
+    private static ShuntingYardParser instance;
 
     private final Map<String, Operator> operators;
 
@@ -21,13 +32,13 @@ public class ShuntingYardParser {
         {
             final ASTNode rightASTNode = stack.pop();
             final ASTNode leftASTNode = stack.pop();
-            stack.push(new ASTNode(operator, leftASTNode, rightASTNode));
+            stack.push(new ASTNode(operator, leftASTNode, rightASTNode, Type.OPERATOR));
         }
         else
         {
             //is a function
             final ASTNode leftASTNode = stack.pop();
-            stack.push(new ASTNode(operator, leftASTNode, null));
+            stack.push(new ASTNode(operator, leftASTNode, null, Type.FUNCTION));
         }
     }
 
@@ -37,7 +48,7 @@ public class ShuntingYardParser {
      * @param operators A collection of operators that should be recognized by
      * the parser.
      */
-    public ShuntingYardParser(Collection<Operator> operators) {
+    private ShuntingYardParser(Collection<Operator> operators) {
         this.operators = new HashMap<>();
         for(Operator o : operators) {
             this.operators.put(o.getSymbol(), o);
@@ -49,19 +60,22 @@ public class ShuntingYardParser {
      * Creates a ShuntingYardParser with default operators
      * 
      */
-    public ShuntingYardParser() {
+    private ShuntingYardParser() {
         operators = new HashMap<>();
-        operators.put("^", new BaseOperator("^", true, 4));
-        operators.put("*", new BaseOperator("*", false, 3));
-        operators.put("/", new BaseOperator("/", false, 3));
-        operators.put("+", new BaseOperator("+", false, 2));
-        operators.put("-", new BaseOperator("-", false, 2));
 
+        for (BaseOperator o : BaseOperator.operators)
+        {
+            operators.put(o.getSymbol(), o);
+        }
+        
         functions = new HashSet<>();
-        functions.add("sin");
-        functions.add("cos");
-        functions.add("tan");
-        functions.add("sqrt");
+        functions.addAll(Arrays.asList(BaseOperator.functions));
+    }
+
+    public static ShuntingYardParser get()
+    {
+        if (instance == null) instance = new ShuntingYardParser();
+        return instance;
     }
 
     private static boolean isNumber(char c)
@@ -70,14 +84,15 @@ public class ShuntingYardParser {
     }
     private static boolean isNumber(String c)
     {
-        for (int i = 0; i < c.length(); i++)
+        try
         {
-            if (!isNumber(c.charAt(i)))
-            {
-                return false;
-            }
+            Double.parseDouble(c);
+            return true;
         }
-        return true;
+        catch(Exception e)
+        {
+            return false;
+        }
     }
     /**
      * Tests if token is a function
@@ -127,17 +142,14 @@ public class ShuntingYardParser {
         {
             char c = input.charAt(i);
             if (c == ' ') continue;
-            if (writingFunction(c, build))
-            {
-                build.append(c);
-            }
-            else if (isNumber(c))
+            if (writingFunction(c, build) || isNumber(c))
             {
                 build.append(c);
             }
             else if (c == '-' && !isNumber(prevToken))
             {
-                build.append(c);
+                tokens.add("-1");
+                tokens.add("*");
             }
             else
             {
@@ -156,17 +168,24 @@ public class ShuntingYardParser {
         }
         return tokens;
     }
+    public ASTNode convertLatexToAST(final String input)
+    {
+        return convertTokensToAST(tokenizeLaTeX(input));
+    }
     /***
      * Convert an expression in infix notation to a tree
      *
      * @param input The expression, in infix notation.
      * @return An {@link ASTNode} that serves as the root of the AST.
      */
-    public ASTNode convertInfixNotationToAST(final String input) {
+    public ASTNode convertInfixNotationToAST(final String input) 
+    {
+        return convertTokensToAST(tokenize(input));
+    }
+    private ASTNode convertTokensToAST(List<String> tokens)
+    {
         final Stack<String> operatorStack = new Stack<>();
         final Stack<ASTNode> operandStack = new Stack<>();
-        //Splits String into tokens
-        List<String> tokens = tokenize(input);
 
         for(String token : tokens) {
             String popped;
@@ -185,6 +204,7 @@ public class ShuntingYardParser {
                                 String function = operatorStack.pop();
                                 addNode(operandStack, function);
                             }
+                            break;
                         } else {
                             addNode(operandStack, popped);
                         }
@@ -211,8 +231,12 @@ public class ShuntingYardParser {
                         operatorStack.push(token);
                     } else {
                         //is a number
-                        //or a function
-                        operandStack.push(new ASTNode(token, null, null));
+                        Type t = Type.VARIABLE;
+                        if (isNumber(token))
+                        {
+                            t = Type.NUMBER;
+                        }
+                        operandStack.push(new ASTNode(token, null, null, t));
                     }
                     break;
             }
@@ -222,6 +246,41 @@ public class ShuntingYardParser {
         }
         return operandStack.pop();
     }
-
+    /**
+     * TODO: tokenize LaTeX input
+     * @param input
+     * @return
+     */
+    private List<String> tokenizeLaTeX(final String input) 
+    {
+        List<String> tokens = new ArrayList<>();
+        StringBuilder build = new StringBuilder();
+        char prevToken = '\0';
+        boolean inCommand = false; 
     
+        for (int i = 0; i < input.length(); i++)
+        {
+            char c = input.charAt(i);
+            if (c == ' ') continue;
+            if (writingFunction(c, build) || isNumber(c) || c == '-' && !isNumber(prevToken))
+            {
+                build.append(c);
+            }
+            else
+            {
+                if (build.length() != 0)
+                {
+                    tokens.add(build.toString());
+                    build.setLength(0);
+                }
+                tokens.add(String.valueOf(c));
+            }
+            prevToken = c;
+        }
+        if (build.length() != 0)
+        {
+            tokens.add(build.toString());
+        }
+        return tokens;
+    }
 }
