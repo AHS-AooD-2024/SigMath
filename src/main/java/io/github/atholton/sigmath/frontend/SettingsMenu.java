@@ -48,13 +48,17 @@ public class SettingsMenu extends Menu {
                 if(!toolBarSize.getValueIsAdjusting()) Application.resizeFonts();
             }
         });
-
+        JTextField setName = new JTextField();
         saveButton = new JButton("Save as Default");
         saveButton.setBackground(new Color(201, 218, 248));
         saveButton.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (!setName.getText().equals(""))
+                {
+                    UserStats.get().name = setName.getText();
+                }
                 UserStats.get().path = "DEFAULT";
                 UserStats.get().save();
                 JOptionPane.showMessageDialog(Application.get(), "Saved Default Profile to: " + UserStats.get().name);
@@ -69,6 +73,10 @@ public class SettingsMenu extends Menu {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (!setName.getText().equals(""))
+                {
+                    UserStats.get().name = setName.getText();
+                }
                 UserStats.get().path = UserStats.get().name;
                 UserStats.get().save();
                 JOptionPane.showMessageDialog(Application.get(), "Saved Current Profile to: " + UserStats.get().name);
@@ -76,7 +84,7 @@ public class SettingsMenu extends Menu {
             
         });
 
-        JTextField setName = new JTextField();
+        
         setName.setToolTipText("Set Profile Name");
         setName.addActionListener(new ActionListener() {
 
