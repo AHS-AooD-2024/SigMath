@@ -21,6 +21,7 @@ public class BaseOperator implements Operator {
         "cos",
         "tan",
         "sqrt",
+        "ln",
     };
 
     public static final String[] specialCharacters = {

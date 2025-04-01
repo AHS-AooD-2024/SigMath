@@ -5,6 +5,7 @@ import java.awt.LayoutManager;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,7 +16,6 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
-
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -52,7 +52,11 @@ public class DualTeXField extends JPanel {
     public DualTeXField(LayoutManager layout, int columns) {
         super(layout);
 
-        input = new JTextField(columns);
+        input = new HintTextField("Type your answer here");
+        Font font1 = new Font("SansSerif", Font.BOLD, 20);
+        input.setFont(font1);
+
+
         labelUpdater = new DocumentListener() {
 
             @Override
@@ -136,7 +140,7 @@ public class DualTeXField extends JPanel {
         input.getDocument().addDocumentListener(labelUpdater);
         input.addKeyListener(parenthesisSurrounder);
         
-        output = new TeXLabel("");
+        output = new TeXLabel("Aloha");
 
         input.addKeyListener(FilterKeyListener.disallows('\\'));
 

@@ -27,6 +27,7 @@ import io.github.atholton.sigmath.equationtree.ASTNode.Type;
  * 
  */
 public class ShuntingYardParser {
+    private static ShuntingYardParser instance;
 
     private final Map<String, Operator> operators;
 
@@ -56,7 +57,7 @@ public class ShuntingYardParser {
      * @param operators A collection of operators that should be recognized by
      * the parser.
      */
-    public ShuntingYardParser(Collection<Operator> operators) {
+    private ShuntingYardParser(Collection<Operator> operators) {
         this.operators = new HashMap<>();
         for(Operator o : operators) {
             this.operators.put(o.getSymbol(), o);
@@ -69,7 +70,7 @@ public class ShuntingYardParser {
      * Creates a ShuntingYardParser with default operators
      * 
      */
-    public ShuntingYardParser() {
+    private ShuntingYardParser() {
         operators = new HashMap<>();
 
         for (BaseOperator o : BaseOperator.operators)
@@ -80,6 +81,12 @@ public class ShuntingYardParser {
         functions = new HashSet<>();
         functions.addAll(Arrays.asList(BaseOperator.functions));
         specialCharacters = Set.of(BaseOperator.specialCharacters);
+    }
+
+    public static ShuntingYardParser get()
+    {
+        if (instance == null) instance = new ShuntingYardParser();
+        return instance;
     }
 
     private static boolean isNumber(char c)
