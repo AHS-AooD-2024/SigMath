@@ -250,10 +250,6 @@ public interface TeXComponentProperties {
         return str;
     }
 
-    // FIXME: the ast idea of texifying has some...interesting interperetations.
-    // some highlights include
-    // "a + " => "(+a)"
-    // "a/b - c" => "\frac{a}{-1} \times c"
     static String texify(ASTNode root) {
         return ASTNode.convertToLatex(root); // well that was easy lol
     }
