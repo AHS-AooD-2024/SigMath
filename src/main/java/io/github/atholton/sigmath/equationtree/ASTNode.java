@@ -1,8 +1,12 @@
 package io.github.atholton.sigmath.equationtree;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+
+import io.github.atholton.sigmath.util.Arrays2;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,11 +27,15 @@ public class ASTNode {
         NUMBER,
         VARIABLE,
         OPERATOR,
-        FUNCTION
+        FUNCTION,
+        PARENTHESIS
     }
 
     public static Map<String, BiFunction<Double, Double, Double>> computeOperator;
     public static Map<String, Function<Double, Double>> computeFunction;
+
+    public static final String IMPLICIT_TIMES = "\\!implicit_times";
+
     /***
      * Constructs a new AST node. There's no explicit specialization for leaf
      * nodes. Leaves are denoted by nodes where both the left and right node
@@ -97,6 +105,16 @@ public class ASTNode {
         type = Type.OPERATOR;
     }
 
+    private static String latexToken(String str) {
+        if(Arrays2.contains(BaseOperator.specialCharacters, str)) {
+            return " \\" + str + " ";
+        } else if(Arrays2.contains(BaseOperator.functions, str)) {
+            return " \\" + str + " ";
+        }
+
+        return str;
+    }
+
 
     /**
      * Method to Convert a {@link ASTNode} tree into LaTeX format String
@@ -104,35 +122,196 @@ public class ASTNode {
      * @return Equation in LaTeX
      */
     //TODO: make it work
-    private String convertToLatex(ASTNode node) {
+    public static String convertToLatex(ASTNode node) {
+        // return texify(node); // My previous attempt
         if (node == null) return "";
         
         String value = node.getValue();
         
         // If it's a leaf node, return its value directly
         if (node.getLeftASTNode() == null && node.getRightASTNode() == null) {
-            return value;
+            return latexToken(value);
         }
 
         // Recursively process left and right subtrees
-        String left = convertToLatex(node.getLeftASTNode());
-        String right = convertToLatex(node.getRightASTNode());
+        String leftstr = convertToLatex(node.getLeftASTNode());
+        String rightstr = convertToLatex(node.getRightASTNode());
+
+        ASTNode left = node.getLeftASTNode();
+        ASTNode right = node.getRightASTNode();
+
+        boolean doParen = false;
+        if(node.type == Type.OPERATOR) {
+            Operator nop = BaseOperator.getOperator(node.getValue());
+            Operator lop = null;
+            if(left != null)
+                lop = BaseOperator.getOperator(left.getValue());
+            Operator rop = null;
+            if(right != null)
+                rop = BaseOperator.getOperator(right.getValue());
+    
+            doParen = true;
+            int comp = 0;
+            if(lop != null) {
+                comp = nop.comparePrecedence(lop);
+            } else if (rop != null) {
+                comp = nop.comparePrecedence(rop);
+            } else {
+                doParen = false;
+            }
+
+            if(doParen) {
+                // if deeper op has lower precedence, we have to 
+                // surround this op with parens
+                // 
+                // no parens
+                // 3 * x ^ 2
+                //   *      // prec = 2
+                //  / \
+                // 3   ^    // prec = 3
+                //    / \
+                //   x   2  // 2 < 3
+                // yes parens
+                // (3 * x) ^ 2
+                //     ^    // prec = 3
+                //    / \
+                //   *   2  // prec = 2
+                //  / \
+                // 3   x    // 3 > 2
+                doParen = comp > 0; 
+            }
+        }
+
+        String leftParen;
+        String rightParen;
+
+        if(doParen) {
+            leftParen = "\\left(";
+            rightParen = "\\right)";
+        } else {
+            leftParen = "";
+            rightParen = "";
+        }
 
         // Handle different operators
         switch (value) {
             case "+":
             case "-":
-                return "(" + left + " " + value + " " + right + ")";
+                return leftParen + leftstr + " " + value + " " + rightstr + rightParen;
             case "*":
-                return left + " \\times " + right;
+                return leftParen + leftstr + " \\times " + rightstr + rightParen;
+            case IMPLICIT_TIMES:
+                return implicitTimesTex(node.getLeftASTNode(), node.getRightASTNode(), leftstr, rightstr);
             case "/":
-                return "\\frac{" + left + "}{" + right + "}";
+                return leftParen + "\\frac{" + leftstr + "}{" + rightstr + "}" + rightParen;
             case "^":
-                return "{" + left + "}^{" + right + "}";
+                return leftParen + "{" + leftstr + "}" + rightParen + "^{" + rightstr + "}";
+            case "sqrt":
+                return "\\sqrt{" + leftstr + "}";
+            case "cbrt":
+                return "\\sqrt[3]{" + leftstr + "}";
             default:
-                return value; // If it's a number or variable, return as is
+                return defaultLatex(node, value, leftstr);
+                
         }
     }
+
+    private static String defaultLatex(ASTNode node, String value, String left) {
+        if(node.type == Type.FUNCTION && !node.value.contains("(")) // The dumbest assertion I have ever had to make, and I have had to
+                                                                        // nonnull assert things that have been checked for null and enums ansd -o Wifojsmdzf lnkm I feel like Im going insane
+            return "\\" + node.value + " \\left(" + left + "\\right)";    
+        else 
+            return latexToken(value); // If it's a number or variable, return as is
+    }
+
+    public static String texify(ASTNode node) {
+        StringBuilder sb = new StringBuilder();
+        texify(node, sb);
+        // return sb.substring(1, sb.length() - 1);
+        return sb.toString();
+    }
+
+    private static void texify(ASTNode node, StringBuilder sb) {
+        if(node != null){
+            System.out.println(node.type + " =================== ");
+            switch (node.type) {
+                case OPERATOR:
+                    texifyOperator(node, sb);
+                    break;
+
+                case FUNCTION:
+                    texifyFunction(node, sb);
+                    break;
+                
+                case NUMBER:
+                    sb.append(node.getValue());
+                    break;
+
+                case VARIABLE:
+                    texifyVariable(node, sb);
+                    break;
+            
+                default:
+                    break;
+            }
+        }
+    }
+
+    private static void texifyOperator(ASTNode node, StringBuilder sb) {
+        // special case; division fractions act closer to functions
+        if(node.getValue().equals("/")) {
+            sb.append("\\frac{");
+            texify(node.getLeftASTNode(), sb);
+            sb.append("}{");
+            texify(node.getRightASTNode(), sb);
+            sb.append("}");
+        } else {
+            sb.append("{");
+            texify(node.getLeftASTNode(), sb);
+            sb.append("}")
+                .append(texifyOperatorString(node.getValue()))
+                .append("{");
+            texify(node.getRightASTNode(), sb);
+            sb.append("}");
+        }
+    }
+
+    private static void texifyFunction(ASTNode node, StringBuilder sb) {
+        sb.append("\\")
+            .append(node.getValue())
+            .append("{");
+        texify(node.getLeftASTNode(), sb);
+        sb.append("}");
+    }
+
+    private static void texifyVariable(ASTNode node, StringBuilder sb) {
+        if(Arrays2.contains(BaseOperator.specialCharacters, node.getValue())) {
+            sb.append("\\");
+        }
+        sb.append(node.getValue());
+    }
+
+    private static String texifyOperatorString(String operatorString) {
+        if(operatorString.equals("*")) return " \\cdot ";
+        else                                    return operatorString;
+    }
+
+    private static String implicitTimesTex(ASTNode left, ASTNode right, String leftStr, String rightStr) {
+        if(left == null) return rightStr;
+        if(right == null) return leftStr;
+        if(
+            // xy
+            left.type == Type.VARIABLE && right.type == Type.VARIABLE ||
+            // 2x
+            left.type == Type.NUMBER && right.type != Type.NUMBER ||
+            left.value == IMPLICIT_TIMES || right.value == IMPLICIT_TIMES
+            ) {
+            return "\\left(" + leftStr + rightStr + "\\right)";
+        } else {
+            return "\\left(" + leftStr + " \\cdot " + rightStr + "\\right)";
+        }
+    }
+
     /**
      * Method to Convert a {@link ASTNode} tree into LaTeX format String
      * @return Equation in LaTeX
@@ -715,6 +894,16 @@ public class ASTNode {
         print(s, "", "");
         System.out.println(s.toString());
     }
+
+    public static void printTree(ASTNode node) {
+        if(node == null) System.out.println("");
+        else             node.printTree();
+    }
+    public static void printInfix(ASTNode node) {
+        if(node == null) System.out.println("");
+        else             node.printInfix();
+    }
+
     public void printInfix()
     {
         System.out.println(toInfix());

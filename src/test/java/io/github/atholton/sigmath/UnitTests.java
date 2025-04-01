@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 
 import org.junit.Test;
 
+import io.github.atholton.sigmath.latex.TeXComponentProperties;
 import io.github.atholton.sigmath.latex.TeXLabel;
 import io.github.atholton.sigmath.symbols.Greek;
 import io.github.atholton.sigmath.util.Strings;
@@ -128,14 +129,48 @@ public class UnitTests {
 
     @Test
     public void testGrabReplace() {
-        String test = "x^4 + x^2+3";
-        String expt = "x^{4} + x^{2+3}";
+        String test = "x^4 + x^2+3 y^(6)";
+        String expt = "x^{4} + x^{2+3} y^{6}";
         String a = Strings.replaceWithInsides(
             test, "^", "^",
              "(", "{",
              ")", "}",
              " "
             );
+
+        assertEquals(expt, a);
+    }
+
+    @Test
+    public void courtesyOfAbhay() {
+        String test = "a ((x)/(5)) b";
+        String expt = "a  (  \\frac{ x }{ 5 }  )  b";
+        
+        String a = TeXComponentProperties.texify(test);
+
+        assertEquals(expt, a);
+    }
+
+    @Test
+    public void recursiveFrac() {
+        String test = "2/2";
+        String expt = "\\frac{2}{2}";
+
+        String a = TeXComponentProperties.texify(test);
+
+        assertEquals(expt, a);
+
+        test = "2/2/2";
+        expt = "\\frac{\\frac{2}{2}}{2}";
+
+        a = TeXComponentProperties.texify(test);
+
+        assertEquals(expt, a);
+
+        test = "2/2/2/2";
+        expt = "\\frac{\\frac{\\frac{2}{2}}{2}}{2}";
+
+        a = TeXComponentProperties.texify(test);
 
         assertEquals(expt, a);
     }
