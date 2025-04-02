@@ -47,7 +47,7 @@ public class DualTeXField extends JPanel {
         '(', ')', '{', '}', '[', ']', '|', '|'
     };
 
-    private ShuntingYardParser parser = new ShuntingYardParser();
+    private ShuntingYardParser parser = ShuntingYardParser.get();
 
     public DualTeXField(LayoutManager layout, int columns) {
         super(layout);
@@ -160,5 +160,10 @@ public class DualTeXField extends JPanel {
 
         }
         return super.add(comp);
+    }
+    public ASTNode getEquation()
+    {
+        String text = input.getText();
+        return parser.convertInfixNotationToAST(text);
     }
 }

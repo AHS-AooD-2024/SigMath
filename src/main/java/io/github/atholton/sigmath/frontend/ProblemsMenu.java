@@ -106,14 +106,13 @@ public class ProblemsMenu extends Menu {
         private int numGuesses = 0;
         @Override
         public void actionPerformed(ActionEvent e) {
-            String userAnswer = inputBox.input.getText();
+            ASTNode userAnswer = inputBox.getEquation();
+            ASTNode answer = ShuntingYardParser.get().convertInfixNotationToAST(problemText.getQuestion());
             boolean right = false;
             try
             {
-                ASTNode userEquation = ShuntingYardParser.get().convertInfixNotationToAST(userAnswer);
-                ASTNode answer = ShuntingYardParser.get().convertInfixNotationToAST(problemText.getQuestion());
                 answer = t.returnAnswer(answer);
-                right = QuestionTester.testEquations(userEquation, answer);
+                right = QuestionTester.testEquations(userAnswer, answer);
             }
             catch(Exception exception)
             {
@@ -125,6 +124,7 @@ public class ProblemsMenu extends Menu {
                 if (right || numGuesses >= 3)
                 {
                     if (right) t.setProficiency(t.getProficiency() + 0.1);
+                    else JOptionPane.showMessageDialog(Application.get(), "Right Answer is: " + answer.toInfix());
                     percentageText.updateText();
                     problemText.setText("Derive y = ", questionGenerator.generateQuestion(), " in terms of x.");
                     numGuesses = 0;
