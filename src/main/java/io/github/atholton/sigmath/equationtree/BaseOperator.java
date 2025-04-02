@@ -9,6 +9,7 @@ import java.util.Set;
  */
 public class BaseOperator implements Operator {
     public static BaseOperator[] operators = {
+        new BaseOperator("=", false, 0),
         new BaseOperator("^", true, 4),
         new BaseOperator("*", false, 3),
         new BaseOperator("/", false, 3),

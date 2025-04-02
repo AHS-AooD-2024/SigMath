@@ -116,7 +116,6 @@ public class ProblemTeX extends JPanel implements TeXComponentProperties, SwingC
         if(teXLabel != null) {
             teXLabel.setFont(font);
             teXLabel.setTeXSize(font.getSize2D());
-            System.out.println("FONT SIZE: " + font.getSize2D());
         }
         if(pretext != null) pretext.setFont(font);
         if(posttext != null) posttext.setFont(font);

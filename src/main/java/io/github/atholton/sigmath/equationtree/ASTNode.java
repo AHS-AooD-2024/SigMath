@@ -197,6 +197,7 @@ public class ASTNode {
         switch (value) {
             case "+":
             case "-":
+            case "=":
                 return leftParen + leftstr + " " + value + " " + rightstr + rightParen;
             case "*":
                 return leftParen + leftstr + " \\times " + rightstr + rightParen;

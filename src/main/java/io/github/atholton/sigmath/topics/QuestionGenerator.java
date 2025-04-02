@@ -20,14 +20,14 @@ public class QuestionGenerator {
     }
 
     private String replaceVariables(String equation) {
-        return equation.replaceAll("a", String.valueOf(random.nextInt(20) + 1))  // Replace 'a' with random number
-                       .replaceAll("b", String.valueOf(random.nextInt(20) + 1)) // Replace 'b' with random number
-                       .replaceAll("c", String.valueOf(random.nextInt(20) + 1))
-                       .replaceAll("d", String.valueOf(random.nextInt(20) + 1))
-                       .replaceAll("e", String.valueOf(random.nextInt(20) + 1))
-                       .replaceAll("n1", String.valueOf(random.nextInt(5) + 1))
-                       .replaceAll("n2", String.valueOf(random.nextInt(5) + 1))
-                       .replaceAll("n3", String.valueOf(random.nextInt(5) + 1));//this is a horrendous line btw
+        return equation.replace("a", String.valueOf(random.nextInt(20) + 1))  // Replace 'a' with random number
+                       .replace("b", String.valueOf(random.nextInt(20) + 1)) // Replace 'b' with random number
+                       .replace("c", String.valueOf(random.nextInt(20) + 1))
+                       .replace("d", String.valueOf(random.nextInt(20) + 1))
+                       .replace("e", String.valueOf(random.nextInt(20) + 1))
+                       .replace("n1", String.valueOf(random.nextInt(5) + 1))
+                       .replace("n2", String.valueOf(random.nextInt(5) + 1))
+                       .replace("n3", String.valueOf(random.nextInt(5) + 1));//this is a horrendous line btw
     }
     public static void main(String[] args) {
         QuestionGenerator gen = new QuestionGenerator(PolynomialDerivative.get());

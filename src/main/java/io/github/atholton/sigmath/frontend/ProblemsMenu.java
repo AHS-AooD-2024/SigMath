@@ -100,7 +100,7 @@ public class ProblemsMenu extends Menu {
 
         problemText.setPretext("Derive ");
         problemText.setPosttext(" in terms of x.");
-        problemText.setQuestion(questionGenerator.generateQuestion());
+        problemText.setQuestion("y = " + questionGenerator.generateQuestion());
         updateFontSizes();
     }
 
