@@ -10,6 +10,8 @@ import io.github.atholton.sigmath.equationtree.ASTNode.Type;
 public class QuestionTester {
     public static boolean testEquations(ASTNode eq1, ASTNode eq2)
     {
+        eq1.simplify();
+        eq2.simplify();
         ASTNode.initializeFuncs();
         for (int i = 0; i < 100; i++)
         {

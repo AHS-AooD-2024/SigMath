@@ -12,7 +12,7 @@ public class TopicTest {
     public static void main(String[] args) {
         final ShuntingYardParser parser = ShuntingYardParser.get();
         Topic d = PolynomialDerivative.get();
-        final String input = "x^2 + 2*x";
+        final String input = "19 * x ^ 5";
 
 
         final ASTNode parseTree = parser.convertInfixNotationToAST(input);
