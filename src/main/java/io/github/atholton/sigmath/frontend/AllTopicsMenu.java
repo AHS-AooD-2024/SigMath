@@ -17,6 +17,8 @@ public class AllTopicsMenu extends Menu {
 
         addTopic(PolynomialDerivative.get(), "Polynomial Derivatives");
         addTopic(ProductRuleDerivative.get(), "Product Rule");
+        addTopic(TrigDerivative.get(), "Trig Derivatives");
+        addTopic(ChainRuleDerivative.get(), "Chain Rule Derivatives");
         for (TopicsButton t : topics) {
             add(t);
         }

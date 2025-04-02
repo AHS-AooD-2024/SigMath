@@ -9,10 +9,11 @@ public class TrigDerivative extends Topic
 
     public TrigDerivative()
     {
-        super();
-        formulaList.add("sin(x)");
-        formulaList.add("cos(x)");
-        formulaList.add("tan(x)");
+        formulaList.add("sin(c1 * x)");
+        formulaList.add("cos(c1 * x)");
+        formulaList.add("tan(c1 * x)");
+        formulaList.add("sin(c1 * x) * cos(c2 * x)");
+        formulaList.add("tan(c1 * x) * sin(c2 * x)");
     }
     @Override
     public void set() {
@@ -22,9 +23,10 @@ public class TrigDerivative extends Topic
     {
         TrigDerivative.instance = instance;
     }
-    public static void get()
+    public static TrigDerivative get()
     {
         if (instance == null) instance = new TrigDerivative();
+        return instance;
     }
 
     @Override
