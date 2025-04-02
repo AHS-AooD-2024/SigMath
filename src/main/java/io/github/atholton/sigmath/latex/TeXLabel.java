@@ -72,7 +72,7 @@ public class TeXLabel extends JLabel implements TeXComponentProperties {
 
         firePropertyChange("teXStyle", old, style);
 
-        repaint();
+        setIcon(formula.createTeXIcon(style, size));
     }
 
     @Override
@@ -87,7 +87,7 @@ public class TeXLabel extends JLabel implements TeXComponentProperties {
 
         firePropertyChange("teXSize", old, size);
 
-        revalidate();
+        setIcon(formula.createTeXIcon(style, size));
     }
 
     @Override

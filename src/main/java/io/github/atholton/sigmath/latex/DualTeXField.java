@@ -41,6 +41,8 @@ public class DualTeXField extends JPanel {
     private JTextField input;
     private TeXLabel output;
 
+    private ASTNode ast;
+
     private DocumentListener labelUpdater;
     private KeyListener parenthesisSurrounder;
     private static final char[] surrounds = {
@@ -49,7 +51,7 @@ public class DualTeXField extends JPanel {
 
     private ShuntingYardParser parser = ShuntingYardParser.get();
 
-    public DualTeXField(LayoutManager layout, int columns) {
+    private DualTeXField(LayoutManager layout, int columns) {
         super(layout);
 
         input = new HintTextField("Type your answer here");
@@ -71,7 +73,7 @@ public class DualTeXField extends JPanel {
 
             private void texify0() {
                 String text = input.getText();
-                ASTNode ast = parser.convertInfixNotationToAST(text);
+                ast = parser.convertInfixNotationToAST(text);
                 ASTNode.printTree(ast);
                 ASTNode.printInfix(ast);
                 String texify = TeXComponentProperties.texify(ast);
@@ -148,10 +150,14 @@ public class DualTeXField extends JPanel {
         add(input);
     }
 
-    public DualTeXField() {
-        this(null, 0);
+    public DualTeXField(int columns) {
+        this(null, columns);
         BoxLayout layout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
         setLayout(layout);
+    }
+
+    public DualTeXField() {
+        this(0);
     }
 
     @Override
@@ -165,5 +171,15 @@ public class DualTeXField extends JPanel {
     {
         String text = input.getText();
         return parser.convertInfixNotationToAST(text);
+    }
+    /**
+     * Gets an equation tree root that represents the input. The returned
+     * node will be its own copy; you are free to mutate it without affecting the
+     * TeXField or future {@link #getAstNode()} calls in any way.
+     * 
+     * @return An {@link ASTNode} representing the input expression.
+     */
+    public ASTNode getAstNode() {
+        return ASTNode.copy(ast);
     }
 }
