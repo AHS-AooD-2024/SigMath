@@ -16,7 +16,8 @@ import io.github.atholton.sigmath.user.UserSettings;
 public class ProblemsMenu extends Menu {
     private DualTeXField inputBox;
     private ProgressText percentageText;
-    private ProblemText problemText;
+    // private ProblemText problemText;
+    private ProblemTeX problemText;
     private JButton submitButton, getHelpButton;
     private QuestionGenerator questionGenerator;
     private Topic t;
@@ -38,11 +39,11 @@ public class ProblemsMenu extends Menu {
         c.gridheight = 1;
         c.weightx = 1;
         c.weighty = 0.7;
-        problemText = new ProblemText();
+        problemText = new ProblemTeX();
         originalFont.put(problemText, new Font("Sans Serif", Font.BOLD, 40));
         problemText.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-        problemText.setHorizontalAlignment(SwingConstants.CENTER);
+        // problemText.setHorizontalAlignment(SwingConstants.CENTER);
         makeComponent(problemText);  
 
         c.gridwidth = 1;
@@ -97,7 +98,9 @@ public class ProblemsMenu extends Menu {
         getHelpButton.setBorderPainted(false);
         makeComponent(getHelpButton);
 
-        problemText.setText("Derive y = ", questionGenerator.generateQuestion(), " in terms of x.");
+        problemText.setPretext("Derive ");
+        problemText.setPosttext(" in terms of x.");
+        problemText.setQuestion(questionGenerator.generateQuestion());
         updateFontSizes();
     }
 
@@ -106,12 +109,12 @@ public class ProblemsMenu extends Menu {
         private int numGuesses = 0;
         @Override
         public void actionPerformed(ActionEvent e) {
-            String userAnswer = inputBox.input.getText();
+            String userAnswer = inputBox.getAstNode().toInfix();
             boolean right = false;
             try
             {
                 ASTNode userEquation = ShuntingYardParser.get().convertInfixNotationToAST(userAnswer);
-                ASTNode answer = ShuntingYardParser.get().convertInfixNotationToAST(problemText.getQuestion());
+                ASTNode answer = problemText.getQuestionAST();
                 answer = t.returnAnswer(answer);
                 right = QuestionTester.testEquations(userEquation, answer);
             }
@@ -126,7 +129,7 @@ public class ProblemsMenu extends Menu {
                 {
                     if (right) t.setProficiency(t.getProficiency() + 0.1);
                     percentageText.updateText();
-                    problemText.setText("Derive y = ", questionGenerator.generateQuestion(), " in terms of x.");
+                    problemText.setQuestion(questionGenerator.generateQuestion());
                     numGuesses = 0;
                 }
                 else
@@ -145,7 +148,7 @@ public class ProblemsMenu extends Menu {
 
             System.out.println("(fweh)");
 
-            helpPopup = new JFrame("(FWEH HXMICIDE)");
+            var helpPopup = new JFrame("(FWEH HXMICIDE)");
             helpPopup.setUndecorated(true);
             helpPopup.setAlwaysOnTop(true);
             helpPopup.getRootPane().putClientProperty("apple.awt.draggableWindowBackground", false);
