@@ -14,17 +14,17 @@ public class QuestionGenerator {
     }
 
     public String generateQuestion() {
-        String formula = topic.getFormula(0); // Retrieve a formula for the selected topic
+        String formula = topic.getFormula((int)topic.getProficiency()); // Retrieve a formula for the selected topic
         String formattedQuestion = replaceVariables(formula); // Replace variables with numbers
         return new String(formattedQuestion);
     }
 
     private String replaceVariables(String equation) {
-        return equation.replaceAll("a", String.valueOf(random.nextInt(20) + 1))  // Replace 'a' with random number
-                       .replaceAll("b", String.valueOf(random.nextInt(20) + 1)) // Replace 'b' with random number
-                       .replaceAll("c", String.valueOf(random.nextInt(20) + 1))
-                       .replaceAll("d", String.valueOf(random.nextInt(20) + 1))
-                       .replaceAll("e", String.valueOf(random.nextInt(20) + 1))
+        return equation.replaceAll("c1", String.valueOf(random.nextInt(20) + 1))  // Replace 'a' with random number
+                       .replaceAll("c2", String.valueOf(random.nextInt(20) + 1)) // Replace 'b' with random number
+                       .replaceAll("c3", String.valueOf(random.nextInt(20) + 1))
+                       .replaceAll("c4", String.valueOf(random.nextInt(20) + 1))
+                       .replaceAll("c5", String.valueOf(random.nextInt(20) + 1))
                        .replaceAll("n1", String.valueOf(random.nextInt(5) + 1))
                        .replaceAll("n2", String.valueOf(random.nextInt(5) + 1))
                        .replaceAll("n3", String.valueOf(random.nextInt(5) + 1));//this is a horrendous line btw

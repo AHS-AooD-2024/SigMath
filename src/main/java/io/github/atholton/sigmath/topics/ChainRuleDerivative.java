@@ -9,27 +9,29 @@ import io.github.atholton.sigmath.equationtree.ASTNode.Type;
  * Represents all polynomial derivatives
  * @author Abhay Nagaraj
  */
-public class ProductRuleDerivative extends Topic {
-    private static ProductRuleDerivative instance;
+public class ChainRuleDerivative extends Topic {
+    private static ChainRuleDerivative instance;
     private static final long serialVersionUID = 324090982439L;
-    public static ProductRuleDerivative get()
+    public static ChainRuleDerivative get()
     {
-        if (instance == null) instance = new ProductRuleDerivative();
+        if (instance == null) instance = new ChainRuleDerivative();
         return instance;
     }
-    public static void set(ProductRuleDerivative instance)
+    public static void set(ChainRuleDerivative instance)
     {
-        ProductRuleDerivative.instance = instance;
+        ChainRuleDerivative.instance = instance;
     }
+
     @Override
     public void set()
     {
         set(this);
     }
-    private ProductRuleDerivative() {
-        formulaList.add("(c1 * x) * (c2 * x)");
-        formulaList.add("(c1 * x) * (c2 * x ^ n1)");
-        formulaList.add("(c1 * x ^ n1) * (c2 * x ^ n2)");
+    
+    private ChainRuleDerivative() {
+        formulaList.add("(x + c1) ^ n1");
+        formulaList.add("(x + c1) ^ n1 + (c2 * x + c3) ^ n2");
+        formulaList.add("(c1 * x ^ n1 + c2 * x ^ n2) ^ n3");
     }
 
     public ASTNode returnAnswer(ASTNode question) {

@@ -8,6 +8,7 @@ import javax.swing.*;
 import io.github.atholton.sigmath.equationtree.ASTNode;
 import io.github.atholton.sigmath.equationtree.ShuntingYardParser;
 import io.github.atholton.sigmath.latex.DualTeXField;
+import io.github.atholton.sigmath.latex.HintTextField;
 import io.github.atholton.sigmath.topics.QuestionGenerator;
 import io.github.atholton.sigmath.topics.QuestionTester;
 import io.github.atholton.sigmath.topics.Topic;
@@ -124,10 +125,11 @@ public class ProblemsMenu extends Menu {
                 JOptionPane.showMessageDialog(Application.get(), right ? "RIGHT ANSWER":"WRONG ANSWER: " + (3 - numGuesses) + " CHANCES LEFT.");
                 if (right || numGuesses >= 3)
                 {
-                    if (right) t.setProficiency(t.getProficiency() + 0.1);
+                    if (right && t.getProficiency() <= t.getFormulaList().size() - 1) t.setProficiency(t.getProficiency() + 0.5);
                     percentageText.updateText();
                     problemText.setText("Derive y = ", questionGenerator.generateQuestion(), " in terms of x.");
                     numGuesses = 0;
+                    inputBox.input = new HintTextField("Type your answer here");
                 }
                 else
                 {
