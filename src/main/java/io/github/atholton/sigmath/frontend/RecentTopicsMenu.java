@@ -54,6 +54,9 @@ public class RecentTopicsMenu extends Menu{
     public void addTopic(TopicsButton b)
     {
         topics.add(b);
+        makeComponent(b, topics.size() - 1);
+        updateFontSizes();
+        revalidate();
         originalFont.put(b, new Font("Sans Serif", Font.PLAIN, 30));
     }
 

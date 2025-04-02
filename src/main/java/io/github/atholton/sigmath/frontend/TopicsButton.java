@@ -49,11 +49,7 @@ public class TopicsButton extends JButton implements ActionListener{
             }
         }
         if (addTopic) {
-            ArrayList<TopicsButton> topicsList = RecentTopicsMenu.get().getTopics();
             RecentTopicsMenu.get().addTopic(topic, getText());
-            RecentTopicsMenu.get().makeComponent(topicsList.get(topicsList.size() - 1), topicsList.size() - 1);
-            RecentTopicsMenu.get().revalidate();
-            RecentTopicsMenu.get().updateFontSizes();
             //System.out.println(RecentTopicsMenu.get().getTopics().get(0));
         }
     }
