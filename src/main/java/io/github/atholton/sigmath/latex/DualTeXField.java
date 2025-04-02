@@ -182,4 +182,8 @@ public class DualTeXField extends JPanel {
     public ASTNode getAstNode() {
         return ASTNode.copy(ast);
     }
+    public void clearInput()
+    {
+        input.setText("");
+    }
 }

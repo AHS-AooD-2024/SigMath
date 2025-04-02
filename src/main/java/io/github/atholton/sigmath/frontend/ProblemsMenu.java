@@ -132,7 +132,7 @@ public class ProblemsMenu extends Menu {
                     percentageText.updateText();
                     problemText.setQuestion(questionGenerator.generateQuestion());
                     numGuesses = 0;
-                    inputBox.input = new HintTextField("Type your answer here");
+                    inputBox.clearInput();
                 }
                 else
                 {
