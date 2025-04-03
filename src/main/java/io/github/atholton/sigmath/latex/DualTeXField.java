@@ -167,7 +167,6 @@ public class DualTeXField extends JPanel {
         }
         return super.add(comp);
     }
-
     /**
      * Gets an equation tree root that represents the input. The returned
      * node will be its own copy; you are free to mutate it without affecting the
@@ -177,5 +176,9 @@ public class DualTeXField extends JPanel {
      */
     public ASTNode getAstNode() {
         return ASTNode.copy(ast);
+    }
+    public void clearInput()
+    {
+        input.setText("");
     }
 }

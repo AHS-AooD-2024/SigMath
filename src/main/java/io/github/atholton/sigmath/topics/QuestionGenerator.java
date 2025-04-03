@@ -19,7 +19,7 @@ public class QuestionGenerator {
     }
 
     public String generateQuestion() {
-        String formula = topic.getFormula(0); // Retrieve a formula for the selected topic
+        String formula = topic.getFormula((int)topic.getProficiency()); // Retrieve a formula for the selected topic
         String formattedQuestion = replaceVariables(formula); // Replace variables with numbers
         return new String(formattedQuestion);
     }

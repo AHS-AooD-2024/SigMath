@@ -52,6 +52,10 @@ public abstract class Topic implements Serializable{
         return getFormula((int)(Math.random() * formulaList.size()));
     }
 
+    public ArrayList<String> getFormulaList() {
+        return formulaList;
+    }
+
     /**
      * Returns the answer to a given question in tree format using the desired formula
      * 
