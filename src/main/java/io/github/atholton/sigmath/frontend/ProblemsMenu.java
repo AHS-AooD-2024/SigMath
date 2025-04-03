@@ -17,7 +17,8 @@ import io.github.atholton.sigmath.user.UserSettings;
 public class ProblemsMenu extends Menu {
     private DualTeXField inputBox;
     private ProgressText percentageText;
-    private ProblemText problemText;
+    // private ProblemText problemText;
+    private ProblemTeX problemText;
     private JButton submitButton, getHelpButton;
     private QuestionGenerator questionGenerator;
     private Topic t;
@@ -39,20 +40,21 @@ public class ProblemsMenu extends Menu {
         c.gridheight = 1;
         c.weightx = 1;
         c.weighty = 0.7;
-        problemText = new ProblemText();
+        problemText = new ProblemTeX();
         originalFont.put(problemText, new Font("Sans Serif", Font.BOLD, 40));
         problemText.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-        problemText.setHorizontalAlignment(SwingConstants.CENTER);
+        // problemText.setHorizontalAlignment(SwingConstants.CENTER);
         makeComponent(problemText);  
 
         c.gridwidth = 1;
         c.gridheight = 2;
-        c.weightx = 0.8;
+        c.weightx = 0.0;
         c.weighty = 1;
         c.gridx = GridBagConstraints.RELATIVE;
+        c.gridy = 1;
         //c.insets = new Insets(180, 20, 350, 0);
-        c.insets = new Insets(100, 100, 100, 100);
+        c.insets = new Insets(100, 20, 100, 20);
         percentageText = new ProgressText(t);
         originalFont.put(percentageText, new Font("Sans Serif", Font.PLAIN, 40));
         percentageText.setHorizontalAlignment(SwingConstants.CENTER);
@@ -69,13 +71,18 @@ public class ProblemsMenu extends Menu {
         makeComponent(inputBox);
 
         c.weighty = 0.1;
-        c.insets = new Insets(30, 150, 30, 100);
-        submitButton = new JButton("Submit"){
-            {
-                setSize(150, 75);
-                setMaximumSize(getSize());
-            }
-        };
+        c.weightx = 0.1;
+        c.gridheight = 1;
+        c.gridwidth = 1;
+        c.gridy = 2;
+        c.gridx = 1;
+        c.anchor = GridBagConstraints.CENTER;
+        // c.insets = new Insets(30, 150, 30, 100);
+        c.insets = new Insets(0, 20, 0, 20);
+        submitButton = new JButton("Submit");
+        submitButton.setSize(150, 75);
+        submitButton.setMaximumSize(submitButton.getSize());
+            
         originalFont.put(submitButton, new Font("Sans Serif", Font.PLAIN, 40));
         submitButton.addActionListener(new Submit());
         submitButton.setBackground(new Color(201, 218, 248));
@@ -84,11 +91,12 @@ public class ProblemsMenu extends Menu {
         makeComponent(submitButton);
 
         //c.insets = new Insets(180, 0, 350, 20);
-        c.insets = new Insets(100, 100, 100, 100);
+        c.insets = new Insets(100, 20, 100, 20);
         c.weighty = 1;
-        c.weightx = 0.8;
+        c.weightx = 0.0;
         c.gridheight = 2;
         c.gridx = GridBagConstraints.RELATIVE;
+        c.gridy = 1;
         c.gridwidth = GridBagConstraints.REMAINDER;
         getHelpButton = new JButton("Need Help?");
         originalFont.put(getHelpButton, new Font("Sans Serif", Font.PLAIN, 40));
@@ -98,7 +106,9 @@ public class ProblemsMenu extends Menu {
         getHelpButton.setBorderPainted(false);
         makeComponent(getHelpButton);
 
-        problemText.setText("Derive y = ", questionGenerator.generateQuestion(), " in terms of x.");
+        problemText.setPretext("Derive ");
+        problemText.setPosttext(" in terms of x.");
+        problemText.setQuestion("y = " + questionGenerator.generateQuestion());
         updateFontSizes();
     }
 
@@ -107,12 +117,12 @@ public class ProblemsMenu extends Menu {
         private int numGuesses = 0;
         @Override
         public void actionPerformed(ActionEvent e) {
-            String userAnswer = inputBox.input.getText();
+            String userAnswer = inputBox.getAstNode().toInfix();
             boolean right = false;
             try
             {
                 ASTNode userEquation = ShuntingYardParser.get().convertInfixNotationToAST(userAnswer);
-                ASTNode answer = ShuntingYardParser.get().convertInfixNotationToAST(problemText.getQuestion());
+                ASTNode answer = problemText.getQuestionAST();
                 answer = t.returnAnswer(answer);
                 right = QuestionTester.testEquations(userEquation, answer);
             }
@@ -127,7 +137,7 @@ public class ProblemsMenu extends Menu {
                 {
                     if (right && t.getProficiency() <= t.getFormulaList().size() - 1) t.setProficiency(t.getProficiency() + 0.5);
                     percentageText.updateText();
-                    problemText.setText("Derive y = ", questionGenerator.generateQuestion(), " in terms of x.");
+                    problemText.setQuestion(questionGenerator.generateQuestion());
                     numGuesses = 0;
                     inputBox.input = new HintTextField("Type your answer here");
                 }
@@ -147,7 +157,7 @@ public class ProblemsMenu extends Menu {
 
             System.out.println("(fweh)");
 
-            helpPopup = new JFrame("(FWEH HXMICIDE)");
+            var helpPopup = new JFrame("(FWEH HXMICIDE)");
             helpPopup.setUndecorated(true);
             helpPopup.setAlwaysOnTop(true);
             helpPopup.getRootPane().putClientProperty("apple.awt.draggableWindowBackground", false);
