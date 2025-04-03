@@ -134,9 +134,9 @@ public class ProblemsMenu extends Menu {
         getHelpButton.setBorderPainted(false);
         makeComponent(getHelpButton);
 
-        problemText.setPretext("Derive y = ");
+        problemText.setPretext("Derive ");
         problemText.setPosttext(" in terms of x.");
-        problemText.setQuestion(questionGenerator.generateQuestion());
+        problemText.setQuestion("y = " + questionGenerator.generateQuestion());
         updateFontSizes();
     }
 

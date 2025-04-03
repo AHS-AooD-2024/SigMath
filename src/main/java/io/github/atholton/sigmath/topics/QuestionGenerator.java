@@ -28,10 +28,9 @@ public class QuestionGenerator {
         return new QuestionGenerator(null).replaceVariables(eq);
     }
 
-    //private static final Lazy<Pattern> VAR_PATTERN = new Lazy<>(() -> Pattern.compile("(\\\\p?var)|(\\\\coeff)"));
+    private static final Lazy<Pattern> VAR_PATTERN = new Lazy<>(() -> Pattern.compile("(\\\\p?var)|(\\\\coeff)"));
 
     private String replaceVariables(String equation) {
-        /*
         Map<String, Double> variables = new HashMap<>();
         StringBuilder sb = new StringBuilder();
         int oldI = 0;
@@ -113,17 +112,17 @@ public class QuestionGenerator {
         sb.append(equation.substring(oldI));
 
         return sb.toString();
-        */
-         return equation.replace("c1", String.valueOf(random.nextInt(20) + 1))  // Replace 'a' with random number
-                        .replace("c2", String.valueOf(random.nextInt(20) + 1)) // Replace 'b' with random number
-                        .replace("c3", String.valueOf(random.nextInt(20) + 1))
-                        .replace("c4", String.valueOf(random.nextInt(20) + 1))
-                        .replace("c5", String.valueOf(random.nextInt(20) + 1))
-                        .replace("n1", String.valueOf(random.nextInt(5) + 1))
-                        .replace("n2", String.valueOf(random.nextInt(5) + 1))
-                        .replace("n3", String.valueOf(random.nextInt(5) + 1));//this is a horrendous line btw
+
+        // return equation.replace("a", String.valueOf(random.nextInt(20) + 1))  // Replace 'a' with random number
+        //                .replace("b", String.valueOf(random.nextInt(20) + 1)) // Replace 'b' with random number
+        //                .replace("c", String.valueOf(random.nextInt(20) + 1))
+        //                .replace("d", String.valueOf(random.nextInt(20) + 1))
+        //                .replace("e", String.valueOf(random.nextInt(20) + 1))
+        //                .replace("n1", String.valueOf(random.nextInt(5) + 1))
+        //                .replace("n2", String.valueOf(random.nextInt(5) + 1))
+        //                .replace("n3", String.valueOf(random.nextInt(5) + 1));//this is a horrendous line btw
     }
-    
+
     /**
      * Gets the string representation of a double, with some exceptions.
      * <ul>
@@ -146,7 +145,6 @@ public class QuestionGenerator {
      * @param x The number to represent.
      * @return A string representation of the number as if it were a coefficienct
      */
-    /*
     private static String toCoefficientString(double x) {
         if(x == 1.0) {
             return "";
@@ -200,7 +198,6 @@ public class QuestionGenerator {
             return " - \\infn ";
         }
     }
-    */
 
     public static void main(String[] args) {
         QuestionGenerator gen = new QuestionGenerator(PolynomialDerivative.get());

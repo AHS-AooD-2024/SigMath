@@ -75,7 +75,7 @@ public class RecentTopicsMenu extends Menu{
     public void addTopic(Topic t, String topicString) {
         TopicsButton b = new TopicsButton(t, topicString);
         originalFont.put(b, new Font("Sans Serif", Font.PLAIN, 30));
-        addTopic(b);
+        topics.add(b);
         if (redirect != null)
         {
             remove(redirect);
