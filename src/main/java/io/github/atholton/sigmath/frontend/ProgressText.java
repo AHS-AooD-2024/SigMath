@@ -12,12 +12,11 @@ public class ProgressText extends JLabel
     {
         super();
         this.topic = topic;
-        double percentage = topic.getProficiency();
-        setText("Progress:\n" + (int)(100 * percentage) + "%");
+        updateText();
     }
     public void updateText()
     {
         double percentage = topic.getProficiency();
-        setText("Progress:\n" + (int)(100 * percentage) + "%");
+        setText("Progress:\n" + (int)(100 * percentage / 5) + "%");
     }
 }

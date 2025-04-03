@@ -16,9 +16,6 @@
 
 package io.github.atholton.sigmath.util;
 
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -455,9 +452,11 @@ public final class Strings {
         int startIndex, int endIndex,
         StringBuilder sb
     ) {
+        if(endIndex > str.length()) endIndex = str.length();
         if(startIndex >= endIndex) {
             return;
         }
+        // System.out.println("sstr=\"" + str.substring(startIndex, endIndex) + "\"");
         int i = str.indexOf(old, startIndex);
         int oldI = startIndex;
 
@@ -474,12 +473,18 @@ public final class Strings {
                 String oi = str.substring(oldI, i);
                 sb.append(oi)
                     .append(replacement); // then add the replacement
-                
+                    
                 // we have to search from the *end* of the opener
                 int j0 = i + old.length();
                 int j = str.indexOf(open, j0);
-
-                boolean noOpenFound = j < 0;
+                    
+                // try to grab characters
+                int g = str.indexOf(grabUntil, j0);
+                
+                // if the grab is found before the open,
+                // we will consider it not our opener
+                boolean noOpenFound = j < 0 || (j > g && g != -1);
+                // System.out.format("%d < 0 || %d > %d && %d != -1\n", j, j, g, g);
                 if(noOpenFound){
                     // no open found, so we add one
                     j = j0;
@@ -492,27 +497,29 @@ public final class Strings {
                 int k0, k, l;
                 k0 = j + open.length();
         
+                int oldK = k0;
                 k = str.indexOf(close, k0);
                 l = str.indexOf(open, k0);
-                
+
                 // while there is an opener for the found closer,
                 // find another
                 while(l < k && l != -1) {
+                    oldK = k;
                     k = str.indexOf(close, k + 1);
                     l = str.indexOf(open, l + 1);
                 }
         
                 // no corrosponding closer found
-                boolean noCloseFound = k < 0;
+                boolean noCloseFound = noOpenFound || k < 0 || (k > g && g != -1 && noOpenFound);
+                // System.out.format("%b || %d < 0 || (%d > %d && %d != -1)\n", noOpenFound, k, k, g, g);
+                
                 if(noCloseFound) {
-                    k0 -= open.length();
                     if(noOpenFound) {
-                        // try to grab characters
-                        int j2 = str.indexOf(grabUntil, j);
-                        if(j2 != -1) {
-                            k = j2; // place close at the grabUntil
+                        k0 -= open.length();
+                        if(g != -1) {
+                            k = g; // place close at the grabUntil
                         } else {
-                            k = endIndex;
+                            k = oldK;
                         }
                     } else {
                         k = endIndex; // place close at the end
@@ -536,7 +543,7 @@ public final class Strings {
                 // search from the end of all replacements
                 i = str.indexOf(old, k);
                 if(noCloseFound) {
-                    last = k; // we added a close, so no need to add close.length()
+                    last = Math.min(k, endIndex);; // we added a close, so no need to add close.length()
                 } else {
                     // still doing a min check just in case.
                     last = Math.min(k + close.length(), endIndex);
@@ -596,27 +603,270 @@ public final class Strings {
         //   - If there are bugs still left in here, print debugging is
         //      going to be really annoying.
         // 3. My feelings are hurt.
-        return reversed(replaceWithInsides(
+
+        // hey I realized that we can reverse the sb rather than reversing 
+        // the string afterwards
+        StringBuilder sb = new StringBuilder();
+        startIndex = str.length() - startIndex;
+        endIndex = str.length() - endIndex;
+        replaceWithInsides(
             reversed(str), reversed(old), reversed(replacement), 
             reversed(close), reversed(closeReplace), 
             reversed(open), reversed(openReplace), 
             reversed(grabUntil),
-            startIndex, endIndex
-        ));
+            endIndex, startIndex,
+            sb
+        );
+        return sb.reverse().toString();
     }
 
+    /**
+     * Gets a string in reverse. If the string is empty or only a single
+     * character, it is simply returned. If the string is {@code null}, 
+     * {@code null} is returned.
+     * <p>
+     * As defined by {@link StringBuilder#reverse()}:
+     * <p>
+     * If there are any surrogate pairs included in the string, these 
+     * are treated as single characters for the reverse operation. Thus, 
+     * the order of the high-low surrogates is never reversed. Let n be 
+     * the character length of the string (not the length in char values) 
+     * just prior to execution of the reversed method. Then the character 
+     * at index k in the returned string is equal to the character 
+     * at index n-k-1 in the given string.
+     * <p>
+     * Note that the reverse operation may result in producing surrogate 
+     * pairs that were unpaired low-surrogates and high-surrogates before 
+     * the operation. For example, reversing "\u005CuDC00\u005CuD800" 
+     * produces "\u005CuD800\u005CuDC00"" which is a valid surrogate pair.
+     * 
+     * @param str The string to get reversed.
+     * 
+     * @return The string in reverse order.
+     * 
+     * @see StringBuilder#reverse()
+     */
     public static String reversed(String str) {
+        if(str == null) return null;
         if(str.length() < 2) return str; // mild optimiztion
-        char[] data = str.toCharArray();
-        reverse(data);
-        return new String(data);
+        
+        // String builder is faster and less alloc than doing it ourselves.
+        // Of course, if we were in the java.lang package we could do it 
+        // without even allocating a StringBuilder, but whatever I guess.
+        StringBuilder sb = new StringBuilder(str);
+        return sb.reverse().toString();
+    }
+    
+    /**
+     * Gets a character sequence in reverse. If the sequence is empty 
+     * or only a single character, it is simply returned. 
+     * If the sequence is {@code null}, {@code null} is returned.
+     * <p>
+     * As defined by {@link StringBuilder#reverse()}:
+     * <p>
+     * If there are any surrogate pairs included in the sequence, these 
+     * are treated as single characters for the reverse operation. Thus, 
+     * the order of the high-low surrogates is never reversed. Let n be 
+     * the character length of the sequence (not the length in char values) 
+     * just prior to execution of the reversed method. Then the character 
+     * at index k in the returned sequence is equal to the character 
+     * at index n-k-1 in the given string.
+     * <p>
+     * Note that the reverse operation may result in producing surrogate 
+     * pairs that were unpaired low-surrogates and high-surrogates before 
+     * the operation. For example, reversing "\u005CuDC00\u005CuD800" 
+     * produces "\u005CuD800\u005CuDC00"" which is a valid surrogate pair.
+     * 
+     * @param str The sequence to get reversed.
+     * 
+     * @return The sequence in reverse order.
+     * 
+     * @see StringBuilder#reverse()
+     */
+    public static CharSequence reversed(CharSequence seq) {
+        if(seq == null) return null;
+        if(seq.length() < 2) return seq;
+
+        StringBuilder sb = new StringBuilder(seq);
+        sb.reverse();
+        if(seq instanceof String) {
+            // This should never happen, as String arguments should get bound
+            // to the overload
+            return sb.toString();
+        } else {
+            // We are not using this string builder, so I don't care
+            // if it gets cast and mutated. Otherwise I would wrap it
+            // in an immutable veiw.
+            return sb;
+        }
+    }
+    
+    /**
+     * Reverses an array in place.
+     * <p>
+     * This operation is {@code O(n)} time and {@code O(1)} space complex.
+     * 
+     * @param <T> The type of stuff in the array.
+     * @param arr The array.
+     * @return the reversed array.
+     */
+    public static <T> T[] reverse(T[] arr) {
+        final int n = arr.length;
+        for(int i = 0; i < n / 2; i++) {
+            int j = n - i - 1;
+            T temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+        return arr;
+    }
+    
+    /**
+     * Reverses an array in place.
+     * <p>
+     * This operation is {@code O(n)} time and {@code O(1)} space complex.
+     * 
+     * @param arr The array.
+     * @return the reversed array.
+     */
+    public static int[] reverse(int[] arr) {
+        final int n = arr.length;
+        for(int i = 0; i < n / 2; i++) {
+            int j = n - i - 1;
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+        return arr;
+    }
+    
+    /**
+     * Reverses an array in place.
+     * <p>
+     * This operation is {@code O(n)} time and {@code O(1)} space complex.
+     * 
+     * @param arr The array.
+     * @return the reversed array.
+     */
+    public static long[] reverse(long[] arr) {
+        final int n = arr.length;
+        for(int i = 0; i < n / 2; i++) {
+            int j = n - i - 1;
+            long temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+        return arr;
+    }
+    
+    /**
+     * Reverses an array in place.
+     * <p>
+     * This operation is {@code O(n)} time and {@code O(1)} space complex.
+     * 
+     * @param arr The array.
+     * @return the reversed array.
+     */
+    public static double[] reverse(double[] arr) {
+        final int n = arr.length;
+        for(int i = 0; i < n / 2; i++) {
+            int j = n - i - 1;
+            double temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+        return arr;
+    }
+    
+    /**
+     * Reverses an array in place.
+     * <p>
+     * This operation is {@code O(n)} time and {@code O(1)} space complex.
+     * 
+     * @param arr The array.
+     * @return the reversed array.
+     */
+    public static float[] reverse(float[] arr) {
+        final int n = arr.length;
+        for(int i = 0; i < n / 2; i++) {
+            int j = n - i - 1;
+            float temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+        return arr;
     }
 
-    private static char[] reverse(char[] arr) {
+    /**
+     * Reverses an array in place.
+     * <p>
+     * This operation is {@code O(n)} time and {@code O(1)} space complex.
+     * 
+     * @param arr The array.
+     * @return the reversed array.
+     */
+    public static short[] reverse(short[] arr) {
+        final int n = arr.length;
+        for(int i = 0; i < n / 2; i++) {
+            int j = n - i - 1;
+            short temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+        return arr;
+    }
+
+    /**
+     * Reverses an array in place.
+     * <p>
+     * This operation is {@code O(n)} time and {@code O(1)} space complex.
+     * 
+     * @param arr The array.
+     * @return the reversed array.
+     */
+    public static char[] reverse(char[] arr) {
         final int n = arr.length;
         for(int i = 0; i < n / 2; i++) {
             int j = n - i - 1;
             char temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+        return arr;
+    }
+
+    /**
+     * Reverses an array in place.
+     * <p>
+     * This operation is {@code O(n)} time and {@code O(1)} space complex.
+     * 
+     * @param arr The array.
+     * @return the reversed array.
+     */
+    public static byte[] reverse(byte[] arr) {
+        final int n = arr.length;
+        for(int i = 0; i < n / 2; i++) {
+            int j = n - i - 1;
+            byte temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+        return arr;
+    }
+
+    /**
+     * Reverses an array in place.
+     * <p>
+     * This operation is {@code O(n)} time and {@code O(1)} space complex.
+     * 
+     * @param arr The array.
+     * @return the reversed array.
+     */
+    public static boolean[] reverse(boolean[] arr) {
+        final int n = arr.length;
+        for(int i = 0; i < n / 2; i++) {
+            int j = n - i - 1;
+            boolean temp = arr[i];
             arr[i] = arr[j];
             arr[j] = temp;
         }

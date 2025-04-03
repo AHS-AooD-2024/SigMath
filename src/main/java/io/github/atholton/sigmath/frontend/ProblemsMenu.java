@@ -22,6 +22,7 @@ import javax.swing.SwingConstants;
 import io.github.atholton.sigmath.equationtree.ASTNode;
 import io.github.atholton.sigmath.equationtree.ShuntingYardParser;
 import io.github.atholton.sigmath.latex.DualTeXField;
+import io.github.atholton.sigmath.latex.HintTextField;
 import io.github.atholton.sigmath.topics.QuestionGenerator;
 import io.github.atholton.sigmath.topics.QuestionTester;
 import io.github.atholton.sigmath.topics.Topic;
@@ -29,7 +30,8 @@ import io.github.atholton.sigmath.topics.Topic;
 public class ProblemsMenu extends Menu {
     private DualTeXField inputBox;
     private ProgressText percentageText;
-    private ProblemText problemText;
+    // private ProblemText problemText;
+    private ProblemTeX problemText;
     private JButton submitButton, getHelpButton;
     private URI uri;
     private QuestionGenerator questionGenerator;
@@ -52,11 +54,11 @@ public class ProblemsMenu extends Menu {
         c.gridheight = 1;
         c.weightx = 1;
         c.weighty = 0.7;
-        problemText = new ProblemText();
+        problemText = new ProblemTeX();
         originalFont.put(problemText, new Font("Sans Serif", Font.BOLD, 40));
         problemText.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-        problemText.setHorizontalAlignment(SwingConstants.CENTER);
+        // problemText.setHorizontalAlignment(SwingConstants.CENTER);
         makeComponent(problemText);  
 
         c.gridwidth = 1;
@@ -125,7 +127,9 @@ public class ProblemsMenu extends Menu {
         getHelpButton.setBorderPainted(false);
         makeComponent(getHelpButton);
 
-        problemText.setText("Derive y = ", questionGenerator.generateQuestion(), " in terms of x.");
+        problemText.setPretext("Derive ");
+        problemText.setPosttext(" in terms of x.");
+        problemText.setQuestion(questionGenerator.generateQuestion());
         updateFontSizes();
     }
 
@@ -134,14 +138,13 @@ public class ProblemsMenu extends Menu {
         private int numGuesses = 0;
         @Override
         public void actionPerformed(ActionEvent e) {
-            String userAnswer = inputBox.input.getText();
+            ASTNode userAnswer = inputBox.getAstNode();
+            ASTNode answer = ShuntingYardParser.get().convertInfixNotationToAST(problemText.getQuestion());
             boolean right = false;
             try
             {
-                ASTNode userEquation = ShuntingYardParser.get().convertInfixNotationToAST(userAnswer);
-                ASTNode answer = ShuntingYardParser.get().convertInfixNotationToAST(problemText.getQuestion());
                 answer = t.returnAnswer(answer);
-                right = QuestionTester.testEquations(userEquation, answer);
+                right = QuestionTester.testEquations(userAnswer, answer);
             }
             catch(Exception exception)
             {
@@ -151,11 +154,13 @@ public class ProblemsMenu extends Menu {
             {
                 JOptionPane.showMessageDialog(Application.get(), right ? "RIGHT ANSWER":"WRONG ANSWER: " + (3 - numGuesses) + " CHANCES LEFT.");
                 if (right || numGuesses >= 3)
-                {
-                    if (right) t.setProficiency(t.getProficiency() + 0.1);
+                {                    
+                    if (right && t.getProficiency() <= t.getFormulaList().size() - 1) t.setProficiency(t.getProficiency() + 0.5);
+                    else JOptionPane.showMessageDialog(Application.get(), "Right Answer is: " + answer.toInfix());
                     percentageText.updateText();
-                    problemText.setText("Derive y = ", questionGenerator.generateQuestion(), " in terms of x.");
+                    problemText.setQuestion(questionGenerator.generateQuestion());
                     numGuesses = 0;
+                    inputBox.clearInput();
                 }
                 else
                 {
@@ -169,10 +174,12 @@ public class ProblemsMenu extends Menu {
     class Help implements ActionListener
     {
         @Override
+      
         public void actionPerformed(ActionEvent e){
         open(uri);
         }   
     
+
     }
 
     private static void open(URI uri) 

@@ -1,6 +1,9 @@
 
 package io.github.atholton.sigmath.equationtree;
 
+import java.util.Objects;
+import java.util.Set;
+
 /**
  * @author nathanli5722
  */
@@ -11,6 +14,7 @@ public class BaseOperator implements Operator {
         new BaseOperator("/", false, 3),
         new BaseOperator("+", false, 2),
         new BaseOperator("-", false, 2),
+        new BaseOperator(ASTNode.IMPLICIT_TIMES, false, 3),
     };
     public static String[] functions = {
         "sin",
@@ -18,6 +22,33 @@ public class BaseOperator implements Operator {
         "tan",
         "sqrt",
         "ln",
+    };
+
+    public static final String[] specialCharacters = {
+        "alpha", "Alpha",
+        "beta", "Beta",
+        "gamma", "Gamma",
+        "delta", "Delta",
+        "epsilon", "Epsilon",
+        "zeta", "Zeta",
+        "theta", "Theta",
+        "Eta", "eta",
+        "iota", "Iota",
+        "kappa", "Kappa",
+        "lambda", "Lambda",
+        "mu", "Mu",
+        "nu", "Nu",
+        "xi", "Xi",
+        "omicron", "Omicron",
+        "pi", "Pi",
+        "rho", "Rho",
+        "sigma", "Sigma",
+        "tau", "Tau",
+        "upsilon", "Upsilon",
+        "phi", "Phi",
+        "chi", "Chi",
+        "psi", "Psi",
+        "omega", "Omega"
     };
     public static BaseOperator getOperator(String symbol)
     {
@@ -54,6 +85,7 @@ public class BaseOperator implements Operator {
 
     @Override
     public int comparePrecedence(Operator o) {
+        Objects.requireNonNull(o);
         if(o instanceof BaseOperator) {
             BaseOperator other = (BaseOperator) o;
             return precedence - other.precedence;

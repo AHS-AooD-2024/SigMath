@@ -16,7 +16,6 @@
 
 package io.github.atholton.sigmath.latex;
 
-import java.beans.BeanProperty;
 import java.beans.JavaBean;
 import java.util.regex.Pattern;
 
@@ -29,8 +28,7 @@ import io.github.atholton.sigmath.util.Strings;
 
 @JavaBean(defaultProperty = "UI", description = "A label that displays LaTeX icons")
 @SwingContainer(false)
-public class TeXLabel extends JLabel {
-    public static final int DEFAULT_STYLE = TeXConstants.STYLE_DISPLAY;
+public class TeXLabel extends JLabel implements TeXComponentProperties {
     // backslashes '\' and whitespace ' '
     public static final Pattern BACKSPACE_STOPS = Pattern.compile("(?:\\s?\\\\)|\\s+");
 
@@ -62,41 +60,37 @@ public class TeXLabel extends JLabel {
         setIcon(formula.createTeXIcon(style, size));
     }
 
+    @Override
     public int getTeXStyle() {
         return style;
     }
     
-    @BeanProperty(preferred = true, bound = true, visualUpdate = true, description 
-        = "The TeX style"
-    )
+    @Override
     public void setTeXStyle(int style) {
         int old = this.style;
         this.style = style;
 
         firePropertyChange("teXStyle", old, style);
 
-        repaint();
+        setIcon(formula.createTeXIcon(style, size));
     }
 
+    @Override
     public float getTeXSize() {
         return size;
     }
 
-    @BeanProperty(preferred = true, bound = true, visualUpdate = true, description 
-        = "The size of the TeX Icon" 
-    )
+    @Override
     public void setTeXSize(float size) {
         float old = this.size;
         this.size = size;
 
         firePropertyChange("teXSize", old, size);
 
-        revalidate();
+        setIcon(formula.createTeXIcon(style, size));
     }
 
-    @BeanProperty(preferred = true, bound = true, visualUpdate = true, description
-        = "The LaTeX formula the is displayed"
-    )
+    @Override
     public void setTeX(String latex) {
         String old = texText;
         this.texText = latex;
@@ -107,7 +101,7 @@ public class TeXLabel extends JLabel {
         setIcon(formula.createTeXIcon(style, size));
     }
 
-    public TeXLabel append(String latex) {
+    public TeXComponentProperties append(String latex) {
         String old = texText;
         this.texText = texText + latex;
         formula.append(latex);
@@ -119,7 +113,7 @@ public class TeXLabel extends JLabel {
         return this;
     }
 
-    public TeXLabel insert(int position, String latex) {
+    public TeXComponentProperties insert(int position, String latex) {
         if(position < 0 || position > texText.length()) {
             throw new IndexOutOfBoundsException(position);
         }
@@ -134,7 +128,7 @@ public class TeXLabel extends JLabel {
         return this;
     }
 
-    public TeXLabel backspace() {
+    public TeXComponentProperties backspace() {
         setTeX(Strings.backspaceUntilMatches(texText, BACKSPACE_STOPS));
         return this;
     }

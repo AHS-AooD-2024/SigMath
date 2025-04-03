@@ -72,7 +72,7 @@ public class Derivative
                 ASTNode left = copy(node.getLeftASTNode());
                 powerRule(node);
                 //multiple with node that will be chain ruled
-                chainRule(left);
+                derive(left);
                 replaceNode(node, new ASTNode("*",  copy(node), copy(left), Type.OPERATOR));
             }    
         }
