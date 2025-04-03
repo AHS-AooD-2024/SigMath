@@ -11,9 +11,11 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 
+import io.github.atholton.sigmath.topics.ChainRuleDerivative;
 import io.github.atholton.sigmath.topics.PolynomialDerivative;
 import io.github.atholton.sigmath.topics.ProductRuleDerivative;
 import io.github.atholton.sigmath.topics.Topic;
+import io.github.atholton.sigmath.topics.TrigDerivative;
 
 public class AllTopicsMenu extends Menu {
     private ArrayList<TopicsButton> topics;
