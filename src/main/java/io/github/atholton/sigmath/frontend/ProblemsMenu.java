@@ -1,9 +1,23 @@
 package io.github.atholton.sigmath.frontend;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Desktop;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
 
 import io.github.atholton.sigmath.equationtree.ASTNode;
 import io.github.atholton.sigmath.equationtree.ShuntingYardParser;
@@ -11,13 +25,13 @@ import io.github.atholton.sigmath.latex.DualTeXField;
 import io.github.atholton.sigmath.topics.QuestionGenerator;
 import io.github.atholton.sigmath.topics.QuestionTester;
 import io.github.atholton.sigmath.topics.Topic;
-import io.github.atholton.sigmath.user.UserSettings;
 
 public class ProblemsMenu extends Menu {
     private DualTeXField inputBox;
     private ProgressText percentageText;
     private ProblemText problemText;
     private JButton submitButton, getHelpButton;
+    private URI uri;
     private QuestionGenerator questionGenerator;
     private Topic t;
     private GridBagLayout layout;
@@ -92,6 +106,20 @@ public class ProblemsMenu extends Menu {
         getHelpButton = new JButton("Need Help?");
         originalFont.put(getHelpButton, new Font("Sans Serif", Font.PLAIN, 40));
         getHelpButton.setBackground(new Color(213, 166, 189));
+        //uri = new URI("http://www.youtube.com/watch?v=qzW6mgfY5X4");
+        
+        String myURL = "https://www.youtube.com/playlist?list=PL_oayj0GNI_ryLSlaGd-ug5qACQvAXD43";
+        try {
+            URL url = new URL(myURL);
+            String nullFragment = null;
+            this.uri = new URI(url.getProtocol(), url.getHost(), url.getPath(), url.getQuery(), nullFragment);
+            System.out.println("URI " + this.uri.toString() + " is OK");
+        } catch (MalformedURLException e) {
+            System.out.println("URL " + myURL + " is a malformed URL");
+        } catch (URISyntaxException e) {
+            System.out.println("URI " + myURL + " is a malformed URL");
+        }
+
         getHelpButton.addActionListener(new Help());
         getHelpButton.setOpaque(true);
         getHelpButton.setBorderPainted(false);
@@ -138,27 +166,31 @@ public class ProblemsMenu extends Menu {
 
     }
 
-    class Help implements ActionListener 
+    class Help implements ActionListener
     {
         @Override
-        public void actionPerformed(ActionEvent e) {
-
-            System.out.println("(fweh)");
-
-            helpPopup = new JFrame("(FWEH HXMICIDE)");
-            helpPopup.setUndecorated(true);
-            helpPopup.setAlwaysOnTop(true);
-            helpPopup.getRootPane().putClientProperty("apple.awt.draggableWindowBackground", false);
-            helpPopup.getContentPane().setLayout(new java.awt.BorderLayout());
-            helpPopup.getContentPane().add(new JTextField("text field north"), java.awt.BorderLayout.NORTH);
-            helpPopup.setFont(new Font("Sans Serif", Font.PLAIN, (int)(40.0 * UserSettings.get().getFontSize() / 100.0)));
-            helpPopup.setBackground(new Color(213, 166, 189));
-            makeComponent(helpPopup);
-            helpPopup.setVisible(true);
-            helpPopup.pack();
+        public void actionPerformed(ActionEvent e){
+        open(uri);
+        }   
+    
     }
 
-    }   
-    
+    private static void open(URI uri) 
+    {
+        if (Desktop.isDesktopSupported()) 
+        {
+            try 
+            {
+                Desktop.getDesktop().browse(uri);
+            }
+            catch (IOException e) 
+            {
+                System.out.println("AHHHHHHHHHHHHHHHHHHHHHHHHHHHHH\nMY A**SSSSSS (swwy)");
+            }
+        }
+        else
+        { /* TODO: error handling [or not (seeyuhh)] */ }
+    }
 }
+
 
