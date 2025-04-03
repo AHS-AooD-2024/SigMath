@@ -17,6 +17,8 @@ public class TopicsButton extends JButton implements ActionListener{
         super(topicString);
         this.topic = topic;
         addActionListener(this);
+        setOpaque(true);
+        setBackground(new Color(255, 255, 255));
     }
     
     public Topic getTopic() {
@@ -51,7 +53,7 @@ public class TopicsButton extends JButton implements ActionListener{
         }
         if (addTopic) {
             RecentTopicsMenu.get().addTopic(topic, getText());
-            //System.out.println(RecentTopicsMenu.get().getTopics().get(0));
+            System.out.println(RecentTopicsMenu.get().getTopics().get(0));
         }
     }
 }
