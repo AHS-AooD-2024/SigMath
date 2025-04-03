@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import io.github.atholton.sigmath.frontend.ProblemsMenu.Submit;
 import io.github.atholton.sigmath.topics.*;
 
 public class TopicsButton extends JButton implements ActionListener{
