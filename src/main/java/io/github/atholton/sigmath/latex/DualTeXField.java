@@ -167,11 +167,6 @@ public class DualTeXField extends JPanel {
         }
         return super.add(comp);
     }
-    public ASTNode getEquation()
-    {
-        String text = input.getText();
-        return parser.convertInfixNotationToAST(text);
-    }
     /**
      * Gets an equation tree root that represents the input. The returned
      * node will be its own copy; you are free to mutate it without affecting the

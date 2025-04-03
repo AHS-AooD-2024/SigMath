@@ -110,7 +110,7 @@ public class ProblemsMenu extends Menu {
         private int numGuesses = 0;
         @Override
         public void actionPerformed(ActionEvent e) {
-            ASTNode userAnswer = inputBox.getEquation();
+            ASTNode userAnswer = inputBox.getAstNode();
             ASTNode answer = ShuntingYardParser.get().convertInfixNotationToAST(problemText.getQuestion());
             boolean right = false;
             try
