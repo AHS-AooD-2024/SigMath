@@ -63,11 +63,12 @@ public class ProblemsMenu extends Menu {
 
         c.gridwidth = 1;
         c.gridheight = 2;
-        c.weightx = 0.8;
+        c.weightx = 0.0;
         c.weighty = 1;
         c.gridx = GridBagConstraints.RELATIVE;
+        c.gridy = 1;
         //c.insets = new Insets(180, 20, 350, 0);
-        c.insets = new Insets(100, 100, 100, 100);
+        c.insets = new Insets(100, 20, 100, 20);
         percentageText = new ProgressText(t);
         originalFont.put(percentageText, new Font("Sans Serif", Font.PLAIN, 40));
         percentageText.setHorizontalAlignment(SwingConstants.CENTER);
@@ -84,13 +85,18 @@ public class ProblemsMenu extends Menu {
         makeComponent(inputBox);
 
         c.weighty = 0.1;
-        c.insets = new Insets(30, 150, 30, 100);
-        submitButton = new JButton("Submit"){
-            {
-                setSize(150, 75);
-                setMaximumSize(getSize());
-            }
-        };
+        c.weightx = 0.1;
+        c.gridheight = 1;
+        c.gridwidth = 1;
+        c.gridy = 2;
+        c.gridx = 1;
+        c.anchor = GridBagConstraints.CENTER;
+        // c.insets = new Insets(30, 150, 30, 100);
+        c.insets = new Insets(0, 20, 0, 20);
+        submitButton = new JButton("Submit");
+        submitButton.setSize(150, 75);
+        submitButton.setMaximumSize(submitButton.getSize());
+            
         originalFont.put(submitButton, new Font("Sans Serif", Font.PLAIN, 40));
         submitButton.addActionListener(new Submit());
         submitButton.setBackground(new Color(201, 218, 248));
@@ -99,11 +105,12 @@ public class ProblemsMenu extends Menu {
         makeComponent(submitButton);
 
         //c.insets = new Insets(180, 0, 350, 20);
-        c.insets = new Insets(100, 100, 100, 100);
+        c.insets = new Insets(100, 20, 100, 20);
         c.weighty = 1;
-        c.weightx = 0.8;
+        c.weightx = 0.0;
         c.gridheight = 2;
         c.gridx = GridBagConstraints.RELATIVE;
+        c.gridy = 1;
         c.gridwidth = GridBagConstraints.REMAINDER;
         getHelpButton = new JButton("Need Help?");
         originalFont.put(getHelpButton, new Font("Sans Serif", Font.PLAIN, 40));
@@ -129,7 +136,7 @@ public class ProblemsMenu extends Menu {
 
         problemText.setPretext("Derive ");
         problemText.setPosttext(" in terms of x.");
-        problemText.setQuestion(questionGenerator.generateQuestion());
+        problemText.setQuestion("y = " + questionGenerator.generateQuestion());
         updateFontSizes();
     }
 

@@ -25,6 +25,7 @@ import org.junit.Test;
 import io.github.atholton.sigmath.latex.TeXComponentProperties;
 import io.github.atholton.sigmath.latex.TeXLabel;
 import io.github.atholton.sigmath.symbols.Greek;
+import io.github.atholton.sigmath.topics.QuestionGenerator;
 import io.github.atholton.sigmath.util.Strings;
 
 public class UnitTests {
@@ -173,5 +174,12 @@ public class UnitTests {
         a = TeXComponentProperties.texify(test);
 
         assertEquals(expt, a);
+    }
+
+    @Test
+    public void replaceVariablesTest() {
+        final String test = "\\coeff{a, 1, 5}x^2";
+        String result = QuestionGenerator.testReplaceVars(test);
+        System.out.println(result);
     }
 }

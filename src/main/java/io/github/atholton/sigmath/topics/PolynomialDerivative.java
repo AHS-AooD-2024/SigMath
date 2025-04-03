@@ -29,6 +29,12 @@ public class PolynomialDerivative extends Topic {
     }
     
     private PolynomialDerivative() {
+        super();
+        formulaList.add("a*x^n1");
+        formulaList.add("a*x^n1 + b*x^n2");
+        formulaList.add("a*x^n1 + b*x^n2 + c*x^n3");
+        formulaList.add("(a + b*x^n1)*x^n2");
+        formulaList.add("(x^n1 + a * x^n2)/x");
         formulaList.add("c1*x^n1");
         formulaList.add("c1*x^n1 + c2*x^n2");
         formulaList.add("(c1 + c2*x^n1)*x^n2");
