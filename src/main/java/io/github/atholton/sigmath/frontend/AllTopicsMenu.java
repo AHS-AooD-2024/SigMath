@@ -23,31 +23,18 @@ public class AllTopicsMenu extends Menu {
     private GridBagLayout layout;
     
     private AllTopicsMenu() {
-        super();
-        layout = new GridBagLayout();
-        setLayout(layout);
-        c = new GridBagConstraints();
-        c.fill = GridBagConstraints.BOTH;
-
-        c.insets = new Insets(30, 30, 30, 30); 
-
         topics = new ArrayList<TopicsButton>();
 
         addTopic(PolynomialDerivative.get(), "Polynomial Derivatives");
+        addTopic(ChainRuleDerivative.get(), "Chain Rule Derivatives");
         addTopic(ProductRuleDerivative.get(), "Product Rule");
         addTopic(TrigDerivative.get(), "Trig Derivatives");
-        addTopic(ChainRuleDerivative.get(), "Chain Rule Derivatives");
         for (TopicsButton t : topics) {
             add(t);
         }
     }
     public void addTopic(Topic t, String topicString) { 
         TopicsButton b = new TopicsButton(t, topicString);
-        b.setSize(150, 75);
-        b.setMaximumSize(getSize());
-        b.setBackground(new Color(255, 255, 255));
-        b.setBorder(BorderFactory.createLineBorder(Color.black, 2));
-        b.setOpaque(true);
         topics.add(b);
         originalFont.put(b, new Font("Sans Serif", Font.PLAIN, 30));
     }
