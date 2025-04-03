@@ -205,6 +205,14 @@ public class ProblemsMenu extends Menu {
         else
         { /* TODO: error handling [or not (seeyuhh)] */ }
     }
+
+    @Override
+    public void setFont(Font font) {
+        if(inputBox != null) {
+            inputBox.setFont(font);
+        }
+        super.setFont(font);
+    }
 }
 
 

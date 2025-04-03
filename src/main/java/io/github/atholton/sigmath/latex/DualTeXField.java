@@ -6,6 +6,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -38,7 +39,7 @@ import io.github.atholton.sigmath.util.LazyLogger;
 public class DualTeXField extends JPanel {
     private static LazyLogger logger = new LazyLogger("TeXInput");
 
-    private JTextField input;
+    private HintTextField input;
     private TeXLabel output;
 
     private ASTNode ast;
@@ -57,7 +58,6 @@ public class DualTeXField extends JPanel {
         input = new HintTextField("Type your answer here");
         Font font1 = new Font("SansSerif", Font.BOLD, 20);
         input.setFont(font1);
-
 
         labelUpdater = new DocumentListener() {
 
@@ -78,7 +78,11 @@ public class DualTeXField extends JPanel {
                 ASTNode.printInfix(ast);
                 String texify = TeXComponentProperties.texify(ast);
                 try {
-                    output.setTeX(texify);
+                    if(input.isHint()) {
+                        output.setTeX("");
+                    } else {
+                        output.setTeX(texify);
+                    }
                 } catch (ParseException e) {
                     logger.get().logp(Level.SEVERE, getClass().getName(), "#texify0", e, () -> "Illegal LaTeX generated:\n" + texify + "\nFrom input:\n" + text);
                 }
@@ -142,18 +146,19 @@ public class DualTeXField extends JPanel {
         input.getDocument().addDocumentListener(labelUpdater);
         input.addKeyListener(parenthesisSurrounder);
         
-        output = new TeXLabel("Aloha");
+        output = new TeXLabel("");
+        output.setTeXSize(40.0f);
 
-        input.addKeyListener(FilterKeyListener.disallows('\\'));
+        input.addKeyListener(FilterKeyListener.disallows('\\', '|'));
 
         add(output);
         add(input);
     }
 
     public DualTeXField(int columns) {
-        this(null, columns);
-        BoxLayout layout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
-        setLayout(layout);
+        this(new GridLayout(2, 1), columns);
+        // BoxLayout layout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
+        // setLayout(layout);
     }
 
     public DualTeXField() {
@@ -167,6 +172,16 @@ public class DualTeXField extends JPanel {
         }
         return super.add(comp);
     }
+
+    @Override
+    public void setFont(Font font) {
+        if(output != null) {
+            output.setFont(font);
+            output.setTeXSize(font.getSize2D());
+        }
+        super.setFont(font);
+    }
+
     /**
      * Gets an equation tree root that represents the input. The returned
      * node will be its own copy; you are free to mutate it without affecting the
@@ -179,6 +194,6 @@ public class DualTeXField extends JPanel {
     }
     public void clearInput()
     {
-        input.setText("");
+        input.setToHint();
     }
 }
