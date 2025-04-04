@@ -103,7 +103,7 @@ public class Toolbar extends Menu {
                 }
                 else
                 {
-                    menu.add(SettingsMenu.get(), BorderLayout.CENTER);
+                    menu.add(AllTopicsMenu.get(), BorderLayout.CENTER);
                 }
                 previous = currentMenu;
                 menu.repaint();

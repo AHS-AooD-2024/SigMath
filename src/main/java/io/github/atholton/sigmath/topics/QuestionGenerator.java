@@ -119,9 +119,10 @@ public class QuestionGenerator {
                         .replace("c3", String.valueOf(random.nextInt(20) + 1))
                         .replace("c4", String.valueOf(random.nextInt(20) + 1))
                         .replace("c5", String.valueOf(random.nextInt(20) + 1))
-                        .replace("n1", String.valueOf(random.nextInt(5) + 1))
-                        .replace("n2", String.valueOf(random.nextInt(5) + 1))
-                        .replace("n3", String.valueOf(random.nextInt(5) + 1));//this is a horrendous line btw
+                        .replace("n1", String.valueOf(random.nextInt(5) + 2))
+                        .replace("n2", String.valueOf(random.nextInt(5) + 2))
+                        .replace("n3", String.valueOf(random.nextInt(5) + 2))
+                        .replace("n4", String.valueOf(random.nextInt(5) + 2));//this is a horrendous line btw
     }
     
     /**

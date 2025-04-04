@@ -27,9 +27,9 @@ public class ProductRuleDerivative extends Topic {
         set(this);
     }
     private ProductRuleDerivative() {
-        formulaList.add("(c1 * x) * (c2 * x)");
-        formulaList.add("(c1 * x) * (c2 * x ^ n1)");
-        formulaList.add("(c1 * x ^ n1) * (c2 * x ^ n2)");
+        formulaList.add("(c1 * x) ^ n1 * (c2 * x) ^ n2");
+        formulaList.add("(c1 * x) ^ n1 * (c2 * x ^ n2) ^ n3");
+        formulaList.add("(c1 * x ^ n1) ^ n2 * (c2 * x ^ n3) ^ n4");
     }
 
     public ASTNode returnAnswer(ASTNode question) {
